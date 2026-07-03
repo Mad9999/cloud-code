@@ -1,0 +1,678 @@
+/* Qur'anic Engineering MVP — interactive layers over the generated dataset.
+   Plain vanilla JS, no external dependencies; works over file://. */
+
+"use strict"
+
+const D = window.QURAN_DATA
+const $ = (sel) => document.querySelector(sel)
+
+const COLORS = {
+	page: "#0d0d0d", surface: "#1a1a19", ink: "#ffffff", ink2: "#c3c2b7",
+	muted: "#898781", grid: "#2c2c2a", baseline: "#383835",
+	blue: "#3987e5", aqua: "#199e70", yellow: "#c98500", violet: "#9085e9",
+	red: "#e66767", magenta: "#d55181", orange: "#d95926",
+}
+const BIN_COLORS = {
+	soft2: "#3987e5", soft1: "#86b6ef", neutral: "#6b6a64",
+	hard1: "#e66767", hard2: "#d03b3b",
+}
+const BIN_LABELS = {
+	soft2: "لينٌ ظاهر (همس/رخاوة/مد)", soft1: "مائل إلى اللين",
+	neutral: "متوسط", hard1: "مائل إلى الشدة", hard2: "شدةٌ ظاهرة (استعلاء/قلقلة)",
+}
+const AR = {
+	hams: "مهموس", jahr: "مجهور", shidda: "شديد", tawassut: "متوسط", rakhawa: "رخو",
+	istiala: "مستعلٍ", istifal: "مستفل", safir: "صفير", ghunna: "غنة",
+	tafashshi: "تفشٍّ", istitala: "استطالة", inhiraf: "انحراف", takrir: "تكرير",
+	lin: "لين", madd: "مد",
+	jawf: "الجوف", aqsa_halq: "أقصى الحلق", wasat_halq: "وسط الحلق",
+	adna_halq: "أدنى الحلق", aqsa_lisan: "أقصى اللسان", wasat_lisan: "وسط اللسان",
+	hafat_lisan: "حافة اللسان", tarf_lisan: "طرف اللسان", shafawi: "الشفتان",
+}
+const STATE_AR = { fatha: "فتحة", damma: "ضمة", kasra: "كسرة", sakin: "ساكن", madd: "مد" }
+const GRADE_AR = { qati: "قطعي", "ma'thur": "مأثور", ijtihadi: "اجتهادي" }
+const GRADE_CLASS = { qati: "qati", "ma'thur": "mathur", ijtihadi: "ijtihadi" }
+const LINK_TYPE = {
+	mawdui: { label: "موضوعي", color: COLORS.violet },
+	munasaba: { label: "مناسبات", color: COLORS.yellow },
+	balaghi: { label: "بلاغي", color: COLORS.magenta },
+	nahwi: { label: "نحوي", color: COLORS.orange },
+	tanazur: { label: "تناظر", color: COLORS.red },
+	bayn_suwar: { label: "بين السور", color: COLORS.aqua },
+	tafsiri: { label: "تفسيري", color: COLORS.blue },
+}
+
+const arNum = (n) => String(n).replace(/\d/g, (d) => "٠١٢٣٤٥٦٧٨٩"[d])
+const gradeBadge = (g) => `<span class="badge ${GRADE_CLASS[g] || ""}">${GRADE_AR[g] || g}</span>`
+
+/* ---------- tooltip ---------- */
+const tip = $("#tooltip")
+function showTip(html, x, y) {
+	tip.innerHTML = html
+	tip.style.display = "block"
+	const w = tip.offsetWidth, h = tip.offsetHeight
+	let px = x - w - 14
+	if (px < 6) { px = x + 14 }
+	let py = y - h / 2
+	py = Math.max(6, Math.min(window.innerHeight - h - 6, py))
+	tip.style.left = px + "px"
+	tip.style.top = py + "px"
+}
+function hideTip() { tip.style.display = "none" }
+
+/* ---------- tabs ---------- */
+$("#tabs").addEventListener("click", (e) => {
+	const btn = e.target.closest("button")
+	if (!btn) { return }
+	document.querySelectorAll("#tabs button").forEach((b) => b.classList.toggle("active", b === btn))
+	document.querySelectorAll("section.layer").forEach((s) => s.classList.remove("visible"))
+	$("#layer-" + btn.dataset.layer).classList.add("visible")
+	if (btn.dataset.layer === "graph") { graphResize() }
+	if (btn.dataset.layer === "phonetic") { drawRadar() }
+	if (btn.dataset.layer === "acoustic") { drawBridge() }
+})
+
+/* ============================================================
+   Layer 1 — Ring structure
+   ============================================================ */
+const RING = D.surah.ring_structure
+const PAIR_COLORS = { "1-7": COLORS.red, "2-6": COLORS.aqua, "3-5": COLORS.violet }
+
+function buildRing() {
+	const W = 720, H = 560, cx = W / 2, cy = H / 2 - 10, R = 200
+	const pos = {}
+	for (let n = 1; n <= 7; n++) {
+		// verse 4 (numeric axis) at the bottom; pairs mirror across the vertical
+		const a = (90 + (n - 4) * (360 / 7)) * Math.PI / 180
+		pos[n] = { x: cx + R * Math.cos(a), y: cy + R * Math.sin(a) }
+	}
+	let svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%">`
+	svg += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${COLORS.grid}" stroke-width="1.5"/>`
+
+	// mirror pair chords
+	for (const p of RING.pairs) {
+		const key = `${p.a}-${p.b}`, c = PAIR_COLORS[key]
+		const A = pos[p.a], B = pos[p.b]
+		svg += `<path d="M ${A.x} ${A.y} Q ${cx} ${cy} ${B.x} ${B.y}" fill="none" stroke="${c}" stroke-width="2" opacity="0.75" data-pair="${key}"/>`
+	}
+	// iltifat marker between v4 and v5
+	const m1 = pos[4], m2 = pos[5]
+	const mx = (m1.x + m2.x) / 2
+	const my = (m1.y + m2.y) / 2
+	svg += `<text x="${mx + (mx > cx ? 70 : -70)}" y="${my + 34}" fill="${COLORS.magenta}" font-size="15" text-anchor="middle">↯ الالتفات: من الغيبة إلى الخطاب</text>`
+
+	// verse nodes: fill encodes the prophetic division
+	for (let n = 1; n <= 7; n++) {
+		const p = pos[n]
+		const div = RING.prophetic_division
+		const fill = n === div.pivot_verse ? COLORS.magenta : (div.first_half.includes(n) ? "#1c5cab" : "#0e7a56")
+		const stroke = n === RING.numeric_axis ? COLORS.yellow : "rgba(255,255,255,0.25)"
+		const verse = D.surah.verses[n - 1]
+		svg += `<g class="ring-node" data-n="${n}" style="cursor:pointer">`
+		svg += `<circle cx="${p.x}" cy="${p.y}" r="30" fill="${fill}" stroke="${stroke}" stroke-width="${n === RING.numeric_axis ? 3 : 1.5}"/>`
+		svg += `<text x="${p.x}" y="${p.y + 7}" fill="#fff" font-size="20" text-anchor="middle">${arNum(n)}</text>`
+		const lx = cx + (R + 66) * Math.cos((90 + (n - 4) * (360 / 7)) * Math.PI / 180)
+		const ly = cy + (R + 66) * Math.sin((90 + (n - 4) * (360 / 7)) * Math.PI / 180)
+		const short = verse.uthmani.split(" ").slice(0, 3).join(" ") + (verse.uthmani.split(" ").length > 3 ? "…" : "")
+		svg += `<text x="${lx}" y="${ly}" fill="${COLORS.ink2}" font-size="15" text-anchor="middle">${short}</text>`
+		svg += `</g>`
+	}
+	svg += `</svg>`
+	$("#ring-svg-holder").innerHTML = svg
+
+	document.querySelectorAll(".ring-node").forEach((g) => {
+		g.addEventListener("click", () => selectRingVerse(Number(g.dataset.n)))
+	})
+	ringDefaultInfo()
+}
+
+function ringDefaultInfo() {
+	const div = RING.prophetic_division
+	$("#ring-info").innerHTML =
+		`<b>${RING.axis_note}</b>` + gradeBadge("ijtihadi") +
+		`<div style="margin-top:8px">${div.note} ${gradeBadge(div.grade)}</div>` +
+		`<div class="src">المصدر: ${div.source} · منهجية التناظر: ${RING.methodology_source}</div>` +
+		`<div class="legend" style="margin-top:10px">
+			<span class="item"><span class="swatch" style="background:#1c5cab"></span> ثناءٌ لله (١–٤)</span>
+			<span class="item"><span class="swatch" style="background:${COLORS.magenta}"></span> بين الله وعبده (٥)</span>
+			<span class="item"><span class="swatch" style="background:#0e7a56"></span> عطاءٌ للعبد (٦–٧)</span>
+			<span class="item"><span class="swatch" style="background:none;border:2px solid ${COLORS.yellow}"></span> المحور العددي (٤)</span>
+		</div>`
+}
+
+function selectRingVerse(n) {
+	const verse = D.surah.verses[n - 1]
+	const pair = RING.pairs.find((p) => p.a === n || p.b === n)
+	document.querySelectorAll("[data-pair]").forEach((el) => {
+		const active = pair && el.dataset.pair === `${pair.a}-${pair.b}`
+		el.setAttribute("stroke-width", active ? 4.5 : 2)
+		el.setAttribute("opacity", active ? 1 : 0.25)
+	})
+	let html = `<b>﴿${verse.uthmani}﴾</b><div style="margin-top:6px">المحور الموضوعي: ${verse.theme}</div>`
+	if (pair) {
+		const other = pair.a === n ? pair.b : pair.a
+		html += `<div style="margin-top:8px">↔ نظيرتها الآية ${arNum(other)}: ${pair.note} ${gradeBadge(pair.grade)}</div>`
+	} else {
+		html += `<div style="margin-top:8px">${RING.axis_note} ${gradeBadge("ijtihadi")}</div>`
+	}
+	if (n === RING.iltifat_at) {
+		const l3 = D.surah.semantic_links.find((l) => l.id === "L3")
+		html += `<div style="margin-top:8px">↯ ${l3.note} ${gradeBadge(l3.grade)}<div class="src">${l3.source}</div></div>`
+	}
+	$("#ring-info").innerHTML = html
+}
+
+/* ============================================================
+   Layer 2 — Semantic force graph
+   ============================================================ */
+const KIND_STYLE = {
+	verse: { color: COLORS.yellow, r: 15, label: "آية" },
+	word: { color: COLORS.blue, r: 7, label: "كلمة" },
+	root: { color: COLORS.aqua, r: 9, label: "جذر" },
+	theme: { color: COLORS.violet, r: 12, label: "محور" },
+}
+let G = null
+
+function mulberry32(seed) {
+	return function () {
+		seed |= 0; seed = (seed + 0x6d2b79f5) | 0
+		let t = Math.imul(seed ^ (seed >>> 15), 1 | seed)
+		t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+		return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+	}
+}
+
+function graphInit() {
+	const canvas = $("#graph-canvas")
+	const nodes = D.graph.nodes.filter((n) => n.kind !== "link_card")
+		.map((n) => ({ ...n }))
+	const idx = new Map(nodes.map((n, i) => [n.id, i]))
+	const edges = D.graph.edges
+		.filter((e) => idx.has(e.from) && idx.has(e.to))
+		.map((e) => ({ ...e, a: idx.get(e.from), b: idx.get(e.to) }))
+	const rand = mulberry32(7)
+	nodes.forEach((n) => {
+		const a = rand() * Math.PI * 2, r = 120 + rand() * 260
+		n.x = Math.cos(a) * r; n.y = Math.sin(a) * r
+		n.vx = 0; n.vy = 0
+		n.r = KIND_STYLE[n.kind].r + (n.kind === "root" ? Math.min(4, n.count) : 0)
+	})
+	G = { canvas, ctx: canvas.getContext("2d"), nodes, edges, idx, alpha: 1, hover: null, drag: null, highlight: null }
+	graphResize()
+	requestAnimationFrame(graphTick)
+
+	canvas.addEventListener("mousemove", (e) => {
+		const p = graphMouse(e)
+		if (G.drag) {
+			G.drag.x = p.x; G.drag.y = p.y
+			G.drag.vx = 0; G.drag.vy = 0
+			G.alpha = Math.max(G.alpha, 0.35)
+			return
+		}
+		G.hover = graphFind(p)
+		canvas.style.cursor = G.hover ? "pointer" : "default"
+		if (G.hover) {
+			const n = G.hover
+			let html = `<b>${n.label}</b> <span class="mut">(${KIND_STYLE[n.kind].label})</span>`
+			if (n.kind === "word") {
+				html += `<div class="mut">آية ${arNum(n.verse)} · ${n.pos}${n.root ? " · جذر: " + n.root : ""}</div><div>${n.gloss}</div>`
+			}
+			if (n.kind === "verse") { html += `<div>${n.theme}</div>` }
+			if (n.kind === "root") { html += `<div class="mut">ورد ${arNum(n.count)} مرات في السورة</div>` }
+			showTip(html, e.clientX, e.clientY)
+		} else { hideTip() }
+	})
+	canvas.addEventListener("mousedown", (e) => {
+		const n = graphFind(graphMouse(e))
+		if (n) { G.drag = n; G.alpha = Math.max(G.alpha, 0.4) }
+	})
+	window.addEventListener("mouseup", () => { G.drag = null })
+	canvas.addEventListener("mouseleave", () => { G.hover = null; hideTip() })
+
+	// legend
+	$("#graph-legend").innerHTML = Object.values(KIND_STYLE)
+		.map((k) => `<span class="item"><span class="swatch" style="background:${k.color};border-radius:50%"></span> ${k.label}</span>`)
+		.join("") +
+		`<span class="item"><span class="line" style="background:${COLORS.magenta}"></span> رابط مُسند (انظر البطاقات)</span>`
+
+	// sourced link cards
+	const cards = D.graph.nodes.filter((n) => n.kind === "link_card")
+	$("#links-list").innerHTML = cards.map((c) => {
+		const t = LINK_TYPE[c.type] || { label: c.type, color: COLORS.muted }
+		return `<div class="link-card" data-link="${c.id}">
+			<div class="t"><span class="typechip" style="background:${t.color}"></span>${c.label} ${gradeBadge(c.grade)}</div>
+			<div style="margin-top:4px">${c.note}</div>
+			${c.external ? `<div style="margin-top:4px;color:${COLORS.ink2}">↗ ${c.external}</div>` : ""}
+			<div class="src">النوع: ${t.label} · المصدر: ${c.source}</div>
+		</div>`
+	}).join("")
+	document.querySelectorAll(".link-card").forEach((el) => {
+		const card = cards.find((c) => c.id === el.dataset.link)
+		el.addEventListener("mouseenter", () => {
+			el.classList.add("hl")
+			G.highlight = new Set([...(card.from_words || []), ...(card.to_words || [])].map((i) => "w" + i))
+		})
+		el.addEventListener("mouseleave", () => {
+			el.classList.remove("hl")
+			G.highlight = null
+		})
+	})
+}
+
+function graphResize() {
+	const canvas = G.canvas
+	const cssW = canvas.parentElement.clientWidth - 40
+	const dpr = window.devicePixelRatio || 1
+	canvas.style.height = "560px"
+	canvas.width = cssW * dpr
+	canvas.height = 560 * dpr
+	G.dpr = dpr; G.w = cssW; G.h = 560
+	G.alpha = Math.max(G.alpha, 0.3)
+}
+
+function graphMouse(e) {
+	const rect = G.canvas.getBoundingClientRect()
+	return { x: e.clientX - rect.left - G.w / 2, y: e.clientY - rect.top - G.h / 2 }
+}
+
+function graphFind(p) {
+	let best = null, bd = 1e9
+	for (const n of G.nodes) {
+		const d = Math.hypot(n.x - p.x, n.y - p.y)
+		if (d < n.r + 6 && d < bd) { best = n; bd = d }
+	}
+	return best
+}
+
+function graphTick() {
+	const { nodes, edges, ctx } = G
+	if (G.alpha > 0.005) {
+		// pairwise repulsion
+		for (let i = 0; i < nodes.length; i++) {
+			for (let j = i + 1; j < nodes.length; j++) {
+				const a = nodes[i], b = nodes[j]
+				let dx = b.x - a.x, dy = b.y - a.y
+				let d2 = dx * dx + dy * dy
+				if (d2 < 1) { d2 = 1; dx = 1 }
+				const f = (3200 * G.alpha) / d2
+				const d = Math.sqrt(d2)
+				const fx = (dx / d) * f, fy = (dy / d) * f
+				a.vx -= fx; a.vy -= fy; b.vx += fx; b.vy += fy
+			}
+		}
+		// springs
+		for (const e of edges) {
+			const a = nodes[e.a], b = nodes[e.b]
+			const dx = b.x - a.x, dy = b.y - a.y
+			const d = Math.max(1, Math.hypot(dx, dy))
+			const target = e.type === "membership" ? 105 : e.type === "jidhri" ? 80 : 150
+			const f = ((d - target) / d) * 0.028 * G.alpha * 8
+			a.vx += dx * f; a.vy += dy * f
+			b.vx -= dx * f; b.vy -= dy * f
+		}
+		// centering gravity + integration
+		for (const n of nodes) {
+			n.vx -= n.x * 0.0009 * G.alpha * 8
+			n.vy -= n.y * 0.0015 * G.alpha * 8
+			if (n !== G.drag) {
+				n.x += n.vx; n.y += n.vy
+			}
+			n.vx *= 0.86; n.vy *= 0.86
+		}
+		G.alpha *= 0.995
+	}
+	graphDraw(ctx)
+	requestAnimationFrame(graphTick)
+}
+
+function graphDraw(ctx) {
+	const { nodes, edges } = G
+	ctx.setTransform(G.dpr, 0, 0, G.dpr, (G.w / 2) * G.dpr, (G.h / 2) * G.dpr)
+	ctx.clearRect(-G.w / 2, -G.h / 2, G.w, G.h)
+	ctx.fillStyle = COLORS.surface
+	ctx.fillRect(-G.w / 2, -G.h / 2, G.w, G.h)
+
+	for (const e of edges) {
+		const a = nodes[e.a], b = nodes[e.b]
+		const semantic = !["membership", "jidhri", "mawdui"].includes(e.type)
+		if (semantic) {
+			ctx.strokeStyle = COLORS.magenta
+			ctx.lineWidth = 1.8
+			ctx.globalAlpha = 0.85
+		} else {
+			ctx.strokeStyle = e.type === "jidhri" ? COLORS.aqua : e.type === "mawdui" ? COLORS.violet : "#3a3a38"
+			ctx.lineWidth = e.type === "membership" ? 0.7 : 1.1
+			ctx.globalAlpha = e.type === "membership" ? 0.55 : 0.6
+		}
+		ctx.beginPath()
+		ctx.moveTo(a.x, a.y)
+		ctx.lineTo(b.x, b.y)
+		ctx.stroke()
+	}
+	ctx.globalAlpha = 1
+
+	for (const n of nodes) {
+		const hl = G.highlight && G.highlight.has(n.id)
+		const dim = G.highlight && !hl
+		ctx.globalAlpha = dim ? 0.25 : 1
+		ctx.beginPath()
+		ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2)
+		ctx.fillStyle = KIND_STYLE[n.kind].color
+		ctx.fill()
+		// 2px surface ring separates overlapping marks
+		ctx.lineWidth = hl ? 2.5 : 2
+		ctx.strokeStyle = hl ? "#ffffff" : COLORS.surface
+		ctx.stroke()
+		if (n === G.hover) {
+			ctx.beginPath()
+			ctx.arc(n.x, n.y, n.r + 3.5, 0, Math.PI * 2)
+			ctx.strokeStyle = "#fff"
+			ctx.lineWidth = 1.5
+			ctx.stroke()
+		}
+		ctx.fillStyle = dim ? "rgba(195,194,183,0.3)" : (n.kind === "word" ? COLORS.ink2 : COLORS.ink)
+		ctx.font = (n.kind === "word" ? "13px " : "14px ") + '"Amiri","Noto Naskh Arabic",serif'
+		ctx.textAlign = "center"
+		ctx.fillText(arNum(n.label), n.x, n.y - n.r - 5)
+	}
+	ctx.globalAlpha = 1
+}
+
+/* ============================================================
+   Layer 3 — Textual phonetic fingerprint
+   ============================================================ */
+function buildPhonetic() {
+	$("#phonetic-legend").innerHTML = Object.keys(BIN_COLORS)
+		.map((b) => `<span class="item"><span class="swatch" style="background:${BIN_COLORS[b]}"></span> ${BIN_LABELS[b]}</span>`)
+		.join("")
+
+	$("#phonetic-verses").innerHTML = D.phonetics.verses.map((pv) => {
+		const verse = D.surah.verses[pv.n - 1]
+		const chips = pv.phonemes.map((p, i) =>
+			`<span class="chip ${p.state === "madd" ? "madd" : ""}" style="background:${BIN_COLORS[p.bin]}" data-v="${pv.n}" data-i="${i}">
+				${p.char}${p.state === "madd" ? "ـ" : ""}<small>${STATE_AR[p.state]}</small>
+			</span>`).join("")
+		const s = pv.stats
+		return `<div class="verse-block">
+			<div class="vtitle"><span class="num">${arNum(pv.n)} ·</span> ﴿${verse.uthmani}﴾</div>
+			<div class="chips">${chips}</div>
+			<div class="stats-row">
+				<span>${arNum(s.phoneme_count)} صوتاً</span>
+				<span>همس ${s.pct_hams}٪</span>
+				<span>مد ${s.pct_madd}٪</span>
+				<span>استعلاء ${s.pct_istiala}٪</span>
+				<span>مقياس الحدة ${s.mean_intensity}</span>
+			</div>
+		</div>`
+	}).join("")
+
+	$("#phonetic-verses").addEventListener("mousemove", (e) => {
+		const chip = e.target.closest(".chip")
+		if (!chip) { hideTip(); return }
+		const p = D.phonetics.verses[chip.dataset.v - 1].phonemes[chip.dataset.i]
+		const a = p.attrs
+		const extras = a.extras.map((x) => AR[x]).join("، ")
+		const flags = p.flags.filter((f) => ["lin", "madd_lazim", "waqf"].includes(f))
+			.map((f) => ({ lin: "حرف لين", madd_lazim: "مد لازم (٦ حركات)", waqf: "سكون الوقف" })[f]).join("، ")
+		showTip(
+			`<b>${a.name}</b> — ${STATE_AR[p.state]}` +
+			`<div>${AR[a.voicing]} · ${AR[a.strength]} · ${AR[a.elevation]}${a.itbaq ? " · مطبق" : ""}${extras ? " · " + extras : ""}</div>` +
+			`<div class="mut">المخرج: ${AR[a.makhraj]} · درجة الحدة: ${p.intensity}${flags ? " · " + flags : ""}</div>`,
+			e.clientX, e.clientY,
+		)
+	})
+	$("#phonetic-verses").addEventListener("mouseleave", hideTip)
+
+	// radar controls: pick up to two verses (series A blue, series B yellow)
+	const ctrl = $("#radar-controls")
+	ctrl.innerHTML = D.phonetics.verses
+		.map((pv) => `<button data-n="${pv.n}">آية ${arNum(pv.n)}</button>`).join("")
+	ctrl.addEventListener("click", (e) => {
+		const b = e.target.closest("button")
+		if (!b) { return }
+		const n = Number(b.dataset.n)
+		const i = radarSel.indexOf(n)
+		if (i >= 0) { radarSel.splice(i, 1) }
+		else { radarSel.push(n); if (radarSel.length > 2) { radarSel.shift() } }
+		drawRadar()
+	})
+	buildStatsTable()
+}
+
+let radarSel = [5, 1]
+const RADAR_AXES = [
+	{ key: "pct_hams", label: "همس ٪" },
+	{ key: "pct_shidda", label: "شدة ٪" },
+	{ key: "pct_istiala", label: "استعلاء ٪" },
+	{ key: "pct_madd", label: "مد ٪" },
+	{ key: "pct_ghunna", label: "غنة ٪" },
+	{ key: "intensity_norm", label: "مقياس الحدة" },
+]
+
+function radarValue(stats, key) {
+	if (key === "intensity_norm") { return ((stats.mean_intensity + 3) / 11) * 100 }
+	return stats[key]
+}
+
+function drawRadar() {
+	const canvas = $("#radar-canvas")
+	const cssW = canvas.parentElement.clientWidth - 40
+	const dpr = window.devicePixelRatio || 1
+	canvas.width = cssW * dpr
+	canvas.height = 420 * dpr
+	canvas.style.height = "420px"
+	const ctx = canvas.getContext("2d")
+	ctx.setTransform(dpr, 0, 0, dpr, cssW / 2, 215)
+	ctx.clearRect(-cssW / 2, -215, cssW, 420)
+	const R = 145
+	// per-axis normalization to the max across all verses (values are small %)
+	const maxes = RADAR_AXES.map((ax) =>
+		Math.max(...D.phonetics.verses.map((v) => radarValue(v.stats, ax.key))) || 1)
+
+	ctx.strokeStyle = COLORS.grid
+	ctx.fillStyle = COLORS.muted
+	ctx.font = '13px system-ui'
+	for (let ring = 1; ring <= 4; ring++) {
+		ctx.beginPath()
+		for (let i = 0; i <= RADAR_AXES.length; i++) {
+			const a = -Math.PI / 2 + (i * 2 * Math.PI) / RADAR_AXES.length
+			const r = (R * ring) / 4
+			const x = r * Math.cos(a), y = r * Math.sin(a)
+			if (i === 0) { ctx.moveTo(x, y) } else { ctx.lineTo(x, y) }
+		}
+		ctx.stroke()
+	}
+	RADAR_AXES.forEach((ax, i) => {
+		const a = -Math.PI / 2 + (i * 2 * Math.PI) / RADAR_AXES.length
+		ctx.strokeStyle = COLORS.baseline
+		ctx.beginPath()
+		ctx.moveTo(0, 0)
+		ctx.lineTo(R * Math.cos(a), R * Math.sin(a))
+		ctx.stroke()
+		ctx.fillStyle = COLORS.ink2
+		ctx.textAlign = "center"
+		ctx.fillText(ax.label, (R + 34) * Math.cos(a), (R + 26) * Math.sin(a) + 4)
+	})
+
+	const seriesColors = [COLORS.blue, COLORS.yellow]
+	radarSel.forEach((n, si) => {
+		const stats = D.phonetics.verses[n - 1].stats
+		ctx.beginPath()
+		RADAR_AXES.forEach((ax, i) => {
+			const a = -Math.PI / 2 + (i * 2 * Math.PI) / RADAR_AXES.length
+			const r = (radarValue(stats, ax.key) / maxes[i]) * R
+			const x = r * Math.cos(a), y = r * Math.sin(a)
+			if (i === 0) { ctx.moveTo(x, y) } else { ctx.lineTo(x, y) }
+		})
+		ctx.closePath()
+		ctx.strokeStyle = seriesColors[si]
+		ctx.lineWidth = 2
+		ctx.stroke()
+		ctx.globalAlpha = 0.14
+		ctx.fillStyle = seriesColors[si]
+		ctx.fill()
+		ctx.globalAlpha = 1
+		RADAR_AXES.forEach((ax, i) => {
+			const a = -Math.PI / 2 + (i * 2 * Math.PI) / RADAR_AXES.length
+			const r = (radarValue(stats, ax.key) / maxes[i]) * R
+			ctx.beginPath()
+			ctx.arc(r * Math.cos(a), r * Math.sin(a), 4, 0, Math.PI * 2)
+			ctx.fillStyle = seriesColors[si]
+			ctx.fill()
+			ctx.strokeStyle = COLORS.surface
+			ctx.lineWidth = 2
+			ctx.stroke()
+		})
+	})
+
+	$("#radar-legend").innerHTML = radarSel.map((n, si) =>
+		`<span class="item"><span class="swatch" style="background:${seriesColors[si]}"></span> آية ${arNum(n)}: ﴿${D.surah.verses[n - 1].uthmani}﴾</span>`,
+	).join("") + `<span class="item" style="color:${COLORS.muted}">كل بُعد منسوب إلى أعلى قيمته بين الآيات السبع</span>`
+
+	document.querySelectorAll("#radar-controls button").forEach((b) => {
+		const si = radarSel.indexOf(Number(b.dataset.n))
+		b.className = si === 0 ? "sel-a" : si === 1 ? "sel-b" : ""
+	})
+}
+
+function buildStatsTable() {
+	const head = ["الآية", "الأصوات", "همس ٪", "جهر ٪", "شدة ٪", "استعلاء ٪", "مد ٪", "غنة ٪", "مقياس الحدة"]
+	let html = "<tr>" + head.map((h) => `<th>${h}</th>`).join("") + "</tr>"
+	for (const pv of D.phonetics.verses) {
+		const s = pv.stats
+		html += `<tr><td>آية ${arNum(pv.n)}</td><td>${s.phoneme_count}</td><td>${s.pct_hams}</td><td>${s.pct_jahr}</td><td>${s.pct_shidda}</td><td>${s.pct_istiala}</td><td>${s.pct_madd}</td><td>${s.pct_ghunna}</td><td>${s.mean_intensity}</td></tr>`
+	}
+	$("#stats-table").innerHTML = html
+}
+
+/* ============================================================
+   Layer 4 — Physical acoustics of a real recitation
+   ============================================================ */
+function buildAcoustic() {
+	$("#acoustic-src").textContent =
+		`التلاوة: ${D.acoustics.reciter} — المصدر: ${D.acoustics.source}. ` +
+		"الطيف محسوب بتحويل فورييه (نافذة ٢٠٤٨ عينة): الأفقي زمن، والعمودي تردد حتى ٥ كيلوهرتز، والإضاءة شدة الطاقة."
+	$("#acoustic-cards").innerHTML = D.acoustics.verses.map((v) => {
+		if (v.missing) {
+			return `<div class="acoustic-card"><div class="vtitle">آية ${arNum(v.n)}</div>
+				<div class="hint">الملف الصوتي غير متوفر — ضع ${"00100" + v.n}.mp3 في مجلد audio ثم أعد تشغيل build.py</div></div>`
+		}
+		const verse = D.surah.verses[v.n - 1]
+		const bands = Object.entries(v.band_energy_pct)
+			.map(([b, p]) => `<span>${b.replace("-", "–")} هرتز: <b>${p}٪</b></span>`).join("")
+		return `<div class="acoustic-card verse-block">
+			<div class="vtitle"><span class="num">${arNum(v.n)} ·</span> ﴿${verse.uthmani}﴾</div>
+			<img src="generated/spectrograms/ayah_${v.n}.png" alt="طيف ترددي للآية ${v.n}" loading="lazy" />
+			<audio controls preload="none" src="../audio/${v.file}"></audio>
+			<div class="metric-row">
+				<span>المدة: <b>${v.duration_s} ث</b></span>
+				<span>مركز الثقل الطيفي: <b>${v.spectral_centroid_hz} هرتز</b></span>
+				<span>حد ٨٥٪ من الطاقة: <b>${v.rolloff85_hz} هرتز</b></span>
+			</div>
+			<div class="metric-row">${bands}</div>
+		</div>`
+	}).join("")
+}
+
+function drawBridge() {
+	const canvas = $("#bridge-canvas")
+	const cssW = canvas.parentElement.clientWidth - 40
+	const dpr = window.devicePixelRatio || 1
+	canvas.width = cssW * dpr
+	canvas.height = 340 * dpr
+	canvas.style.height = "340px"
+	const ctx = canvas.getContext("2d")
+	ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+	ctx.clearRect(0, 0, cssW, 340)
+
+	const verses = D.acoustics.verses.filter((v) => !v.missing)
+	if (!verses.length) { return }
+	const textVals = D.phonetics.verses.map((v) => (v.stats.mean_intensity + 3) / 11)
+	const physVals = verses.map((v) => v.spectral_centroid_hz)
+	const tMax = Math.max(...textVals), pMax = Math.max(...physVals)
+
+	const padR = 60, padL = 16, padT = 24, padB = 44
+	const plotW = cssW - padR - padL, plotH = 340 - padT - padB
+	const groupW = plotW / 7
+
+	// gridlines at 25/50/75/100 (% of max, indexed common base)
+	ctx.strokeStyle = COLORS.grid
+	ctx.fillStyle = COLORS.muted
+	ctx.font = "11px system-ui"
+	ctx.textAlign = "left"
+	for (let g = 0; g <= 4; g++) {
+		const y = padT + plotH - (plotH * g) / 4
+		ctx.beginPath()
+		ctx.moveTo(padL, y)
+		ctx.lineTo(cssW - padR, y)
+		ctx.stroke()
+		ctx.fillText((g * 25) + "٪", cssW - padR + 8, y + 4)
+	}
+
+	verses.forEach((v, i) => {
+		// RTL reading order: verse 1 on the right
+		const gx = padL + plotW - (i + 1) * groupW
+		const barW = 18, gap = 8
+		const tH = (textVals[v.n - 1] / tMax) * plotH
+		const pH = (physVals[i] / pMax) * plotH
+		const cx = gx + groupW / 2
+
+		const bar = (x, h, color) => {
+			ctx.fillStyle = color
+			ctx.beginPath()
+			ctx.roundRect(x, padT + plotH - h, barW, h, [4, 4, 0, 0])
+			ctx.fill()
+		}
+		bar(cx + gap / 2, tH, COLORS.blue)
+		bar(cx - gap / 2 - barW, pH, COLORS.yellow)
+
+		ctx.fillStyle = COLORS.ink2
+		ctx.font = "11px system-ui"
+		ctx.textAlign = "center"
+		ctx.fillText(D.phonetics.verses[v.n - 1].stats.mean_intensity, cx + gap / 2 + barW / 2, padT + plotH - tH - 6)
+		ctx.fillText(Math.round(physVals[i]) + "", cx - gap / 2 - barW / 2, padT + plotH - pH - 6)
+		ctx.fillStyle = COLORS.ink
+		ctx.font = "13px system-ui"
+		ctx.fillText("آية " + arNum(v.n), cx, padT + plotH + 20)
+	})
+
+	ctx.strokeStyle = COLORS.baseline
+	ctx.beginPath()
+	ctx.moveTo(padL, padT + plotH)
+	ctx.lineTo(cssW - padR, padT + plotH)
+	ctx.stroke()
+
+	$("#bridge-legend").innerHTML =
+		`<span class="item"><span class="swatch" style="background:${COLORS.blue}"></span> مقياس الحدة النصي (القيمة فوق العمود بدرجته الخام)</span>` +
+		`<span class="item"><span class="swatch" style="background:${COLORS.yellow}"></span> مركز الثقل الطيفي المقاس (هرتز)</span>` +
+		`<span class="item" style="color:${COLORS.muted}">كل سلسلة منسوبة إلى أعلى قيمتها (أساس موحد ٪)</span>`
+}
+
+/* ============================================================
+   Layer 5 — Practical framework
+   ============================================================ */
+function buildFramework() {
+	const fw = D.surah.practical_framework
+	$("#framework-title").innerHTML = fw.title + " " + gradeBadge(fw.grade)
+	$("#framework-note").textContent = fw.note
+	$("#framework-steps").innerHTML = fw.steps.map((s) => {
+		const vs = s.verses.map((n) => `﴿${D.surah.verses[n - 1].uthmani}﴾`).join(" ")
+		return `<div class="step">
+			<div class="n">${arNum(s.n)}</div>
+			<h4>${s.title}</h4>
+			<div class="vs">${vs}</div>
+			<p>${s.detail}</p>
+		</div>`
+	}).join("")
+	const pd = D.surah.ring_structure.prophetic_division
+	$("#prophetic-note").innerHTML = `${pd.note}<div class="src" style="margin-top:6px;color:${COLORS.muted}">المصدر: ${pd.source}</div>`
+}
+
+/* ---------- boot ---------- */
+buildRing()
+graphInit()
+buildPhonetic()
+buildAcoustic()
+buildFramework()
+drawRadar()
+window.addEventListener("resize", () => { graphResize(); drawRadar(); drawBridge() })

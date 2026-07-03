@@ -1,0 +1,269 @@
+/* Qur'anic Engineering MVP — dark theme, RTL. Palette follows the validated
+   reference dataviz palette (dark mode steps). */
+
+:root {
+	--page: #0d0d0d;
+	--surface: #1a1a19;
+	--ink: #ffffff;
+	--ink-2: #c3c2b7;
+	--muted: #898781;
+	--grid: #2c2c2a;
+	--baseline: #383835;
+	--border: rgba(255, 255, 255, 0.1);
+	--blue: #3987e5;
+	--aqua: #199e70;
+	--yellow: #c98500;
+	--violet: #9085e9;
+	--red: #e66767;
+	--magenta: #d55181;
+	--orange: #d95926;
+	--soft2: #3987e5;
+	--soft1: #86b6ef;
+	--neutral: #6b6a64;
+	--hard1: #e66767;
+	--hard2: #d03b3b;
+	--arabic: "Amiri", "Scheherazade New", "Noto Naskh Arabic", "Traditional Arabic", serif;
+	--ui: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+	background: var(--page);
+	color: var(--ink-2);
+	font-family: var(--ui);
+	direction: rtl;
+	line-height: 1.7;
+	min-height: 100vh;
+}
+
+header.site {
+	text-align: center;
+	padding: 34px 16px 10px;
+	border-bottom: 1px solid var(--grid);
+	background: radial-gradient(ellipse 60% 100% at 50% 0%, #16202e 0%, var(--page) 75%);
+}
+header.site h1 {
+	font-family: var(--arabic);
+	color: var(--ink);
+	font-size: 34px;
+	font-weight: 700;
+}
+header.site .basmala {
+	font-family: var(--arabic);
+	color: var(--yellow);
+	font-size: 19px;
+	margin-bottom: 8px;
+}
+header.site .sub { color: var(--muted); font-size: 13.5px; max-width: 760px; margin: 8px auto 0; }
+header.site .disclaimer {
+	color: var(--muted);
+	font-size: 12.5px;
+	max-width: 680px;
+	margin: 10px auto 0;
+	border: 1px solid var(--border);
+	border-radius: 10px;
+	padding: 8px 14px;
+	background: var(--surface);
+}
+
+nav.tabs {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 8px;
+	padding: 14px 10px;
+	position: sticky;
+	top: 0;
+	background: rgba(13, 13, 13, 0.94);
+	backdrop-filter: blur(6px);
+	z-index: 20;
+	border-bottom: 1px solid var(--grid);
+}
+nav.tabs button {
+	background: var(--surface);
+	color: var(--ink-2);
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	padding: 8px 18px;
+	font-size: 14px;
+	font-family: var(--ui);
+	cursor: pointer;
+	transition: all 0.15s;
+}
+nav.tabs button:hover { border-color: var(--blue); color: var(--ink); }
+nav.tabs button.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+main { max-width: 1080px; margin: 0 auto; padding: 26px 18px 60px; }
+section.layer { display: none; }
+section.layer.visible { display: block; }
+
+.panel {
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: 14px;
+	padding: 20px;
+	margin-bottom: 18px;
+}
+.panel h2 { color: var(--ink); font-size: 20px; margin-bottom: 4px; }
+.panel h3 { color: var(--ink); font-size: 16px; margin: 14px 0 6px; }
+.panel .hint { color: var(--muted); font-size: 13px; margin-bottom: 12px; }
+
+.badge {
+	display: inline-block;
+	font-size: 11px;
+	border-radius: 999px;
+	padding: 1px 10px;
+	border: 1px solid var(--border);
+	color: var(--ink-2);
+	margin-inline-start: 6px;
+	vertical-align: middle;
+}
+.badge.qati { border-color: var(--aqua); color: var(--aqua); }
+.badge.mathur { border-color: var(--blue); color: var(--soft1); }
+.badge.ijtihadi { border-color: var(--yellow); color: var(--yellow); }
+
+.grade-key { font-size: 12px; color: var(--muted); margin-top: 8px; }
+
+svg text { font-family: var(--arabic); }
+canvas { display: block; width: 100%; border-radius: 10px; }
+
+.info-card {
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	padding: 14px 16px;
+	background: #202020;
+	margin-top: 12px;
+	font-size: 14px;
+}
+.info-card .src { color: var(--muted); font-size: 12px; margin-top: 6px; }
+.info-card b { color: var(--ink); font-family: var(--arabic); font-size: 16px; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12.5px; color: var(--ink-2); margin: 10px 0; }
+.legend .item { display: flex; align-items: center; gap: 6px; }
+.legend .swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.legend .line { width: 18px; height: 2px; display: inline-block; }
+
+/* Layer 3: phonetic chips */
+.verse-block { margin-bottom: 20px; }
+.verse-block .vtitle { font-family: var(--arabic); color: var(--ink); font-size: 19px; margin-bottom: 6px; }
+.verse-block .vtitle .num { color: var(--yellow); font-size: 14px; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; direction: rtl; }
+.chip {
+	min-width: 34px;
+	text-align: center;
+	padding: 5px 6px 3px;
+	border-radius: 8px;
+	font-family: var(--arabic);
+	font-size: 19px;
+	color: #fff;
+	position: relative;
+	cursor: default;
+	border: 1px solid rgba(0, 0, 0, 0.35);
+}
+.chip.madd { min-width: 52px; }
+.chip small { display: block; font-size: 9px; color: rgba(255, 255, 255, 0.75); font-family: var(--ui); line-height: 1.2; }
+.chip:hover { outline: 2px solid #fff; z-index: 2; }
+
+.stats-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; font-size: 12px; color: var(--muted); }
+
+.controls { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.controls button {
+	background: #202020;
+	border: 1px solid var(--border);
+	color: var(--ink-2);
+	border-radius: 8px;
+	padding: 5px 12px;
+	cursor: pointer;
+	font-size: 13px;
+	font-family: var(--ui);
+}
+.controls button.sel-a { background: var(--blue); color: #fff; border-color: var(--blue); }
+.controls button.sel-b { background: var(--yellow); color: #14100a; border-color: var(--yellow); }
+
+table.stats {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 13px;
+	margin-top: 10px;
+}
+table.stats th, table.stats td {
+	border-bottom: 1px solid var(--grid);
+	padding: 6px 8px;
+	text-align: center;
+	font-variant-numeric: tabular-nums;
+}
+table.stats th { color: var(--muted); font-weight: 600; }
+table.stats td:first-child, table.stats th:first-child { text-align: right; font-family: var(--arabic); color: var(--ink); }
+
+/* Layer 4 */
+.acoustic-card { margin-bottom: 22px; }
+.acoustic-card img { width: 100%; border-radius: 10px; border: 1px solid var(--grid); }
+.acoustic-card audio { width: 100%; margin-top: 8px; height: 34px; }
+.metric-row { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; margin-top: 8px; color: var(--ink-2); }
+.metric-row b { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+/* Layer 5 */
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 14px; }
+.step {
+	background: #202020;
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	padding: 16px;
+	position: relative;
+}
+.step .n {
+	width: 30px; height: 30px;
+	border-radius: 50%;
+	background: var(--blue);
+	color: #fff;
+	display: flex; align-items: center; justify-content: center;
+	font-weight: 700;
+	margin-bottom: 8px;
+}
+.step h4 { color: var(--ink); font-size: 15.5px; margin-bottom: 6px; }
+.step .vs { color: var(--yellow); font-size: 12px; margin-bottom: 6px; font-family: var(--arabic); }
+.step p { font-size: 13.5px; color: var(--ink-2); }
+
+.tooltip {
+	position: fixed;
+	background: #242423;
+	color: var(--ink);
+	border: 1px solid var(--border);
+	border-radius: 10px;
+	padding: 8px 12px;
+	font-size: 13px;
+	pointer-events: none;
+	z-index: 99;
+	max-width: 280px;
+	box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+	display: none;
+}
+.tooltip b { font-family: var(--arabic); font-size: 16px; }
+.tooltip .mut { color: var(--muted); font-size: 11.5px; }
+
+.links-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; margin-top: 12px; }
+.link-card {
+	border: 1px solid var(--border);
+	border-radius: 10px;
+	padding: 12px 14px;
+	background: #202020;
+	font-size: 13px;
+	cursor: pointer;
+	transition: border-color 0.15s;
+}
+.link-card:hover, .link-card.hl { border-color: var(--blue); }
+.link-card .t { color: var(--ink); font-weight: 600; font-size: 14px; }
+.link-card .src { color: var(--muted); font-size: 11.5px; margin-top: 6px; }
+.link-card .typechip { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-inline-end: 6px; }
+
+footer.site {
+	border-top: 1px solid var(--grid);
+	color: var(--muted);
+	font-size: 12.5px;
+	text-align: center;
+	padding: 26px 16px 40px;
+	max-width: 860px;
+	margin: 0 auto;
+}
+footer.site .dua { font-family: var(--arabic); color: var(--ink-2); font-size: 15px; margin-bottom: 8px; }

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>الهندسة القرآنية — سورة الفاتحة</title>
+	<link rel="stylesheet" href="fonts/fonts.css" />
+	<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+	<header class="site">
+		<div class="basmala">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>
+		<h1>مشروع الهندسة القرآنية</h1>
+		<div class="sub">النموذج الأول: سورة الفاتحة — سبع آيات تحت مجهر التحليل الهيكلي والدلالي والصوتي والفيزيائي</div>
+		<div class="disclaimer">
+			إن أصبتُ فمن الله وحده والحمد لله، وإن أخطأتُ فمن نفسي وأعوذ بالله.
+			كل ما في هذه الواجهة موسوم بدرجته: <span class="badge qati">قطعي</span> نصٌّ وقواعد تجويد متفق عليها،
+			<span class="badge mathur">مأثور</span> منقول عن مصدر معتمد مذكور،
+			<span class="badge ijtihadi">اجتهادي</span> استنباط من المشروع قابل للخطأ والمراجعة.
+		</div>
+	</header>
+
+	<nav class="tabs" id="tabs">
+		<button data-layer="ring" class="active">١ · الهيكل الدائري</button>
+		<button data-layer="graph">٢ · الشبكة الدلالية</button>
+		<button data-layer="phonetic">٣ · البصمة الصوتية</button>
+		<button data-layer="acoustic">٤ · التردد الفيزيائي</button>
+		<button data-layer="framework">٥ · النموذج العملي</button>
+	</nav>
+
+	<main>
+		<section class="layer visible" id="layer-ring">
+			<div class="panel">
+				<h2>البنية الدائرية للسورة <span class="badge ijtihadi">اجتهادي</span></h2>
+				<div class="hint">اضغط على أي آية لترى نظيرتها في التناظر المرآتي ووجه المناسبة بينهما. المحور العددي: الآية الرابعة، والمحور التعبدي: الآية الخامسة (وفق الحديث القدسي في صحيح مسلم <span class="badge mathur">مأثور</span>).</div>
+				<div id="ring-svg-holder"></div>
+				<div class="info-card" id="ring-info"></div>
+			</div>
+		</section>
+
+		<section class="layer" id="layer-graph">
+			<div class="panel">
+				<h2>الشبكة الدلالية <span class="badge ijtihadi">اجتهادي</span></h2>
+				<div class="hint">كل نقطة مضيئة: كلمة أو جذر أو محور أو آية. مرّر الفأرة فوق أي عقدة لبيانها، واسحبها لإعادة تشكيل الشبكة. الروابط المُسندة معروضة كبطاقات أسفل الخريطة — مرّر فوق البطاقة لإبراز كلماتها في الشبكة.</div>
+				<div class="legend" id="graph-legend"></div>
+				<canvas id="graph-canvas" height="560"></canvas>
+				<h3>الروابط المُسندة</h3>
+				<div class="links-list" id="links-list"></div>
+			</div>
+		</section>
+
+		<section class="layer" id="layer-phonetic">
+			<div class="panel">
+				<h2>البصمة الصوتية النصية <span class="badge qati">قطعي الصفات</span><span class="badge ijtihadi">اجتهادي المقياس</span></h2>
+				<div class="hint">كل حرف ملوَّن بموقعه على مقياس اللين ↔ الشدة، المحسوب من صفاته التجويدية الثابتة (الجهر، الشدة، الاستعلاء، الإطباق، القلقلة). الصفات نفسها قطعية من كتب التجويد؛ تجميعها في مقياس واحد اجتهادٌ حسابي موثق. مرّر فوق أي حرف لترى صفاته.</div>
+				<div class="legend" id="phonetic-legend"></div>
+				<div id="phonetic-verses"></div>
+			</div>
+			<div class="panel">
+				<h2>مقارنة البصمات بين الآيات</h2>
+				<div class="hint">اختر آيتين للمقارنة على المخطط الراداري (٦ أبعاد صوتية). القيم نِسَبٌ مئوية موزونة بأزمنة النطق.</div>
+				<div class="controls" id="radar-controls"></div>
+				<div class="legend" id="radar-legend"></div>
+				<canvas id="radar-canvas" height="420"></canvas>
+				<h3>الجدول الكامل</h3>
+				<table class="stats" id="stats-table"></table>
+			</div>
+		</section>
+
+		<section class="layer" id="layer-acoustic">
+			<div class="panel">
+				<h2>التردد الفيزيائي — تلاوة حقيقية <span class="badge qati">قياس فيزيائي</span></h2>
+				<div class="hint" id="acoustic-src"></div>
+				<div id="acoustic-cards"></div>
+			</div>
+			<div class="panel">
+				<h2>الجسر: التوقع النصي مقابل القياس الفيزيائي <span class="badge ijtihadi">اجتهادي</span></h2>
+				<div class="hint">مقارنة استكشافية بين «مقياس الحدة» المحسوب من صفات الحروف نصياً، و«مركز الثقل الطيفي» المقاس فيزيائياً من التلاوة. تنبيه منهجي: الطيف الفيزيائي يتأثر بصوت القارئ وطريقة التسجيل، فهذه المقارنة باب بحثٍ لا نتيجة نهائية.</div>
+				<div class="legend" id="bridge-legend"></div>
+				<canvas id="bridge-canvas" height="340"></canvas>
+			</div>
+		</section>
+
+		<section class="layer" id="layer-framework">
+			<div class="panel">
+				<h2 id="framework-title"></h2>
+				<div class="hint" id="framework-note"></div>
+				<div class="flow" id="framework-steps"></div>
+			</div>
+			<div class="panel">
+				<h2>التقسيم النبوي للسورة <span class="badge mathur">مأثور</span></h2>
+				<div class="hint" id="prophetic-note"></div>
+			</div>
+		</section>
+	</main>
+
+	<footer class="site">
+		<div class="dua">وما توفيقي إلا بالله، عليه توكلت وإليه أنيب</div>
+		<div>النص القرآني: قاعدة Tanzil (رواية حفص) · التلاوة: الشيخ محمود خليل الحصري عبر everyayah.com · صفات الحروف: المقدمة الجزرية · الروابط الدلالية مسندة في كل بطاقة إلى مصدرها</div>
+		<div style="margin-top:6px">للتبليغ عن خطأ: رقم المطوّر <span dir="ltr">+966 50 766 4944</span></div>
+	</footer>
+
+	<div class="tooltip" id="tooltip"></div>
+	<script src="generated/data.js"></script>
+	<script src="app.js"></script>
+</body>
+</html>
