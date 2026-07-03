@@ -71,6 +71,7 @@ $("#tabs").addEventListener("click", (e) => {
 	if (btn.dataset.layer === "phonetic") { drawRadar() }
 	if (btn.dataset.layer === "acoustic") { drawBridge() }
 	if (btn.dataset.layer === "observatory") { drawObsChart(); drawControlChart() }
+	if (btn.dataset.layer === "scale") { drawScale() }
 	if (btn.dataset.layer !== "dialogue") { stopDialogue() }
 	const research = ["graph", "phonetic", "acoustic", "observatory"]
 	$("#research-disclaimer").classList.toggle("show", research.includes(btn.dataset.layer))
@@ -673,6 +674,119 @@ function buildFramework() {
 }
 
 /* ============================================================
+   Layer: الميزان (the scale) — the prophetic division made visible
+   ============================================================ */
+let scaleSel = null
+const SC_PRAISE = [1, 2, 3, 4], SC_PIVOT = 5, SC_PETITION = [6, 7]
+const SC_COL = { praise: "#1c5cab", pivot: COLORS.magenta, petition: "#0e7a56" }
+
+function scaleSide(n) {
+	return n === SC_PIVOT ? "pivot" : SC_PRAISE.includes(n) ? "praise" : "petition"
+}
+
+function buildScale() {
+	$("#scale-chips").innerHTML = D.surah.verses.map((v) =>
+		`<button data-n="${v.n}">آية ${arNum(v.n)}</button>`).join("")
+	$("#scale-chips").querySelectorAll("button").forEach((b) =>
+		{ b.onclick = () => { scaleSel = Number(b.dataset.n); drawScale(); showScaleInfo(scaleSel) } })
+	scaleDefaultInfo()
+	drawScale()
+}
+
+function scaleDefaultInfo() {
+	const pd = D.surah.ring_structure.prophetic_division
+	$("#scale-info").innerHTML =
+		`<b>«قسمتُ الصلاة بيني وبين عبدي نصفين، ولعبدي ما سأل»</b> ${gradeBadge("ma'thur")}` +
+		`<div style="margin-top:8px">${pd.note}</div>` +
+		`<div class="src">المصدر: ${pd.source}</div>` +
+		`<div style="margin-top:10px;color:${COLORS.yellow}">↦ فإذا صلّيتَ الليلة، استحضر أن نصفها ثناؤك لربّك، ونصفها عطاؤه لك، ومفتاحها عهدُك: «إياك نعبد».</div>`
+}
+
+function scaleToken(ctx, x, y, n, side, big) {
+	const r = big ? 24 : 17
+	ctx.beginPath()
+	ctx.arc(x, y, r, 0, Math.PI * 2)
+	ctx.fillStyle = SC_COL[side]
+	ctx.fill()
+	ctx.lineWidth = scaleSel === n ? 3.5 : 2
+	ctx.strokeStyle = scaleSel === n ? "#fff" : COLORS.surface
+	ctx.stroke()
+	ctx.fillStyle = "#fff"
+	ctx.font = (big ? "19px" : "15px") + " 'Amiri',serif"
+	ctx.textAlign = "center"
+	ctx.textBaseline = "middle"
+	ctx.fillText(arNum(n), x, y + 1)
+	ctx.textBaseline = "alphabetic"
+}
+
+function drawScale() {
+	const canvas = $("#scale-canvas")
+	const cssW = canvas.parentElement.clientWidth - 40
+	const dpr = window.devicePixelRatio || 1
+	canvas.width = cssW * dpr
+	canvas.height = 420 * dpr
+	canvas.style.height = "420px"
+	const ctx = canvas.getContext("2d")
+	ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+	ctx.clearRect(0, 0, cssW, 420)
+	const cx = cssW / 2, pivotY = 130, baseY = 356, panY = pivotY + 96
+	const beamHalf = Math.min(cssW * 0.34, 300)
+
+	// stand: post + fulcrum triangle + base plate
+	ctx.strokeStyle = COLORS.baseline
+	ctx.lineWidth = 4
+	ctx.beginPath(); ctx.moveTo(cx, pivotY); ctx.lineTo(cx, baseY); ctx.stroke()
+	ctx.beginPath(); ctx.moveTo(cx, pivotY + 2); ctx.lineTo(cx - 26, baseY); ctx.lineTo(cx + 26, baseY); ctx.closePath()
+	ctx.fillStyle = "#2c2c2a"; ctx.fill(); ctx.strokeStyle = COLORS.baseline; ctx.stroke()
+	ctx.fillStyle = COLORS.baseline; ctx.fillRect(cx - 72, baseY, 144, 6)
+
+	// beam (level — the two halves balance perfectly)
+	ctx.strokeStyle = "#6b6a64"; ctx.lineWidth = 6; ctx.lineCap = "round"
+	ctx.beginPath(); ctx.moveTo(cx - beamHalf, pivotY); ctx.lineTo(cx + beamHalf, pivotY); ctx.stroke()
+
+	const drawPan = (ex, verses, side, label) => {
+		ctx.strokeStyle = "#4a4a48"; ctx.lineWidth = 1.5
+		ctx.beginPath()
+		ctx.moveTo(ex, pivotY); ctx.lineTo(ex - 32, panY)
+		ctx.moveTo(ex, pivotY); ctx.lineTo(ex + 32, panY)
+		ctx.stroke()
+		ctx.strokeStyle = SC_COL[side]; ctx.lineWidth = 3
+		ctx.beginPath(); ctx.arc(ex, panY, 44, 0.12 * Math.PI, 0.88 * Math.PI); ctx.stroke()
+		verses.forEach((n, i) => {
+			const tx = ex - ((verses.length - 1) / 2 - i) * 34
+			scaleToken(ctx, tx, panY - 8, n, side)
+		})
+		ctx.fillStyle = COLORS.ink2; ctx.font = "14px system-ui"; ctx.textAlign = "center"
+		ctx.fillText(label, ex, panY + 74)
+	}
+	// RTL: praise on the right, petition on the left
+	drawPan(cx + beamHalf, SC_PRAISE, "praise", "ثناءٌ لله (١–٤)")
+	drawPan(cx - beamHalf, SC_PETITION, "petition", "عطاءٌ للعبد (٦–٧)")
+
+	// pivot: verse 5 rides the fulcrum — "between Me and My servant"
+	ctx.fillStyle = COLORS.magenta; ctx.font = "13px system-ui"; ctx.textAlign = "center"
+	ctx.fillText("↕ بيني وبين عبدي", cx, pivotY - 42)
+	scaleToken(ctx, cx, pivotY - 2, SC_PIVOT, "pivot", true)
+}
+
+function showScaleInfo(n) {
+	const verse = D.surah.verses[n - 1]
+	const td = D.tadabbur.verses[n - 1]
+	const side = scaleSide(n)
+	const sideLabel = { praise: "كفّة الثناء لله", pivot: "نقطة الارتكاز — بين الله وعبده", petition: "كفّة العطاء للعبد" }[side]
+	let html = `<b>﴿${verse.uthmani}﴾</b> <span style="color:${SC_COL[side]}">— ${sideLabel}</span>`
+	if (td.divine_response) {
+		html += `<div style="margin-top:8px;color:${COLORS.aqua}">قال الله: «${td.divine_response}» <span class="src">${td.divine_response_source}</span></div>`
+	} else {
+		html += `<div style="margin-top:8px;color:${COLORS.muted}">${td.divine_response_note}</div>`
+	}
+	html += `<div style="margin-top:8px">${td.reflection.text}</div><div class="src">${td.reflection.source} ${gradeBadge(td.reflection.grade)}</div>`
+	$("#scale-info").innerHTML = html
+	$("#scale-chips").querySelectorAll("button").forEach((b) =>
+		b.classList.toggle("sel-a", Number(b.dataset.n) === n))
+}
+
+/* ============================================================
    Layer: المحاورة (dialogue) — worshipper wing
    ============================================================ */
 let dlgIndex = 0
@@ -1180,6 +1294,7 @@ function invDrawBreath(arcv, progress) {
 /* ---------- boot ---------- */
 buildInvitation()
 buildDialogue()
+buildScale()
 buildRing()
 graphInit()
 buildPhonetic()
@@ -1188,6 +1303,6 @@ buildFramework()
 buildObservatory()
 drawRadar()
 window.addEventListener("resize", () => {
-	graphResize(); drawRadar(); drawBridge(); drawObsChart()
+	graphResize(); drawRadar(); drawBridge(); drawObsChart(); drawScale()
 	if ($("#layer-dialogue").classList.contains("visible")) { drawBreath(D.arc.verses[dlgIndex], 0) }
 })
