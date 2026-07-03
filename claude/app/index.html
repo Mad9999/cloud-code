@@ -8,6 +8,15 @@
 	<link rel="stylesheet" href="style.css" />
 </head>
 <body>
+	<div id="invitation" class="invitation">
+		<div class="inv-inner">
+			<div class="inv-basmala">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>
+			<div id="inv-stage"></div>
+			<div id="inv-controls" class="inv-controls"></div>
+			<div class="inv-progress" id="inv-progress"></div>
+		</div>
+	</div>
+
 	<header class="site">
 		<div class="basmala">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>
 		<h1>مشروع الهندسة القرآنية</h1>
@@ -21,22 +30,34 @@
 	</header>
 
 	<nav class="tabs" id="tabs">
+		<span class="tab-group-label">للعابد · النور</span>
 		<button data-layer="dialogue" class="active">★ المحاورة</button>
 		<button data-layer="ring">الهيكل الدائري</button>
+		<button data-layer="framework">النموذج العملي</button>
+		<span class="tab-sep"></span>
+		<span class="tab-group-label research">مختبر الباحث · تحرّي الحق</span>
 		<button data-layer="graph">الشبكة الدلالية</button>
 		<button data-layer="phonetic">البصمة الصوتية</button>
 		<button data-layer="acoustic">التردد الفيزيائي</button>
-		<button data-layer="framework">النموذج العملي</button>
 		<button data-layer="observatory">مرصد الفواصل</button>
+		<span class="tab-sep"></span>
+		<button id="reopen-invitation" class="tab-ghost">↻ الافتتاحية</button>
 	</nav>
 
 	<main>
+		<div id="research-disclaimer" class="research-disclaimer">
+			<b>تنبيهٌ وإخلاءُ مسؤولية أمام الله:</b> الأرقامُ والأنماطُ التي تراها هنا هي عينُ ما يقع كثيرٌ من الناس في فخّه — فيرفعونها إلى «إعجازٍ مثبت»، أو يُنزِّلون استنتاجاتهم على كلام الله فيفسّرونه بأقوالهم. ما هنا كلُّه وصفٌ بشريٌّ اجتهاديٌّ قابل للخطأ، لا إثباتَ إعجازٍ ولا تفسيرَ قرآنٍ على كلامنا. القرآنُ غنيٌّ عن أرقامنا، والنورُ في التدبّر والعمل.
+		</div>
 		<section class="layer visible" id="layer-dialogue">
 			<div class="panel dialogue-panel">
 				<h2>المحاورة — الفاتحة كما تُصلَّى <span class="badge mathur">مأثور</span></h2>
-				<div class="hint">الفاتحة ليست مناجاةً في اتجاهٍ واحد؛ هي محاورةٌ حيّة: لكل آيةٍ تقولها جوابٌ من الله، كما في حديث «قسمتُ الصلاة بيني وبين عبدي نصفين» (صحيح مسلم ٣٩٥). استمع للآية بصوت الشيخ الحصري، وتأمّل جواب ربك بعدها.</div>
+				<div class="hint">الفاتحة ليست مناجاةً في اتجاهٍ واحد؛ هي محاورةٌ حيّة: لكل آيةٍ تقولها جوابٌ من الله، كما في حديث «قسمتُ الصلاة بيني وبين عبدي نصفين» (صحيح مسلم ٣٩٥). استمع للآية بصوت الشيخ الحصري، وتأمّل جواب ربك بعدها. واضغط أيّ كلمة لتتدبّر معناها وسرّها.</div>
 				<div id="dialogue-stage"></div>
 				<div class="controls" id="dialogue-controls"></div>
+			</div>
+			<div class="panel benefit-panel">
+				<h3>كيف تنتفع بهذا؟</h3>
+				<p>النورُ ليس في الأرقام ولا في التحليل — بل في ثلاثة: <b>أن تتدبّر</b> معنى ما تقول، و<b>أن تستحضر</b> أنك في صلاتك تُخاطَب وتُجاب، و<b>أن تخرج بعملٍ واحد</b> تعيشه في يومك. أدواتُ التحليل هنا خادمةٌ لهذا، لا غاية. فإذا قمتَ الليلة تصلّي، اقرأ الفاتحة متمهّلًا، وأنصت لجواب ربّك في قلبك.</p>
 			</div>
 		</section>
 

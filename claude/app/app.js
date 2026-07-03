@@ -72,6 +72,8 @@ $("#tabs").addEventListener("click", (e) => {
 	if (btn.dataset.layer === "acoustic") { drawBridge() }
 	if (btn.dataset.layer === "observatory") { drawObsChart(); drawControlChart() }
 	if (btn.dataset.layer !== "dialogue") { stopDialogue() }
+	const research = ["graph", "phonetic", "acoustic", "observatory"]
+	$("#research-disclaimer").classList.toggle("show", research.includes(btn.dataset.layer))
 })
 
 /* ============================================================
@@ -1043,7 +1045,140 @@ function drawObsChart() {
 	})
 }
 
+/* ============================================================
+   Invitation — the front door that delivers the نور itself,
+   with the mandatory honesty/disclaimer gate.
+   ============================================================ */
+const INV_VERSES = [2, 3, 4, 5]
+let invStep = 0
+let invAudio = null
+let invRaf = null
+
+function invStop() {
+	if (invAudio) { invAudio.pause(); invAudio = null }
+	if (invRaf) { cancelAnimationFrame(invRaf); invRaf = null }
+}
+
+function buildInvitation() {
+	$("#reopen-invitation").onclick = () => { invStep = 0; $("#invitation").classList.remove("hidden"); invRender() }
+	let seen = false
+	try { seen = window.localStorage.getItem("qe_seen_invitation") === "1" } catch { seen = false }
+	if (seen) { $("#invitation").classList.add("hidden") } else { invStep = 0; invRender() }
+}
+
+function closeInvitation() {
+	invStop()
+	try { window.localStorage.setItem("qe_seen_invitation", "1") } catch { /* ignore */ }
+	$("#invitation").classList.add("hidden")
+}
+
+function invRender() {
+	invStop()
+	const stage = $("#inv-stage")
+	const ctrl = $("#inv-controls")
+	const prog = $("#inv-progress")
+	prog.innerHTML = INV_VERSES.map((n, k) =>
+		`<span class="idot ${n === D.arc.pivot_verse ? "pivot" : ""} ${invStep - 1 === k ? "on" : ""}"></span>`).join("")
+
+	if (invStep === 0) {
+		stage.innerHTML =
+			`<div class="inv-hook-title">أنت تقرأ الفاتحة في صلاتك<br>سبع عشرة مرّة كل يوم</div>` +
+			`<div class="inv-hook-sub">وأنت — غالبًا — غافلٌ عنها، تمرّ عليها مرور العادة.<br>لكنّك لستَ في مناجاةٍ من طرفٍ واحد.<br><b>أنت في حوار… والله يُجيبك بعد كل آية.</b></div>`
+		ctrl.innerHTML = `<button class="primary" id="inv-start">ابدأ الرحلة</button><button class="ghost" id="inv-skip">تخطَّ إلى العمق</button>`
+		$("#inv-start").onclick = () => { invStep = 1; invRender() }
+		$("#inv-skip").onclick = () => { invStep = INV_VERSES.length + 2; invRender() }
+		return
+	}
+
+	if (invStep >= 1 && invStep <= INV_VERSES.length) {
+		const n = INV_VERSES[invStep - 1]
+		const verse = D.surah.verses[n - 1]
+		const td = D.tadabbur.verses[n - 1]
+		const last = invStep === INV_VERSES.length
+		stage.innerHTML =
+			`<div class="inv-verse">﴿ ${verse.uthmani} <span class="vmark">${arNum(n)}</span> ﴾</div>` +
+			`<canvas class="inv-breath" id="inv-breath"></canvas>` +
+			`<div class="inv-response" id="inv-response"><span class="lbl">فيقول الله:</span>«${td.divine_response}»<span class="src">${td.divine_response_source}</span></div>`
+		ctrl.innerHTML = `<button class="ghost" id="inv-replay">↻ أعِد</button><button class="primary" id="inv-next">${last ? "تأمّل الخاتمة" : "التالية"}</button>`
+		$("#inv-next").onclick = () => { invStep += 1; invRender() }
+		$("#inv-replay").onclick = () => invPlayVerse(n)
+		invPlayVerse(n)
+		return
+	}
+
+	if (invStep === INV_VERSES.length + 1) {
+		stage.innerHTML =
+			`<div class="inv-closing">رأيتَ بعينك: ما إن تُثني حتى تُجاب، وما إن تسأل حتى يُقال «ولعبدي ما سأل».<br>` +
+			`فإذا قمتَ الليلة تصلّي، تذكّر أنك <b>تُخاطَب وتُجاب</b> — لا تناجي جدارًا.<br>` +
+			`اقرأها متمهّلًا، وأنصت لجواب ربّك في قلبك.` +
+			`<span class="action">↦ الليلة: صلِّ ركعتين، وقف عند كل آيةٍ لحظةً تستشعر جوابها.</span></div>`
+		ctrl.innerHTML = `<button class="primary" id="inv-next2">تابع</button>`
+		$("#inv-next2").onclick = () => { invStep += 1; invRender() }
+		return
+	}
+
+	// disclaimer gate (mandatory — reachable from skip too)
+	stage.innerHTML =
+		`<div class="inv-disclaimer"><h3>تنبيهٌ وأمانة — قبل أن تدخل</h3>` +
+		`الأدوات التي ستراها (أرقام، أنماط، خرائط) هي <b>عينُ ما يقع كثيرٌ من الناس في فخّه</b>: ` +
+		`فيرفعون النمط الإحصائي إلى «إعجازٍ مثبت»، أو يُنزِّلون استنتاجاتِهم البشرية على كلام الله <b>فيفسّرون كلامه بكلامنا وأهوائنا</b>. ` +
+		`ونحن نتبرأ إلى الله من ذلك: ما هنا كلُّه وصفٌ بشريٌّ اجتهاديٌّ قابل للخطأ، موسومٌ بدرجته، لا إثباتَ إعجازٍ ولا تفسيرَ قرآنٍ على كلامنا. ` +
+		`القرآنُ غنيٌّ عن أرقامنا، وإنما النورُ في التدبّر والعمل. ` +
+		`فما وافق الحقَّ فمن الله وحده، وما خالفه فمن أنفسنا، ونستغفر الله.</div>`
+	ctrl.innerHTML = `<button class="primary" id="inv-enter">فهمتُ وقرأت — ادخل</button>`
+	$("#inv-enter").onclick = () => closeInvitation()
+}
+
+function invPlayVerse(n) {
+	invStop()
+	const arcv = D.arc.verses[n - 1]
+	invDrawBreath(arcv, 0)
+	invAudio = new Audio("../audio/00100" + n + ".mp3")
+	const tick = () => {
+		if (!invAudio) { return }
+		const p = invAudio.duration ? invAudio.currentTime / invAudio.duration : 0
+		invDrawBreath(arcv, p)
+		invRaf = requestAnimationFrame(tick)
+	}
+	invAudio.addEventListener("ended", () => { const r = $("#inv-response"); if (r) { r.classList.add("show") } invStop() })
+	invAudio.play().then(() => tick()).catch(() => { const r = $("#inv-response"); if (r) { r.classList.add("show") } })
+}
+
+function invDrawBreath(arcv, progress) {
+	const canvas = $("#inv-breath")
+	if (!canvas) { return }
+	const env = (D.acoustics.verses[arcv.n - 1] || {}).envelope || []
+	const cssW = canvas.parentElement.clientWidth || 540
+	const dpr = window.devicePixelRatio || 1
+	canvas.width = cssW * dpr
+	canvas.height = 54 * dpr
+	const ctx = canvas.getContext("2d")
+	ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+	ctx.clearRect(0, 0, cssW, 54)
+	if (!env.length) { return }
+	const col = mixWarmth(arcv.warmth)
+	ctx.beginPath()
+	env.forEach((v, i) => {
+		const x = (i / (env.length - 1)) * cssW
+		const y = 52 - v * 46
+		if (i === 0) { ctx.moveTo(x, y) } else { ctx.lineTo(x, y) }
+	})
+	ctx.strokeStyle = col
+	ctx.lineWidth = 2
+	ctx.stroke()
+	if (progress > 0) {
+		const px = progress * cssW
+		ctx.beginPath()
+		ctx.moveTo(px, 2)
+		ctx.lineTo(px, 52)
+		ctx.strokeStyle = "#fff"
+		ctx.lineWidth = 1.5
+		ctx.stroke()
+	}
+}
+
 /* ---------- boot ---------- */
+buildInvitation()
 buildDialogue()
 buildRing()
 graphInit()

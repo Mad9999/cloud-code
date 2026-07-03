@@ -37,6 +37,99 @@ body {
 	min-height: 100vh;
 }
 
+/* Invitation — the front door that delivers the نور itself */
+.invitation {
+	position: fixed;
+	inset: 0;
+	z-index: 100;
+	background: radial-gradient(ellipse 80% 60% at 50% 0%, #16202e 0%, #0a0a0a 70%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+	overflow-y: auto;
+}
+.invitation.hidden { display: none; }
+.inv-inner {
+	max-width: 720px;
+	width: 100%;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 20px;
+	padding: 30px 0;
+}
+.inv-basmala { font-family: var(--arabic); color: var(--yellow); font-size: 22px; }
+#inv-stage { min-height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; width: 100%; }
+.inv-hook-title { font-family: var(--arabic); color: var(--ink); font-size: 30px; line-height: 1.8; }
+.inv-hook-sub { color: var(--ink-2); font-size: 17px; line-height: 1.9; max-width: 600px; }
+.inv-hook-sub b { color: var(--ink); }
+.inv-verse { font-family: var(--arabic); color: var(--ink); font-size: 30px; line-height: 2; max-width: 640px; }
+.inv-verse .vmark { color: var(--yellow); font-size: 19px; }
+.inv-breath { width: 100%; max-width: 560px; height: 54px; }
+.inv-response {
+	font-family: var(--arabic); color: var(--aqua); font-size: 24px;
+	max-width: 580px; opacity: 0; transform: translateY(10px);
+	transition: opacity 0.8s, transform 0.8s;
+	border-top: 1px solid var(--baseline); padding-top: 16px;
+}
+.inv-response.show { opacity: 1; transform: translateY(0); }
+.inv-response .lbl { display: block; color: var(--muted); font-size: 13px; font-family: var(--ui); margin-bottom: 6px; }
+.inv-response .src { display: block; color: var(--muted); font-size: 11px; font-family: var(--ui); margin-top: 8px; }
+.inv-note { color: var(--muted); font-size: 13px; max-width: 520px; }
+.inv-closing { color: var(--ink-2); font-size: 18px; line-height: 2; max-width: 600px; }
+.inv-closing b { color: var(--ink); }
+.inv-closing .action { display: block; color: var(--yellow); margin-top: 12px; font-size: 16px; }
+.inv-disclaimer {
+	border: 1px solid rgba(230, 103, 103, 0.4);
+	background: rgba(230, 103, 103, 0.06);
+	border-radius: 14px;
+	padding: 20px 22px;
+	text-align: right;
+	font-size: 15px;
+	line-height: 2;
+	color: var(--ink-2);
+	max-width: 640px;
+}
+.inv-disclaimer h3 { color: var(--red); font-size: 18px; margin-bottom: 10px; text-align: center; }
+.inv-disclaimer b { color: var(--ink); }
+.inv-controls { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.inv-controls button {
+	font-family: var(--ui); font-size: 15px; cursor: pointer;
+	border-radius: 999px; padding: 11px 26px; border: 1px solid var(--border);
+	background: var(--surface); color: var(--ink-2); transition: all 0.15s;
+}
+.inv-controls button.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+.inv-controls button.primary:hover { filter: brightness(1.1); }
+.inv-controls button.ghost:hover { border-color: var(--blue); color: var(--ink); }
+.inv-progress { display: flex; gap: 7px; }
+.inv-progress .idot { width: 8px; height: 8px; border-radius: 50%; background: var(--baseline); }
+.inv-progress .idot.on { background: var(--blue); }
+.inv-progress .idot.pivot.on { background: var(--magenta); }
+
+/* Nav grouping + research disclaimer */
+.tab-group-label { font-size: 12px; color: var(--muted); align-self: center; padding: 0 4px; }
+.tab-group-label.research { color: var(--soft1); }
+.tab-sep { width: 1px; height: 24px; background: var(--grid); align-self: center; }
+.tab-ghost { opacity: 0.75; }
+.research-disclaimer {
+	display: none;
+	border: 1px solid rgba(230, 103, 103, 0.35);
+	background: rgba(230, 103, 103, 0.06);
+	border-radius: 12px;
+	padding: 12px 16px;
+	margin-bottom: 16px;
+	font-size: 13px;
+	line-height: 1.85;
+	color: var(--ink-2);
+}
+.research-disclaimer.show { display: block; }
+.research-disclaimer b { color: var(--red); }
+.benefit-panel h3 { color: var(--aqua); }
+.benefit-panel p { font-size: 14.5px; color: var(--ink-2); line-height: 1.9; }
+.benefit-panel b { color: var(--ink); }
+
 header.site {
 	text-align: center;
 	padding: 34px 16px 10px;
