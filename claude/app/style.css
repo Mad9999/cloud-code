@@ -277,6 +277,31 @@ table.stats td:first-child, table.stats th:first-child { text-align: right; font
 	transition: opacity 0.5s;
 }
 .dlg-verse .vmark { color: var(--yellow); font-size: 20px; }
+.dlg-word { cursor: pointer; border-radius: 6px; padding: 0 3px; transition: background 0.12s, color 0.12s; }
+.dlg-word:hover { background: rgba(57, 135, 229, 0.18); }
+.dlg-word.has-insight { border-bottom: 2px dotted rgba(201, 133, 0, 0.6); }
+.dlg-word.sel { background: var(--blue); color: #fff; }
+.dlg-word-info {
+	max-width: 640px;
+	min-height: 30px;
+	font-size: 14px;
+	color: var(--muted);
+	background: #1c1c1b;
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	padding: 12px 16px;
+	text-align: right;
+	transition: border-color 0.15s;
+}
+.dlg-word-info.filled { color: var(--ink-2); border-color: var(--blue); }
+.dlg-word-info .wt-head { margin-bottom: 4px; }
+.dlg-word-info .wt-head b { font-family: var(--arabic); font-size: 20px; color: var(--ink); }
+.dlg-word-info .wt-root { font-size: 12.5px; color: var(--aqua); font-family: var(--arabic); }
+.dlg-word-info .wt-pos { font-size: 12px; color: var(--muted); }
+.dlg-word-info .wt-gloss { color: var(--ink-2); }
+.dlg-word-info .wt-insight { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--grid); font-size: 13px; }
+.dlg-word-info .wt-type { font-family: var(--arabic); }
+.dlg-word-info .src { display: block; color: var(--muted); font-size: 11.5px; margin-top: 4px; }
 .dlg-response {
 	font-family: var(--arabic);
 	font-size: 23px;

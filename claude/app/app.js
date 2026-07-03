@@ -700,6 +700,22 @@ function stopDialogue() {
 	if (dlgRaf) { cancelAnimationFrame(dlgRaf); dlgRaf = null }
 }
 
+// Map each word index -> sourced balaghi/tafsir insights that touch it,
+// built once from the golden semantic links (word-level tadabbur).
+let WORD_INSIGHTS = null
+function buildWordInsights() {
+	WORD_INSIGHTS = new Map()
+	const add = (i, ins) => {
+		if (!WORD_INSIGHTS.has(i)) { WORD_INSIGHTS.set(i, []) }
+		WORD_INSIGHTS.get(i).push(ins)
+	}
+	for (const l of D.surah.semantic_links) {
+		const ins = { label: l.label, note: l.note, source: l.source, grade: l.grade, type: l.type }
+		for (const i of l.from_words || []) { add(i, ins) }
+		for (const i of l.to_words || []) { add(i, ins) }
+	}
+}
+
 function renderDialogueVerse(i) {
 	stopDialogue()
 	dlgIndex = i
@@ -707,8 +723,13 @@ function renderDialogueVerse(i) {
 	const td = D.tadabbur.verses[i]
 	const arcv = D.arc.verses[i]
 	const names = td.divine_names.join(" · ")
+	if (!WORD_INSIGHTS) { buildWordInsights() }
 
-	let html = `<div class="dlg-verse" style="color:${COLORS.ink}">﴿ ${verse.uthmani} <span class="vmark">${arNum(verse.n)}</span> ﴾</div>`
+	const words = verse.words.map((w) =>
+		`<span class="dlg-word${WORD_INSIGHTS.has(w.i) ? " has-insight" : ""}" data-wi="${w.i}">${w.text}</span>`
+	).join(" ")
+	let html = `<div class="dlg-verse" style="color:${COLORS.ink}">﴿ ${words} <span class="vmark">${arNum(verse.n)}</span> ﴾</div>`
+	html += `<div class="dlg-word-info" id="dlg-word-info">اضغط أيّ كلمة لتتدبّر معناها وسرّها البلاغي</div>`
 	html += `<canvas class="dlg-breath" id="dlg-breath"></canvas>`
 
 	if (td.divine_response === null) {
@@ -729,9 +750,27 @@ function renderDialogueVerse(i) {
 	</div>`
 	$("#dialogue-stage").innerHTML = html
 
+	document.querySelectorAll("#dialogue-stage .dlg-word").forEach((el) =>
+		{ el.onclick = () => showWordTadabbur(verse, Number(el.dataset.wi), el) })
 	document.querySelectorAll("#dialogue-controls .dot").forEach((d, k) =>
 		d.classList.toggle("active", k === i))
 	drawBreath(arcv, 0)
+}
+
+function showWordTadabbur(verse, wi, el) {
+	const w = verse.words.find((x) => x.i === wi)
+	document.querySelectorAll("#dialogue-stage .dlg-word").forEach((e) => e.classList.remove("sel"))
+	el.classList.add("sel")
+	const box = $("#dlg-word-info")
+	let html = `<div class="wt-head"><b>${w.text}</b>${w.root ? ` <span class="wt-root">الجذر: ${w.root}</span>` : ""} <span class="wt-pos">${w.pos}</span></div>`
+	html += `<div class="wt-gloss">${w.gloss}</div>`
+	const insights = WORD_INSIGHTS.get(wi) || []
+	for (const ins of insights) {
+		const t = (LINK_TYPE[ins.type] || {}).label || ins.type
+		html += `<div class="wt-insight"><span class="wt-type" style="color:${(LINK_TYPE[ins.type] || {}).color || COLORS.muted}">◆ ${ins.label} (${t})</span> ${ins.note} <span class="src">${ins.source} ${gradeBadge(ins.grade)}</span></div>`
+	}
+	box.innerHTML = html
+	box.classList.add("filled")
 }
 
 function drawBreath(arcv, progress) {
