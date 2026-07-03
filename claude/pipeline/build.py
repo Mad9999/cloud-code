@@ -10,6 +10,7 @@ from pathlib import Path
 
 import arc
 import audio_fft
+import control_experiment
 import fawasil
 import phonetic_profile
 import semantic_graph
@@ -121,6 +122,11 @@ def main():
 	fw = fawasil.build()
 	validate_fawasil(fw)
 
+	print("control-sample experiment (sieve) ...")
+	control = control_experiment.build()
+	print(f"  survived {len(control['synthesis']['survived'])}, "
+		f"killed {len(control['synthesis']['killed'])} claims")
+
 	write_payload("data.js", "QURAN_DATA", {
 		"surah": surah,
 		"letters": letters,
@@ -131,6 +137,7 @@ def main():
 		"arc": spiritual_arc,
 	})
 	write_payload("fawasil.js", "FAWASIL_DATA", fw)
+	write_payload("control.js", "CONTROL_DATA", control)
 
 
 if __name__ == "__main__":

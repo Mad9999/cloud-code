@@ -70,7 +70,7 @@ $("#tabs").addEventListener("click", (e) => {
 	if (btn.dataset.layer === "graph") { graphResize() }
 	if (btn.dataset.layer === "phonetic") { drawRadar() }
 	if (btn.dataset.layer === "acoustic") { drawBridge() }
-	if (btn.dataset.layer === "observatory") { drawObsChart() }
+	if (btn.dataset.layer === "observatory") { drawObsChart(); drawControlChart() }
 	if (btn.dataset.layer !== "dialogue") { stopDialogue() }
 })
 
@@ -839,6 +839,92 @@ function buildObservatory() {
 	renderObsGrid()
 	$("#obs-note").innerHTML = `اختر سورة من الخريطة أعلاه لعرض توزيع صفات فاصلتها.`
 	drawObsChart()
+	buildControl()
+}
+
+/* ---- control-sample experiment (the sieve) ---- */
+const C = window.CONTROL_DATA
+
+function buildControl() {
+	const b = C.quran_baseline
+	$("#control-intro").innerHTML =
+		`قبل أن نَنسب أي نمطٍ للقرآن، نمرّره على نصوصٍ عربيةٍ ضابطة (شعر جاهلي وعباسي، سجع كهّان، خطب، نثر مرسل) — فما ظهر فيها بالقوة نفسها <b style="font-family:inherit;color:${COLORS.ink}">نشطبه بأمانة</b>. ` +
+		`الوكلاء كُلّفوا بمحاولة <b style="font-family:inherit;color:${COLORS.ink}">إسقاط</b> التميّز لا إثباته، والطرف القرآني محسوبٌ حسابياً من ${arNum(b.total_ayahs)} آية. النتيجة: ` +
+		`${arNum(C.synthesis.survived.length)} صمدت، و${arNum(C.synthesis.killed.length)} سقطت.`
+
+	$("#control-legend").innerHTML =
+		`<span class="item"><span class="swatch" style="background:${COLORS.yellow}"></span> القرآن</span>` +
+		`<span class="item"><span class="swatch" style="background:${COLORS.blue}"></span> أعلى ضابط (شعر/نثر)</span>` +
+		`<span class="item" style="color:${COLORS.muted}">نسبة الحرف/الأصوات الأغلب في النهايات</span>`
+
+	drawControlChart()
+
+	const VT = { "quran-distinctive": "صمد: تميّز قرآني", "arabic-general": "سقط: طبعٌ عربي عام", "inconclusive": "غير حاسم" }
+	const VC = { "quran-distinctive": "survived", "arabic-general": "killed", "inconclusive": "inconclusive" }
+	$("#control-verdicts").innerHTML = C.verdicts.map((v) => {
+		const cls = VC[v.verdict]
+		return `<div class="verdict-card ${cls}">
+			<div class="vhead">
+				<span class="dim">${v.dimension}</span>
+				<span class="vtag ${cls}">${VT[v.verdict]}</span>
+				<span class="conf">ثقة: ${{ high: "عالية", medium: "متوسطة", low: "منخفضة" }[v.confidence]}</span>
+			</div>
+			<div class="vbody"><span class="q">القرآن: ${v.quran}</span> · <span class="c">الضابط: ${v.control}</span></div>
+			<div class="vnote">↦ ${v.note}</div>
+		</div>`
+	}).join("")
+
+	const s = C.synthesis
+	$("#control-summary").innerHTML =
+		`<div class="control-cols">
+			<div><h4 class="survived-h">صمد بعد الغربلة</h4><ul>${s.survived.map((x) => `<li>${x}</li>`).join("")}</ul></div>
+			<div><h4 class="killed-h">سقط — لا يُنسب للقرآن</h4><ul>${s.killed.map((x) => `<li class="killed-item">${x}</li>`).join("")}</ul></div>
+		</div>` +
+		`<div style="margin-top:12px">${s.summary_ar}</div>` +
+		`<div class="src">حدود المنهج: ${s.method_limits.join(" · ")}</div>` +
+		`<div class="src">${C._meta.honesty}</div>`
+}
+
+function drawControlChart() {
+	const canvas = $("#control-canvas")
+	const cssW = canvas.parentElement.clientWidth - 40
+	const dpr = window.devicePixelRatio || 1
+	canvas.width = cssW * dpr
+	canvas.height = 240 * dpr
+	canvas.style.height = "240px"
+	const ctx = canvas.getContext("2d")
+	ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+	ctx.clearRect(0, 0, cssW, 240)
+	const b = C.quran_baseline
+	// three comparisons: nun dominance, soft endings, within-consistency
+	const rows = [
+		{ label: "هيمنة حرف واحد", q: b.nun_pct, ctrl: 18, ctrlLabel: "أعلى ضابط 18٪" },
+		{ label: "الأصوات اللينة (ن+ا+م)", q: b.soft_naml_pct, ctrl: 40, ctrlLabel: "أرضية النثر 40٪" },
+		{ label: "الاتساق داخل الوحدة", q: b.per_surah_dominant_median, ctrl: 100, ctrlLabel: "الشعر المقفّى 100٪" },
+	]
+	const padR = 150, padL = 20, padT = 10, rowH = (240 - padT - 10) / rows.length
+	const plotW = cssW - padR - padL
+	rows.forEach((r, i) => {
+		const y = padT + i * rowH
+		ctx.fillStyle = COLORS.ink2
+		ctx.font = "13px system-ui"
+		ctx.textAlign = "right"
+		ctx.fillText(r.label, cssW - 6, y + 16)
+		const barMax = plotW
+		const drawBar = (val, yy, color, txt) => {
+			const w = (val / 100) * barMax
+			ctx.fillStyle = color
+			ctx.beginPath()
+			ctx.roundRect(padL, yy, w, 15, [0, 4, 4, 0])
+			ctx.fill()
+			ctx.fillStyle = COLORS.ink
+			ctx.font = "12px system-ui"
+			ctx.textAlign = "left"
+			ctx.fillText(txt, padL + w + 6, yy + 12)
+		}
+		drawBar(r.q, y + 8, COLORS.yellow, r.q + "٪ قرآن")
+		drawBar(r.ctrl, y + 28, COLORS.blue, r.ctrlLabel)
+	})
 }
 
 function renderObsGrid() {
