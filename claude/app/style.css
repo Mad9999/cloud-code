@@ -257,6 +257,101 @@ table.stats td:first-child, table.stats th:first-child { text-align: right; font
 .link-card .src { color: var(--muted); font-size: 11.5px; margin-top: 6px; }
 .link-card .typechip { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-inline-end: 6px; }
 
+/* Layer: المحاورة (dialogue) */
+.dialogue-panel { text-align: center; }
+#dialogue-stage {
+	min-height: 340px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 18px;
+	padding: 20px 10px;
+}
+.dlg-verse {
+	font-family: var(--arabic);
+	font-size: 30px;
+	color: var(--ink);
+	line-height: 2;
+	max-width: 760px;
+	transition: opacity 0.5s;
+}
+.dlg-verse .vmark { color: var(--yellow); font-size: 20px; }
+.dlg-response {
+	font-family: var(--arabic);
+	font-size: 23px;
+	color: var(--aqua);
+	border-top: 1px solid var(--baseline);
+	padding-top: 18px;
+	max-width: 620px;
+	opacity: 0;
+	transform: translateY(10px);
+	transition: opacity 0.7s, transform 0.7s;
+}
+.dlg-response.show { opacity: 1; transform: translateY(0); }
+.dlg-response .lbl { display: block; color: var(--muted); font-size: 13px; font-family: var(--ui); margin-bottom: 6px; }
+.dlg-response .src { display: block; color: var(--muted); font-size: 11.5px; font-family: var(--ui); margin-top: 8px; }
+.dlg-reflect {
+	max-width: 640px;
+	font-size: 15px;
+	color: var(--ink-2);
+	background: #202020;
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	padding: 14px 18px;
+	opacity: 0;
+	transition: opacity 0.7s;
+}
+.dlg-reflect.show { opacity: 1; }
+.dlg-reflect .action { color: var(--yellow); margin-top: 8px; display: block; }
+.dlg-reflect .src { color: var(--muted); font-size: 11.5px; margin-top: 8px; display: block; }
+.dlg-breath {
+	width: 100%;
+	max-width: 620px;
+	height: 60px;
+}
+.dlg-basmala-note {
+	color: var(--muted);
+	font-size: 13px;
+	max-width: 560px;
+	border: 1px dashed var(--baseline);
+	border-radius: 10px;
+	padding: 8px 14px;
+}
+.dlg-progress { display: flex; gap: 8px; justify-content: center; margin-top: 4px; }
+.dlg-progress .dot {
+	width: 26px; height: 26px; border-radius: 50%;
+	border: 1px solid var(--border);
+	background: #202020; color: var(--muted);
+	font-size: 12px; cursor: pointer;
+	display: flex; align-items: center; justify-content: center;
+	font-family: var(--arabic);
+}
+.dlg-progress .dot.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+.dlg-progress .dot.pivot.active { background: var(--magenta); border-color: var(--magenta); }
+#dialogue-controls { justify-content: center; }
+
+/* Layer: مرصد الفواصل (observatory) */
+.obs-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+	gap: 6px;
+	margin: 14px 0;
+}
+.obs-cell {
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	padding: 7px 4px;
+	text-align: center;
+	cursor: pointer;
+	background: #202020;
+	transition: transform 0.1s, border-color 0.15s;
+}
+.obs-cell:hover { transform: translateY(-2px); border-color: #fff; }
+.obs-cell .oname { font-family: var(--arabic); font-size: 12px; color: var(--ink-2); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.obs-cell .ofas { font-family: var(--arabic); font-size: 20px; color: var(--ink); display: block; }
+.obs-cell .onum { font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
 footer.site {
 	border-top: 1px solid var(--grid);
 	color: var(--muted);

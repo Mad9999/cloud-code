@@ -77,6 +77,7 @@ def analyze_verse(n, path):
 		band_energy[f"{lo}-{hi}"] = round(float(power[mask].sum() / total) * 100, 2)
 
 	rms = float(np.sqrt((x**2).mean()))
+	envelope = rms_envelope(x, sr)
 
 	render_spectrogram(n, freqs, times, sxx)
 
@@ -89,7 +90,21 @@ def analyze_verse(n, path):
 		"spectral_centroid_hz": round(centroid, 1),
 		"rolloff85_hz": round(rolloff, 1),
 		"band_energy_pct": band_energy,
+		"envelope": envelope,
 	}
+
+
+def rms_envelope(x, sr, points_per_second=20):
+	"""Downsampled RMS energy curve (~20 points/s), normalized to 0..1.
+	Lets the UI 'breathe' with the real recitation instead of a faked curve."""
+	win = max(1, int(sr / points_per_second))
+	n_frames = len(x) // win
+	if n_frames < 1:
+		return []
+	frames = x[: n_frames * win].reshape(n_frames, win)
+	rms = np.sqrt((frames**2).mean(axis=1) + 1e-12)
+	peak = rms.max() or 1.0
+	return [round(float(v / peak), 3) for v in rms]
 
 
 def render_spectrogram(n, freqs, times, sxx):

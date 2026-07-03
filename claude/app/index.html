@@ -21,15 +21,26 @@
 	</header>
 
 	<nav class="tabs" id="tabs">
-		<button data-layer="ring" class="active">١ · الهيكل الدائري</button>
-		<button data-layer="graph">٢ · الشبكة الدلالية</button>
-		<button data-layer="phonetic">٣ · البصمة الصوتية</button>
-		<button data-layer="acoustic">٤ · التردد الفيزيائي</button>
-		<button data-layer="framework">٥ · النموذج العملي</button>
+		<button data-layer="dialogue" class="active">★ المحاورة</button>
+		<button data-layer="ring">الهيكل الدائري</button>
+		<button data-layer="graph">الشبكة الدلالية</button>
+		<button data-layer="phonetic">البصمة الصوتية</button>
+		<button data-layer="acoustic">التردد الفيزيائي</button>
+		<button data-layer="framework">النموذج العملي</button>
+		<button data-layer="observatory">مرصد الفواصل</button>
 	</nav>
 
 	<main>
-		<section class="layer visible" id="layer-ring">
+		<section class="layer visible" id="layer-dialogue">
+			<div class="panel dialogue-panel">
+				<h2>المحاورة — الفاتحة كما تُصلَّى <span class="badge mathur">مأثور</span></h2>
+				<div class="hint">الفاتحة ليست مناجاةً في اتجاهٍ واحد؛ هي محاورةٌ حيّة: لكل آيةٍ تقولها جوابٌ من الله، كما في حديث «قسمتُ الصلاة بيني وبين عبدي نصفين» (صحيح مسلم ٣٩٥). استمع للآية بصوت الشيخ الحصري، وتأمّل جواب ربك بعدها.</div>
+				<div id="dialogue-stage"></div>
+				<div class="controls" id="dialogue-controls"></div>
+			</div>
+		</section>
+
+		<section class="layer" id="layer-ring">
 			<div class="panel">
 				<h2>البنية الدائرية للسورة <span class="badge ijtihadi">اجتهادي</span></h2>
 				<div class="hint">اضغط على أي آية لترى نظيرتها في التناظر المرآتي ووجه المناسبة بينهما. المحور العددي: الآية الرابعة، والمحور التعبدي: الآية الخامسة (وفق الحديث القدسي في صحيح مسلم <span class="badge mathur">مأثور</span>).</div>
@@ -92,6 +103,19 @@
 				<div class="hint" id="prophetic-note"></div>
 			</div>
 		</section>
+
+		<section class="layer" id="layer-observatory">
+			<div class="panel">
+				<h2>مرصد الفواصل — تجربة حيّة على القرآن كاملاً <span class="badge qati">قياس</span></h2>
+				<div class="hint" id="obs-intro"></div>
+				<div class="legend" id="obs-legend"></div>
+				<canvas id="obs-canvas" height="360"></canvas>
+				<h3>خريطة السور الـ١١٤ (الفاصلة الغالبة في كل سورة)</h3>
+				<div class="controls" id="obs-controls"></div>
+				<div id="obs-grid" class="obs-grid"></div>
+				<div class="info-card" id="obs-note"></div>
+			</div>
+		</section>
 	</main>
 
 	<footer class="site">
@@ -102,6 +126,7 @@
 
 	<div class="tooltip" id="tooltip"></div>
 	<script src="generated/data.js"></script>
+	<script src="generated/fawasil.js"></script>
 	<script src="app.js"></script>
 </body>
 </html>

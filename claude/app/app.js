@@ -70,6 +70,8 @@ $("#tabs").addEventListener("click", (e) => {
 	if (btn.dataset.layer === "graph") { graphResize() }
 	if (btn.dataset.layer === "phonetic") { drawRadar() }
 	if (btn.dataset.layer === "acoustic") { drawBridge() }
+	if (btn.dataset.layer === "observatory") { drawObsChart() }
+	if (btn.dataset.layer !== "dialogue") { stopDialogue() }
 })
 
 /* ============================================================
@@ -668,11 +670,264 @@ function buildFramework() {
 	$("#prophetic-note").innerHTML = `${pd.note}<div class="src" style="margin-top:6px;color:${COLORS.muted}">المصدر: ${pd.source}</div>`
 }
 
+/* ============================================================
+   Layer: المحاورة (dialogue) — worshipper wing
+   ============================================================ */
+let dlgIndex = 0
+let dlgAudio = null
+let dlgRaf = null
+
+function buildDialogue() {
+	renderDialogueVerse(0)
+	const dots = D.surah.verses.map((v, i) =>
+		`<span class="dot ${v.n === D.arc.pivot_verse ? "pivot" : ""}" data-i="${i}">${arNum(v.n)}</span>`).join("")
+	$("#dialogue-controls").innerHTML =
+		`<button id="dlg-prev">◀ السابقة</button>` +
+		`<button id="dlg-play">▶ استمع وتأمّل</button>` +
+		`<button id="dlg-reveal">أظهِر الجواب</button>` +
+		`<button id="dlg-next">التالية ▶</button>` +
+		`<div class="dlg-progress">${dots}</div>`
+	$("#dlg-prev").onclick = () => renderDialogueVerse(Math.max(0, dlgIndex - 1))
+	$("#dlg-next").onclick = () => renderDialogueVerse(Math.min(6, dlgIndex + 1))
+	$("#dlg-play").onclick = () => playDialogue()
+	$("#dlg-reveal").onclick = () => revealDialogue()
+	document.querySelectorAll("#dialogue-controls .dot").forEach((d) =>
+		{ d.onclick = () => renderDialogueVerse(Number(d.dataset.i)) })
+}
+
+function stopDialogue() {
+	if (dlgAudio) { dlgAudio.pause(); dlgAudio = null }
+	if (dlgRaf) { cancelAnimationFrame(dlgRaf); dlgRaf = null }
+}
+
+function renderDialogueVerse(i) {
+	stopDialogue()
+	dlgIndex = i
+	const verse = D.surah.verses[i]
+	const td = D.tadabbur.verses[i]
+	const arcv = D.arc.verses[i]
+	const names = td.divine_names.join(" · ")
+
+	let html = `<div class="dlg-verse" style="color:${COLORS.ink}">﴿ ${verse.uthmani} <span class="vmark">${arNum(verse.n)}</span> ﴾</div>`
+	html += `<canvas class="dlg-breath" id="dlg-breath"></canvas>`
+
+	if (td.divine_response === null) {
+		html += `<div class="dlg-basmala-note">${td.divine_response_note}</div>`
+	} else {
+		html += `<div class="dlg-response" id="dlg-response">
+			<span class="lbl">فيقول الله${td.divine_response_continuation ? " (تتمّة الطلب)" : ""}:</span>
+			«${td.divine_response}»
+			${td.divine_response_variant ? `<span class="src">${td.divine_response_variant}</span>` : ""}
+			<span class="src">${td.divine_response_source} · ${td.divine_response_note || ""}</span>
+		</div>`
+	}
+	html += `<div class="dlg-reflect" id="dlg-reflect">
+		<span class="mut" style="color:${COLORS.muted};font-size:12px">وقفة · الأسماء الفاعلة: ${names}</span>
+		<div style="margin-top:6px">${td.reflection.text}</div>
+		<span class="action">↦ ${td.action.text}</span>
+		<span class="src">${td.reflection.source} ${gradeBadge(td.reflection.grade)} · حال القلب: ${td.heart_state.text} ${gradeBadge("ijtihadi")}</span>
+	</div>`
+	$("#dialogue-stage").innerHTML = html
+
+	document.querySelectorAll("#dialogue-controls .dot").forEach((d, k) =>
+		d.classList.toggle("active", k === i))
+	drawBreath(arcv, 0)
+}
+
+function drawBreath(arcv, progress) {
+	const canvas = $("#dlg-breath")
+	if (!canvas) { return }
+	const env = (D.acoustics.verses[arcv.n - 1] || {}).envelope || []
+	const cssW = canvas.parentElement.clientWidth || 600
+	const dpr = window.devicePixelRatio || 1
+	canvas.width = cssW * dpr
+	canvas.height = 60 * dpr
+	const ctx = canvas.getContext("2d")
+	ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+	ctx.clearRect(0, 0, cssW, 60)
+	if (!env.length) { return }
+	const col = mixWarmth(arcv.warmth)
+	ctx.beginPath()
+	ctx.moveTo(0, 58)
+	env.forEach((v, i) => {
+		const x = (i / (env.length - 1)) * cssW
+		const y = 58 - v * 52
+		ctx.lineTo(x, y)
+	})
+	ctx.lineTo(cssW, 58)
+	ctx.closePath()
+	ctx.fillStyle = col + "33"
+	ctx.fill()
+	ctx.beginPath()
+	env.forEach((v, i) => {
+		const x = (i / (env.length - 1)) * cssW
+		const y = 58 - v * 52
+		if (i === 0) { ctx.moveTo(x, y) } else { ctx.lineTo(x, y) }
+	})
+	ctx.strokeStyle = col
+	ctx.lineWidth = 2
+	ctx.stroke()
+	if (progress > 0) {
+		const px = progress * cssW
+		ctx.beginPath()
+		ctx.moveTo(px, 4)
+		ctx.lineTo(px, 58)
+		ctx.strokeStyle = "#fff"
+		ctx.lineWidth = 1.5
+		ctx.stroke()
+	}
+}
+
+function mixWarmth(w) {
+	// cool blue (praise) -> warm yellow (petition), driven by real intensity
+	const cold = [57, 135, 229], hot = [201, 133, 0]
+	const r = Math.round(cold[0] + (hot[0] - cold[0]) * w)
+	const g = Math.round(cold[1] + (hot[1] - cold[1]) * w)
+	const b = Math.round(cold[2] + (hot[2] - cold[2]) * w)
+	return `rgb(${r},${g},${b})`
+}
+
+function playDialogue() {
+	stopDialogue()
+	const arcv = D.arc.verses[dlgIndex]
+	const n = arcv.n
+	const file = "00100" + n + ".mp3"
+	dlgAudio = new Audio("../audio/" + file)
+	const tick = () => {
+		if (!dlgAudio) { return }
+		const p = dlgAudio.duration ? dlgAudio.currentTime / dlgAudio.duration : 0
+		drawBreath(arcv, p)
+		dlgRaf = requestAnimationFrame(tick)
+	}
+	dlgAudio.addEventListener("ended", () => { revealDialogue(); stopDialogue() })
+	dlgAudio.play().then(() => { tick() }).catch(() => { revealDialogue() })
+}
+
+function revealDialogue() {
+	const resp = $("#dlg-response")
+	if (resp) { resp.classList.add("show") }
+	const refl = $("#dlg-reflect")
+	if (refl) { setTimeout(() => refl.classList.add("show"), resp ? 500 : 0) }
+}
+window.__revealDialogue = revealDialogue
+
+/* ============================================================
+   Layer: مرصد الفواصل (observatory) — researcher wing
+   ============================================================ */
+const F = window.FAWASIL_DATA
+let obsFilter = "all"
+
+function buildObservatory() {
+	$("#obs-intro").innerHTML =
+		`تجربة حيّة من <b style="font-family:inherit;color:${COLORS.ink}">دفتر الأسئلة المفتوحة</b> (السؤال ٢: هندسة الفواصل). ` +
+		`حلّلنا حرف الفاصلة الأخير لكل آيات القرآن (${arNum(F.total_ayahs)} آية في ${arNum(F.surah_count)} سورة). ` +
+		`أبرز نتيجة: حرف <b style="font-family:var(--arabic);color:${COLORS.ink}">النون</b> يهيمن على فواصل القرآن (${arNum(F.global_top_fasila[0][1])} آية، قرابة النصف) — الغنّة الأنفية الرخيّة — تليه ألف المد. ` +
+		`${F.scope_note}`
+
+	$("#obs-legend").innerHTML =
+		`<span class="item"><span class="swatch" style="background:${COLORS.blue}"></span> مكية</span>` +
+		`<span class="item"><span class="swatch" style="background:${COLORS.aqua}"></span> مدنية</span>` +
+		`<span class="item" style="color:${COLORS.muted}">النقر على سورة يعرض بصمة فواصلها</span>`
+
+	$("#obs-controls").innerHTML =
+		`<button data-f="all" class="sel-a">الكل (١١٤)</button>` +
+		`<button data-f="مكية">المكية</button>` +
+		`<button data-f="مدنية">المدنية</button>`
+	$("#obs-controls").querySelectorAll("button").forEach((b) =>
+		{ b.onclick = () => { obsFilter = b.dataset.f; renderObsGrid() } })
+
+	renderObsGrid()
+	$("#obs-note").innerHTML = `اختر سورة من الخريطة أعلاه لعرض توزيع صفات فاصلتها.`
+	drawObsChart()
+}
+
+function renderObsGrid() {
+	document.querySelectorAll("#obs-controls button").forEach((b) =>
+		b.classList.toggle("sel-a", b.dataset.f === obsFilter))
+	const list = F.surahs.filter((s) => obsFilter === "all" || s.revelation === obsFilter)
+	$("#obs-grid").innerHTML = list.map((s) => {
+		const col = s.revelation === "مكية" ? COLORS.blue : COLORS.aqua
+		return `<div class="obs-cell" data-n="${s.n}" style="border-color:${col}44">
+			<span class="onum">${arNum(s.n)}</span>
+			<span class="ofas">${s.dominant_fasila}</span>
+			<span class="oname">${s.name.replace("سُورَةُ ", "").replace("ٱل", "ال")}</span>
+		</div>`
+	}).join("")
+	document.querySelectorAll(".obs-cell").forEach((c) =>
+		{ c.onclick = () => showObsSurah(Number(c.dataset.n)) })
+}
+
+function showObsSurah(n) {
+	const s = F.surahs.find((x) => x.n === n)
+	const fp = Object.entries(s.fingerprint).sort((a, b) => b[1] - a[1])
+	const tags = { ghunna: "غنة", madd: "مد", jahr: "جهر", hams: "همس", shidda: "شدة", rakhawa: "رخاوة", tawassut: "توسط", istiala: "استعلاء", istifal: "استفال", itbaq: "إطباق", qalqala: "قلقلة", safir: "صفير", lin: "لين", inhiraf: "انحراف", takrir: "تكرير", tafashshi: "تفشٍّ", istitala: "استطالة" }
+	const bars = fp.slice(0, 8).map(([k, v]) =>
+		`<div style="display:flex;align-items:center;gap:8px;margin:3px 0">
+			<span style="width:70px;font-size:12px;color:${COLORS.ink2}">${tags[k] || k}</span>
+			<span style="flex:1;height:10px;background:#2c2c2a;border-radius:5px;overflow:hidden">
+				<span style="display:block;height:100%;width:${v}%;background:${COLORS.blue}"></span></span>
+			<span style="width:44px;font-size:12px;color:${COLORS.muted};font-variant-numeric:tabular-nums">${v}٪</span>
+		</div>`).join("")
+	const top = s.top_letters.map(([l, c]) => `${l} (${arNum(c)})`).join("، ")
+	$("#obs-note").innerHTML =
+		`<b>${s.name} — ${s.revelation}، ${arNum(s.ayah_count)} آية</b>` +
+		`<div style="margin-top:4px;color:${COLORS.ink2}">الفاصلة الغالبة: <b style="font-family:var(--arabic)">${s.dominant_fasila}</b> بنسبة ${s.dominant_pct}٪ · أكثر حروف الفواصل: ${top}</div>` +
+		`<div style="margin-top:10px">بصمة صفات الفواصل:</div>${bars}` +
+		`<div class="src">${F.source}</div>`
+}
+
+function drawObsChart() {
+	const canvas = $("#obs-canvas")
+	const cssW = canvas.parentElement.clientWidth - 40
+	const dpr = window.devicePixelRatio || 1
+	canvas.width = cssW * dpr
+	canvas.height = 360 * dpr
+	canvas.style.height = "360px"
+	const ctx = canvas.getContext("2d")
+	ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+	ctx.clearRect(0, 0, cssW, 360)
+
+	const data = F.global_top_fasila
+	const max = data[0][1]
+	const padR = 90, padL = 60, padT = 16, padB = 20
+	const plotW = cssW - padR - padL
+	const rowH = (360 - padT - padB) / data.length
+
+	ctx.fillStyle = COLORS.ink
+	ctx.font = "13px system-ui"
+	ctx.textAlign = "right"
+	ctx.fillText("توزيع حروف الفواصل في القرآن كاملاً", cssW - padL, padT - 2 + 14)
+
+	data.forEach(([letter, count], i) => {
+		const y = padT + i * rowH + 14
+		const w = (count / max) * plotW
+		// bar grows from the right (RTL)
+		const x = cssW - padL - w
+		ctx.fillStyle = i === 0 ? COLORS.yellow : COLORS.blue
+		ctx.beginPath()
+		ctx.roundRect(x, y, w, rowH - 12, [0, 4, 4, 0])
+		ctx.fill()
+		ctx.fillStyle = COLORS.ink
+		ctx.font = "16px 'Amiri',serif"
+		ctx.textAlign = "right"
+		ctx.fillText(letter, cssW - padL + 22, y + rowH / 2)
+		ctx.fillStyle = COLORS.muted
+		ctx.font = "12px system-ui"
+		ctx.textAlign = "left"
+		ctx.fillText(arNum(count) + " آية", x - 8, y + rowH / 2 - 4)
+	})
+}
+
 /* ---------- boot ---------- */
+buildDialogue()
 buildRing()
 graphInit()
 buildPhonetic()
 buildAcoustic()
 buildFramework()
+buildObservatory()
 drawRadar()
-window.addEventListener("resize", () => { graphResize(); drawRadar(); drawBridge() })
+window.addEventListener("resize", () => {
+	graphResize(); drawRadar(); drawBridge(); drawObsChart()
+	if ($("#layer-dialogue").classList.contains("visible")) { drawBreath(D.arc.verses[dlgIndex], 0) }
+})
