@@ -1184,8 +1184,11 @@ function tsVerseCard(s, v, showPlay) {
 	const ref = s + ":" + v.n
 	const echoBtn = (AL.links[ref] && AL.links[ref].length)
 		? `<button class="ts-echo-btn" data-ref="${ref}">⇄ صداها في القرآن (${arNum(AL.links[ref].length)})</button>` : ""
+	const sabab = v.sabab
+		? `<div class="ts-vsabab">◆ <b>سببُ نزولها:</b> ${v.sabab.text} <span class="src">${v.sabab.source} ${gradeBadge(v.sabab.grade)}</span></div>` : ""
 	return `<div class="ts-verse" data-a="${v.n}">` +
 		`<div class="ts-ayah">${playBtn}﴿ ${ayahText(s, v.n)} <span class="vmark">${arNum(v.n)}</span> ﴾</div>` +
+		sabab +
 		`<div class="ts-reflect">${v.reflection.text}` +
 		`<span class="src">${v.reflection.source} ${gradeBadge(v.reflection.grade)}</span></div>` +
 		`<div class="ts-meta">${names}` +

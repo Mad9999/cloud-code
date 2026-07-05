@@ -47,6 +47,10 @@ def build():
 				raise SystemExit(f"tadabbur_baqara: 2:{n} bad grade {ref.get('grade')!r}")
 			if not (v.get("heart_state") or {}).get("text") or not (v.get("action") or {}).get("text"):
 				raise SystemExit(f"tadabbur_baqara: 2:{n} missing heart_state/action")
+			# optional per-verse occasion of revelation — must be sourced & graded
+			sb = v.get("sabab")
+			if sb and (not sb.get("text") or not sb.get("source") or sb.get("grade") not in GRADES):
+				raise SystemExit(f"tadabbur_baqara: 2:{n} sabab missing text/source/grade")
 			covered += 1
 		blk = p.get("fadl")
 		if blk and (not blk.get("source") or blk.get("grade") not in GRADES):

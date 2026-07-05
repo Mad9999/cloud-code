@@ -415,6 +415,9 @@ table.stats td:first-child, table.stats th:first-child { text-align: right; font
 .ts-reflect .src { display: block; color: var(--muted); font-family: var(--ui); font-size: 11.5px; margin-top: 8px; }
 .ts-meta { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 10px; font-family: var(--arabic); font-size: 14px; color: var(--muted); }
 .ts-action { font-family: var(--arabic); font-size: 15.5px; color: var(--yellow); margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--grid); }
+.ts-vsabab { font-family: var(--arabic); font-size: 14.5px; line-height: 1.85; color: var(--ink-2); background: rgba(57, 135, 229, 0.06); border: 1px solid rgba(57, 135, 229, 0.22); border-radius: 10px; padding: 9px 13px; margin: 0 0 10px; }
+.ts-vsabab b { color: var(--ink); }
+.ts-vsabab .src { display: block; color: var(--muted); font-family: var(--ui); font-size: 11px; margin-top: 5px; }
 .ts-echo-wrap { margin-top: 10px; }
 .ts-echo-btn { font-family: var(--ui); font-size: 12px; color: var(--violet); background: rgba(144, 133, 233, 0.1); border: 1px solid rgba(144, 133, 233, 0.32); border-radius: 7px; padding: 3px 11px; cursor: pointer; }
 .ts-echo-btn:hover, .ts-echo-btn.open { background: rgba(144, 133, 233, 0.22); }
