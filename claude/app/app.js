@@ -74,7 +74,8 @@ $("#tabs").addEventListener("click", (e) => {
 	if (btn.dataset.layer === "scale") { drawScale() }
 	if (btn.dataset.layer === "scenes") { sizeSceneCanvas(); if (!scenesRaf) { scenesLoop() } }
 	if (btn.dataset.layer !== "dialogue") { stopDialogue() }
-	const research = ["graph", "phonetic", "acoustic", "observatory", "explorer"]
+	if (btn.dataset.layer === "suramap") { smResize() }
+	const research = ["graph", "phonetic", "acoustic", "observatory", "explorer", "suramap"]
 	$("#research-disclaimer").classList.toggle("show", research.includes(btn.dataset.layer))
 })
 
@@ -672,6 +673,181 @@ function buildFramework() {
 	}).join("")
 	const pd = D.surah.ring_structure.prophetic_division
 	$("#prophetic-note").innerHTML = `${pd.note}<div class="src" style="margin-top:6px;color:${COLORS.muted}">المصدر: ${pd.source}</div>`
+}
+
+/* ============================================================
+   Layer: خريطة السور (surah connection map) — 114 surahs linked by
+   their shared distinctive roots. Force-directed. Computed facts.
+   ============================================================ */
+const SM = window.SURAH_MAP
+let smG = null
+
+function smName(n) {
+	return (SM.surahs[n].name || ("سورة " + n)).replace(/^سُ?ورَةُ\s*/, "")
+}
+
+function buildSurahMap() {
+	const canvas = $("#suramap-canvas")
+	const nodes = Object.entries(SM.surahs).map(([n, d]) => ({ n: +n, ...d, vx: 0, vy: 0 }))
+	const idx = new Map(nodes.map((nd, i) => [nd.n, i]))
+	const seen = new Set(), edges = []
+	nodes.forEach((nd) => {
+		nd.neighbors.slice(0, 3).forEach(([m]) => {
+			const key = nd.n < m ? nd.n + "-" + m : m + "-" + nd.n
+			if (!seen.has(key) && idx.has(m)) { seen.add(key); edges.push({ a: idx.get(nd.n), b: idx.get(m) }) }
+		})
+	})
+	const rand = mulberry32(9)
+	const maxSize = Math.max(...nodes.map((n) => n.size))
+	nodes.forEach((nd) => {
+		const a = rand() * 6.2832, r = 120 + rand() * 260
+		nd.x = Math.cos(a) * r; nd.y = Math.sin(a) * r
+		nd.r = 4 + 13 * Math.sqrt(nd.size / maxSize)
+	})
+	smG = { canvas, ctx: canvas.getContext("2d"), nodes, edges, idx, alpha: 1, hover: null, sel: null, view: { scale: 1, cx: 0, cy: 0 } }
+	smResize()
+	requestAnimationFrame(smTick)
+
+	canvas.addEventListener("mousemove", (e) => {
+		const p = smMouse(e)
+		smG.hover = smFind(p)
+		canvas.style.cursor = smG.hover ? "pointer" : "default"
+		if (smG.hover) {
+			const d = smG.hover
+			showTip(`<b>${smName(d.n)}</b> <span class="mut">(${d.type} · ${arNum(d.ayahs)} آية)</span>`, e.clientX, e.clientY)
+		} else { hideTip() }
+	})
+	canvas.addEventListener("mousedown", (e) => {
+		const nd = smFind(smMouse(e))
+		if (nd) { smG.sel = nd; smG.alpha = Math.max(smG.alpha, 0.2); showSmPanel(nd) }
+	})
+	canvas.addEventListener("mouseleave", () => { smG.hover = null; hideTip() })
+
+	$("#suramap-legend").innerHTML =
+		`<span class="item"><span class="swatch" style="background:${COLORS.blue};border-radius:50%"></span> مكية</span>` +
+		`<span class="item"><span class="swatch" style="background:${COLORS.aqua};border-radius:50%"></span> مدنية</span>` +
+		`<span class="item" style="color:${COLORS.muted}">حجم الدائرة ~ طول السورة · الخيوط تصل المتشابهات</span>`
+	$("#suramap-info").innerHTML = "اضغط أيّ سورة لترى أقرب السور إليها لغويًّا وما الجذور التي تجمعها."
+}
+
+function smResize() {
+	const canvas = smG.canvas
+	const cssW = canvas.parentElement.clientWidth - 40
+	const dpr = window.devicePixelRatio || 1
+	canvas.style.height = "560px"
+	canvas.width = cssW * dpr; canvas.height = 560 * dpr
+	smG.dpr = dpr; smG.w = cssW; smG.h = 560
+	smG.alpha = Math.max(smG.alpha, 0.3)
+}
+function smMouse(e) {
+	const rect = smG.canvas.getBoundingClientRect()
+	const { scale, cx, cy } = smG.view
+	return {
+		x: (e.clientX - rect.left - smG.w / 2) / scale + cx,
+		y: (e.clientY - rect.top - smG.h / 2) / scale + cy,
+	}
+}
+function smFit() {
+	const xs = smG.nodes.map((n) => n.x), ys = smG.nodes.map((n) => n.y)
+	const minx = Math.min(...xs), maxx = Math.max(...xs), miny = Math.min(...ys), maxy = Math.max(...ys)
+	const pad = 46
+	const s = Math.min((smG.w - pad * 2) / Math.max(1, maxx - minx), (smG.h - pad * 2) / Math.max(1, maxy - miny), 1.3)
+	smG.view = { scale: Math.max(0.45, s), cx: (minx + maxx) / 2, cy: (miny + maxy) / 2 }
+}
+function smFind(p) {
+	let best = null, bd = 1e9
+	for (const nd of smG.nodes) {
+		const d = Math.hypot(nd.x - p.x, nd.y - p.y)
+		if (d < nd.r + 6 && d < bd) { best = nd; bd = d }
+	}
+	return best
+}
+
+function smTick() {
+	if (!$("#layer-suramap").classList.contains("visible")) { requestAnimationFrame(smTick); return }
+	const { nodes, edges } = smG
+	if (smG.alpha > 0.004) {
+		const REP = 1600           // repulsion strength
+		const MIND = 24            // distance floor: never let two nodes act closer than this
+		const IDEAL = 96           // ideal edge length
+		const MAXV = 30            // per-tick velocity cap — the guard against numerical blow-up
+		for (const nd of nodes) { nd.vx *= 0.9; nd.vy *= 0.9 }
+		for (let i = 0; i < nodes.length; i++) {
+			const a = nodes[i]
+			for (let j = i + 1; j < nodes.length; j++) {
+				const b = nodes[j]
+				let dx = b.x - a.x, dy = b.y - a.y
+				let d = Math.hypot(dx, dy)
+				if (d < 0.01) { dx = (i - j) || 1; dy = 1; d = Math.hypot(dx, dy) }
+				const dd = Math.max(d, MIND)
+				const f = (REP * smG.alpha) / (dd * dd)   // ~ inverse-square, bounded by the MIND floor
+				const ux = dx / d, uy = dy / d
+				a.vx -= ux * f; a.vy -= uy * f; b.vx += ux * f; b.vy += uy * f
+			}
+		}
+		for (const e of edges) {
+			const a = nodes[e.a], b = nodes[e.b]
+			const dx = b.x - a.x, dy = b.y - a.y, d = Math.max(0.01, Math.hypot(dx, dy))
+			const f = ((d - IDEAL) / d) * 0.05 * smG.alpha
+			a.vx += dx * f; a.vy += dy * f; b.vx -= dx * f; b.vy -= dy * f
+		}
+		for (const nd of nodes) {
+			nd.vx -= nd.x * 0.015 * smG.alpha      // gravity toward centre — keeps the cloud bounded
+			nd.vy -= nd.y * 0.018 * smG.alpha
+			const v = Math.hypot(nd.vx, nd.vy)
+			if (v > MAXV) { nd.vx = (nd.vx / v) * MAXV; nd.vy = (nd.vy / v) * MAXV }
+			nd.x += nd.vx; nd.y += nd.vy
+		}
+		smG.alpha *= 0.99
+	}
+	smFit()
+	smDraw()
+	requestAnimationFrame(smTick)
+}
+
+function smDraw() {
+	const { ctx, nodes, edges } = smG
+	const { scale, cx, cy } = smG.view
+	ctx.setTransform(smG.dpr, 0, 0, smG.dpr, 0, 0)
+	ctx.clearRect(0, 0, smG.w, smG.h)
+	ctx.fillStyle = COLORS.surface
+	ctx.fillRect(0, 0, smG.w, smG.h)
+	ctx.setTransform(smG.dpr * scale, 0, 0, smG.dpr * scale,
+		(smG.w / 2 - cx * scale) * smG.dpr, (smG.h / 2 - cy * scale) * smG.dpr)
+	const selSet = smG.sel ? new Set(smG.sel.neighbors.slice(0, 3).map((x) => x[0]).concat(smG.sel.n)) : null
+	for (const e of edges) {
+		const a = nodes[e.a], b = nodes[e.b]
+		const on = smG.sel && (a.n === smG.sel.n || b.n === smG.sel.n)
+		ctx.strokeStyle = on ? hexA(COLORS.yellow, 0.8) : "#33322f"
+		ctx.lineWidth = on ? 2 : 0.7
+		ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke()
+	}
+	for (const nd of nodes) {
+		const dim = selSet && !selSet.has(nd.n)
+		ctx.globalAlpha = dim ? 0.25 : 1
+		ctx.beginPath(); ctx.arc(nd.x, nd.y, nd.r, 0, Math.PI * 2)
+		ctx.fillStyle = nd.type === "مكية" ? COLORS.blue : COLORS.aqua
+		ctx.fill()
+		ctx.lineWidth = (smG.sel && nd.n === smG.sel.n) ? 3 : 1.5
+		ctx.strokeStyle = (smG.sel && nd.n === smG.sel.n) ? "#fff" : COLORS.surface
+		ctx.stroke()
+		if (nd.r > 9 || nd === smG.hover || (smG.sel && nd.n === smG.sel.n)) {
+			ctx.fillStyle = dim ? "rgba(195,194,183,0.3)" : COLORS.ink
+			ctx.font = "13px 'Amiri',serif"
+			ctx.textAlign = "center"
+			ctx.fillText(smName(nd.n), nd.x, nd.y - nd.r - 4)
+		}
+		ctx.globalAlpha = 1
+	}
+}
+
+function showSmPanel(nd) {
+	const rows = nd.neighbors.slice(0, 5).map(([m, sim, sh]) =>
+		`<div class="rx-occ"><span class="rx-ref">${smName(m)}</span> يجمعهما: ${sh.join("، ")} <span style="color:${COLORS.muted}">(${sim})</span></div>`).join("")
+	$("#suramap-info").innerHTML =
+		`<div class="rx-head"><b>${smName(nd.n)}</b> — ${nd.type} · ${arNum(nd.ayahs)} آية</div>` +
+		`<div class="rx-stat">أقرب السور إليها لغويًّا (بالجذور المشتركة النادرة):</div>` +
+		`<div class="rx-list">${rows}</div>`
 }
 
 /* ============================================================
@@ -1585,6 +1761,7 @@ buildDialogue()
 buildScenes()
 buildScale()
 buildExplorer()
+buildSurahMap()
 buildRing()
 graphInit()
 buildPhonetic()
@@ -1593,6 +1770,6 @@ buildFramework()
 buildObservatory()
 drawRadar()
 window.addEventListener("resize", () => {
-	graphResize(); drawRadar(); drawBridge(); drawObsChart(); drawScale(); sizeSceneCanvas()
+	graphResize(); drawRadar(); drawBridge(); drawObsChart(); drawScale(); sizeSceneCanvas(); smResize()
 	if ($("#layer-dialogue").classList.contains("visible")) { drawBreath(D.arc.verses[dlgIndex], 0) }
 })

@@ -43,6 +43,7 @@
 		<button data-layer="acoustic">التردد الفيزيائي</button>
 		<button data-layer="observatory">مرصد الفواصل</button>
 		<button data-layer="explorer">مستكشف الجذر</button>
+		<button data-layer="suramap">خريطة السور</button>
 		<span class="tab-sep"></span>
 		<button id="reopen-invitation" class="tab-ghost">↻ الافتتاحية</button>
 	</nav>
@@ -148,6 +149,16 @@
 			</div>
 		</section>
 
+		<section class="layer" id="layer-suramap">
+			<div class="panel">
+				<h2>خريطة ترابط السور <span class="badge qati">حقائق محسوبة</span></h2>
+				<div class="hint">الـ١١٤ سورة كشبكة: تُوصَل كل سورة بأقرب السور إليها «لغةً» — أي أكثرها مشاركةً لها في الجذور النادرة (لا الشائعة كـأله/قول). فترى أي السور «تتكلم بنفس اللغة». مرّر فوق سورة أو اضغطها. حقائق محسوبة، لا تزيد على القرآن شيئًا.</div>
+				<div class="legend" id="suramap-legend"></div>
+				<canvas id="suramap-canvas" height="560"></canvas>
+				<div class="info-card" id="suramap-info"></div>
+			</div>
+		</section>
+
 		<section class="layer" id="layer-explorer">
 			<div class="panel">
 				<h2>مستكشف الجذر — كل كلمة بوّابة <span class="badge qati">حقائق محسوبة</span></h2>
@@ -192,6 +203,7 @@
 	<script src="generated/fawasil.js"></script>
 	<script src="generated/control.js"></script>
 	<script src="generated/explorer.js"></script>
+	<script src="generated/surah_map.js"></script>
 	<script src="app.js"></script>
 </body>
 </html>

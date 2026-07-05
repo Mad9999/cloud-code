@@ -160,8 +160,65 @@ def build_explorer():
 	}
 
 
+def build_surah_map(top_k=6):
+	"""Inter-surah connection map: link each surah to the others that 'speak the
+	same language' — highest cosine similarity over their root vectors, weighted
+	so RARE shared roots count more than ubiquitous ones (أله/قول are everywhere).
+	Also records the distinctive roots that bind each pair. Computed facts."""
+	import math
+	surah_roots = defaultdict(Counter)
+	for s, _a, _w, _seg, _form, root in parse_all():
+		if root:
+			surah_roots[s][root] += 1
+	surahs = sorted(surah_roots)
+	n = len(surahs)
+	df = Counter()
+	for s in surahs:
+		for r in surah_roots[s]:
+			df[r] += 1
+	idf = {r: math.log(n / df[r]) for r in df}
+
+	def vec(s):
+		return {r: (1 + math.log(c)) * idf[r] for r, c in surah_roots[s].items()}
+
+	vecs = {s: vec(s) for s in surahs}
+	norms = {s: math.sqrt(sum(x * x for x in v.values())) or 1 for s, v in vecs.items()}
+
+	def sim(a, b):
+		va, vb = vecs[a], vecs[b]
+		common = set(va) & set(vb)
+		return sum(va[r] * vb[r] for r in common) / (norms[a] * norms[b]) if common else 0.0
+
+	def shared(a, b):
+		common = set(surah_roots[a]) & set(surah_roots[b])
+		return [r for r in sorted(common, key=lambda r: -idf[r])[:4]]
+
+	with open(BASE / "data" / "surah_meta.json", encoding="utf-8") as f:
+		meta = json.load(f)
+	out = {}
+	for a in surahs:
+		sims = sorted(((sim(a, b), b) for b in surahs if b != a), reverse=True)[:top_k]
+		m = meta[str(a)]
+		out[a] = {
+			"name": m["name"], "type": "مكية" if m["revelationType"] == "Meccan" else "مدنية",
+			"ayahs": m["ayahs"], "size": sum(surah_roots[a].values()),
+			"neighbors": [[b, round(sc, 3), shared(a, b)] for sc, b in sims],
+		}
+	return {"surahs": out}
+
+
 if __name__ == "__main__":
 	import sys
+	if "--map" in sys.argv:
+		payload = build_surah_map()
+		out = BASE / "app" / "generated" / "surah_map.js"
+		out.parent.mkdir(parents=True, exist_ok=True)
+		with open(out, "w", encoding="utf-8") as f:
+			f.write("window.SURAH_MAP = ")
+			json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
+			f.write(";\n")
+		print(f"wrote surah_map.js ({out.stat().st_size // 1024} KiB) — {len(payload['surahs'])} surahs")
+		sys.exit(0)
 	if "--explorer" in sys.argv:
 		payload = build_explorer()
 		out = BASE / "app" / "generated" / "explorer.js"
