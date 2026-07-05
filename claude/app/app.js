@@ -1055,6 +1055,46 @@ function buildDiscoveries() {
 }
 
 /* ============================================================
+   Layer: تدبّر السور القصار (contemplation of the short surahs) —
+   sourced, graded reflection per verse. NOT محاورة: no manufactured
+   divine response; that belongs to al-Fatiha alone (Muslim 395).
+   ============================================================ */
+const TS = window.TADABBUR_SHORT
+
+function buildTadabburShort() {
+	$("#ts-picker").innerHTML = TS.surahs.map((su, i) =>
+		`<button class="ts-tab${i === 0 ? " sel" : ""}" data-i="${i}">${stripSurah(EX.surah_names[su.n] || ("سورة " + su.n))}</button>`).join("")
+	$("#ts-picker").querySelectorAll(".ts-tab").forEach((b) =>
+		b.addEventListener("click", () => renderTadabburShort(+b.dataset.i)))
+	renderTadabburShort(0)
+}
+
+function renderTadabburShort(i) {
+	$("#ts-picker").querySelectorAll(".ts-tab").forEach((b, k) => b.classList.toggle("sel", k === i))
+	const su = TS.surahs[i]
+	const nm = stripSurah(EX.surah_names[su.n] || ("سورة " + su.n))
+	let html = `<div class="ts-head"><b>${nm}</b> <span class="mut">· ${EX.surah_type[su.n]} · ${arNum(su.verses.length)} آية · ${su.theme}</span></div>`
+	if (su.fadl) {
+		html += `<div class="ts-note ts-fadl">✦ <b>فضلها:</b> ${su.fadl.text} <span class="src">${su.fadl.source} ${gradeBadge(su.fadl.grade)}</span></div>`
+	}
+	if (su.sabab) {
+		html += `<div class="ts-note ts-sabab">◆ <b>سببُ نزولها:</b> ${su.sabab.text} <span class="src">${su.sabab.source} ${gradeBadge(su.sabab.grade)}</span></div>`
+	}
+	html += su.verses.map((v) => {
+		const names = (v.names && v.names.length) ? `<span class="ts-names">الأسماء الفاعلة: ${v.names.join(" · ")}</span>` : ""
+		return `<div class="ts-verse">` +
+			`<div class="ts-ayah">﴿ ${ayahText(su.n, v.n)} <span class="vmark">${arNum(v.n)}</span> ﴾</div>` +
+			`<div class="ts-reflect">${v.reflection.text}` +
+			`<span class="src">${v.reflection.source} ${gradeBadge(v.reflection.grade)}</span></div>` +
+			`<div class="ts-meta">${names}` +
+			`<span class="ts-heart">القلب: ${v.heart_state.text} ${gradeBadge("ijtihadi")}</span></div>` +
+			`<div class="ts-action">↦ ${v.action.text} ${gradeBadge("ijtihadi")}</div>` +
+			`</div>`
+	}).join("")
+	$("#ts-body").innerHTML = html
+}
+
+/* ============================================================
    Layer: المصادر المُسنَدة (sourced context library) — the trusted
    classical references for stories, occasions of revelation, history,
    tafsir-by-narration. We catalogue and point; we do not summarise.
@@ -1955,6 +1995,7 @@ buildScale()
 buildExplorer()
 buildDiscoveries()
 buildSources()
+buildTadabburShort()
 buildSurahMap()
 buildRing()
 graphInit()

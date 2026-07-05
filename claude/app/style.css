@@ -397,6 +397,25 @@ table.stats td:first-child, table.stats th:first-child { text-align: right; font
 .ex-disc b { color: var(--ink); }
 .ex-disc .mut { font-family: var(--ui); font-size: 11px; color: var(--muted); }
 
+/* Layer: تدبّر السور القصار (short-surah contemplation) */
+.ts-picker { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 18px; }
+.ts-tab { font-family: var(--arabic); font-size: 16px; color: var(--ink-2); background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 6px 16px; cursor: pointer; }
+.ts-tab.sel, .ts-tab:hover { background: rgba(25, 158, 112, 0.14); border-color: rgba(25, 158, 112, 0.5); color: var(--ink); }
+.ts-head { font-family: var(--arabic); font-size: 22px; color: var(--ink); margin-bottom: 12px; }
+.ts-head .mut { font-size: 14px; color: var(--muted); }
+.ts-note { font-family: var(--arabic); font-size: 15px; line-height: 1.9; color: var(--ink-2); border-radius: 10px; padding: 11px 15px; margin-bottom: 10px; }
+.ts-note b { color: var(--ink); }
+.ts-note .src { display: block; color: var(--muted); font-family: var(--ui); font-size: 11.5px; margin-top: 6px; }
+.ts-fadl { background: rgba(25, 158, 112, 0.08); border: 1px solid rgba(25, 158, 112, 0.28); }
+.ts-sabab { background: rgba(57, 135, 229, 0.07); border: 1px solid rgba(57, 135, 229, 0.26); }
+.ts-verse { border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; margin-bottom: 14px; background: var(--surface); }
+.ts-ayah { font-family: var(--arabic); font-size: 26px; line-height: 2; color: var(--ink); text-align: center; margin-bottom: 12px; }
+.ts-ayah .vmark { font-size: 15px; color: var(--aqua); }
+.ts-reflect { font-family: var(--arabic); font-size: 16.5px; line-height: 2; color: var(--ink-2); }
+.ts-reflect .src { display: block; color: var(--muted); font-family: var(--ui); font-size: 11.5px; margin-top: 8px; }
+.ts-meta { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 10px; font-family: var(--arabic); font-size: 14px; color: var(--muted); }
+.ts-action { font-family: var(--arabic); font-size: 15.5px; color: var(--yellow); margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--grid); }
+
 /* Layer: المصادر المُسنَدة (sourced context library) */
 .src-cat { margin-bottom: 22px; }
 .src-cat-head { border-bottom: 1px solid var(--grid); padding-bottom: 6px; margin-bottom: 12px; }

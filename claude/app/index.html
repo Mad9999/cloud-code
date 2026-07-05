@@ -32,6 +32,7 @@
 	<nav class="tabs" id="tabs">
 		<span class="tab-group-label">للعابد · النور</span>
 		<button data-layer="dialogue" class="active">★ المحاورة</button>
+		<button data-layer="tadabbur-short">تدبّر السور القصار</button>
 		<button data-layer="scenes">الآية تُضيء</button>
 		<button data-layer="scale">الميزان</button>
 		<button data-layer="ring">الهيكل الدائري</button>
@@ -151,6 +152,15 @@
 			</div>
 		</section>
 
+		<section class="layer" id="layer-tadabbur-short">
+			<div class="panel">
+				<h2>تدبّر السور القصار — ما تقرؤه في صلاتك <span class="badge mathur">مأثور مُسنَد</span></h2>
+				<div class="hint">هذه سورٌ تُصلّى كثيرًا، فلنتدبّرها. وأمانةً: هذا <b>تدبّرٌ لا محاورة</b> — «جوابُ الله بعد كل آية» خاصٌّ بالفاتحة لحديث «قسمتُ الصلاة» (مسلم ٣٩٥)، ولم يرد مثلُه لهذه السور فلا نصنعُه. المعاني منقولةٌ بتصرّفٍ يسير عن تفسير ابن كثير وتيسير السعدي مع الإحالة، وحالُ القلب والعملُ اجتهادٌ موسوم.</div>
+				<div class="ts-picker" id="ts-picker"></div>
+				<div class="ts-body" id="ts-body"></div>
+			</div>
+		</section>
+
 		<section class="layer" id="layer-sources">
 			<div class="panel">
 				<h2>المصادر المُسنَدة — إلى أين تعود لتفهم القصّة والسبب <span class="badge mathur">مأثور موثّق</span></h2>
@@ -226,6 +236,7 @@
 	<script src="generated/discoveries.js"></script>
 	<script src="generated/quran_context.js"></script>
 	<script src="generated/ayah_links.js"></script>
+	<script src="generated/tadabbur_short.js"></script>
 	<script src="app.js"></script>
 </body>
 </html>
