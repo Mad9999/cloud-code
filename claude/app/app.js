@@ -75,7 +75,7 @@ $("#tabs").addEventListener("click", (e) => {
 	if (btn.dataset.layer === "scenes") { sizeSceneCanvas(); if (!scenesRaf) { scenesLoop() } }
 	if (btn.dataset.layer !== "dialogue") { stopDialogue() }
 	if (btn.dataset.layer === "suramap") { smResize() }
-	const research = ["graph", "phonetic", "acoustic", "observatory", "explorer", "suramap"]
+	const research = ["discover", "graph", "phonetic", "acoustic", "observatory", "explorer", "suramap"]
 	$("#research-disclaimer").classList.toggle("show", research.includes(btn.dataset.layer))
 })
 
@@ -883,10 +883,17 @@ function renderExplorerSurah(n) {
 	const cnt = EX.surah_ayahs[n]
 	const prof = EX.surah_profile[n] || {}
 	const topR = (prof.top_roots || []).map(([r, c]) => `${r} (${arNum(c)})`).join("، ")
+	const disc = DISC.surahs[n]
+	const uniqNote = (disc && disc.unique.length)
+		? `<div class="ex-disc">✦ <b>ما قد لا تلاحظه:</b> ` +
+			disc.unique.slice(0, 4).map((u) => `«${u[1]}»`).join("، ") +
+			` — كلماتٌ لا يردُ جذرها في القرآن كلّه إلا في هذه السورة. <span class="mut">(كشفٌ محسوب)</span></div>`
+		: ""
 	$("#explorer-header").innerHTML =
 		`<b>${sname(n)}</b> — ${EX.surah_type[n]} · ${arNum(cnt)} آية` +
 		`${topR ? ` · أبرز جذورها: ${topR}` : ""}` +
-		`${prof.unique_roots ? ` · جذورٌ تفرّدت بها: ${arNum(prof.unique_roots)}` : ""}`
+		`${prof.unique_roots ? ` · جذورٌ تفرّدت بها: ${arNum(prof.unique_roots)}` : ""}` +
+		uniqNote
 	let html = ""
 	for (let a = 1; a <= cnt; a++) {
 		const ws = EX.verse_words[n + ":" + a] || []
@@ -919,6 +926,42 @@ function showRootExplorer(root, wtext, el) {
 		`<div class="rx-stat">ظهر هذا الجذر في القرآن كلّه: <b>${arNum(r.count)}</b> مرة · في <b>${arNum(r.ayah_count)}</b> آية · عبر <b>${arNum(r.surah_count)}</b> سورة</div>` +
 		`<div class="rx-surahs">أكثر السور حضورًا: ${topS}</div>` +
 		`<h3>حيث يظهر عبر المصحف (عيّنة):</h3><div class="rx-list">${rows}${more}</div>`
+}
+
+/* ============================================================
+   Layer: كشوف محسوبة (computed discoveries) — what the AI surfaces
+   that a reader passes over. Pure counting facts, each with its proof.
+   ============================================================ */
+const DISC = window.DISCOVERIES
+
+function stripSurah(name) {
+	return (name || "").replace(/^سُ?ورَةُ\s*/, "")
+}
+
+function buildDiscoveries() {
+	const g = DISC.global
+	$("#disc-stats").innerHTML =
+		`<span class="disc-stat"><b>${arNum(g.distinct_roots)}</b> جذرًا يُبنى منه القرآن كلّه</span>` +
+		`<span class="disc-stat"><b>${arNum(g.hapax_total)}</b> جذرًا لا يردُ في المصحف إلا <b>مرّةً واحدة</b></span>` +
+		`<span class="disc-stat"><b>${arNum(Object.keys(DISC.surahs).length)}</b> سورةً لها كلماتٌ تفرّدت بها</span>`
+	$("#disc-feed").innerHTML = g.feed.map((f, i) =>
+		`<div class="disc-item" data-s="${f.surah}" data-a="${f.ayah}">` +
+		`<div class="disc-line"><span class="disc-word">${f.form}</span>` +
+		`<span class="disc-say">لا يردُ جذرُها <b class="root">${f.root}</b> في القرآن كلّه إلا في ` +
+		`<b>${stripSurah(f.name)}</b> — ${arNum(f.count)} مرّات.</span></div>` +
+		`<div class="disc-proof" id="disc-proof-${i}"><span class="disc-open">تحقّق: أظهِر الموضع الأول ↓</span></div></div>`).join("")
+	$("#disc-feed").querySelectorAll(".disc-item").forEach((el, i) => {
+		el.addEventListener("click", () => {
+			const proof = $("#disc-proof-" + i)
+			const s = +el.dataset.s, a = +el.dataset.a
+			if (proof.dataset.open) {
+				proof.dataset.open = ""; proof.innerHTML = `<span class="disc-open">تحقّق: أظهِر الموضع الأول ↓</span>`
+			} else {
+				proof.dataset.open = "1"
+				proof.innerHTML = `<div class="disc-ayah"><span class="rx-ref">${stripSurah(DISC.surahs[s] ? DISC.surahs[s].name : sname(s))} ${arNum(a)}</span> ${ayahText(s, a)}</div>`
+			}
+		})
+	})
 }
 
 /* ============================================================
@@ -1761,6 +1804,7 @@ buildDialogue()
 buildScenes()
 buildScale()
 buildExplorer()
+buildDiscoveries()
 buildSurahMap()
 buildRing()
 graphInit()

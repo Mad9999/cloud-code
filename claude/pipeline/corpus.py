@@ -207,8 +207,90 @@ def build_surah_map(top_k=6):
 	return {"surahs": out}
 
 
+def build_discoveries(per_surah_cap=8, feed_cap=60):
+	"""What the AI surfaces that a reader passes over (رقم القاعدة ١١+١٢): purely
+	COMPUTED, verifiable facts — never generated meaning. Two honest categories:
+
+	  * unique-to-surah roots — a root that occurs in NO other surah of the whole
+	    Qur'an (e.g. صمد/كفأ only in al-Ikhlas). The reader never notices a word
+	    is confined to one place until it is counted.
+	  * hapax — a root that occurs exactly ONCE in the entire Qur'an.
+
+	Each item carries its own proof (root, example word, location, counts) so the
+	claim can be checked; nothing is interpreted, only counted."""
+	words = defaultdict(lambda: defaultdict(lambda: {"text": "", "root": None}))
+	root_count = Counter()
+	root_surahs = defaultdict(set)
+	root_first = {}                       # root -> (s, a) first occurrence
+	for s, a, w, _seg, form, root in parse_all():
+		e = words[(s, a)][w]
+		e["text"] += form
+		if root:
+			e["root"] = root
+			root_count[root] += 1
+			root_surahs[root].add(s)
+			if root not in root_first:
+				root_first[root] = (s, a)
+
+	# a readable example word (full reconstructed form) for each root
+	example = {}
+	for (s, a), wd in words.items():
+		for w in wd:
+			r = wd[w]["root"]
+			if r and r not in example and root_first.get(r) == (s, a):
+				example[r] = wd[w]["text"]
+
+	with open(BASE / "data" / "surah_meta.json", encoding="utf-8") as f:
+		meta = json.load(f)
+
+	def sname(n):
+		return meta[str(n)]["name"]
+
+	surahs = {}
+	feed = []
+	for n in range(1, 115):
+		confined = [r for r in root_surahs if len(root_surahs[r]) == 1 and n in root_surahs[r]]
+		# unique: confined to this surah, ranked by how many times it recurs here
+		uniq = sorted(confined, key=lambda r: -root_count[r])
+		unique_items = [[r, example.get(r, ""), root_count[r], root_first[r][1]]
+			for r in uniq[:per_surah_cap]]
+		hapax_items = [[r, example.get(r, ""), root_first[r][1]]
+			for r in sorted(confined) if root_count[r] == 1][:per_surah_cap]
+		if unique_items or hapax_items:
+			surahs[n] = {"name": sname(n), "unique": unique_items, "hapax": hapax_items}
+		# feed: the striking ones — a word repeated yet still confined to one surah
+		for r in uniq:
+			if root_count[r] >= 2:
+				feed.append({"type": "unique", "root": r, "form": example.get(r, ""),
+					"surah": n, "name": sname(n), "ayah": root_first[r][1], "count": root_count[r]})
+
+	feed.sort(key=lambda x: -x["count"])
+	hapax_total = sum(1 for r in root_count if root_count[r] == 1)
+	return {
+		"surahs": surahs,
+		"global": {
+			"distinct_roots": len(root_count),
+			"hapax_total": hapax_total,
+			"feed": feed[:feed_cap],
+		},
+	}
+
+
 if __name__ == "__main__":
 	import sys
+	if "--discoveries" in sys.argv:
+		payload = build_discoveries()
+		out = BASE / "app" / "generated" / "discoveries.js"
+		out.parent.mkdir(parents=True, exist_ok=True)
+		with open(out, "w", encoding="utf-8") as f:
+			f.write("window.DISCOVERIES = ")
+			json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
+			f.write(";\n")
+		g = payload["global"]
+		print(f"wrote discoveries.js ({out.stat().st_size // 1024} KiB) — "
+			f"{len(payload['surahs'])} surahs, {g['hapax_total']} hapax roots, "
+			f"feed {len(g['feed'])}")
+		sys.exit(0)
 	if "--map" in sys.argv:
 		payload = build_surah_map()
 		out = BASE / "app" / "generated" / "surah_map.js"
