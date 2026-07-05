@@ -72,6 +72,7 @@ $("#tabs").addEventListener("click", (e) => {
 	if (btn.dataset.layer === "acoustic") { drawBridge() }
 	if (btn.dataset.layer === "observatory") { drawObsChart(); drawControlChart() }
 	if (btn.dataset.layer === "scale") { drawScale() }
+	if (btn.dataset.layer === "scenes") { sizeSceneCanvas(); if (!scenesRaf) { scenesLoop() } }
 	if (btn.dataset.layer !== "dialogue") { stopDialogue() }
 	const research = ["graph", "phonetic", "acoustic", "observatory"]
 	$("#research-disclaimer").classList.toggle("show", research.includes(btn.dataset.layer))
@@ -671,6 +672,222 @@ function buildFramework() {
 	}).join("")
 	const pd = D.surah.ring_structure.prophetic_division
 	$("#prophetic-note").innerHTML = `${pd.note}<div class="src" style="margin-top:6px;color:${COLORS.muted}">المصدر: ${pd.source}</div>`
+}
+
+/* ============================================================
+   Layer: الآية تُضيء (verse scenes) — bespoke design that lights up
+   each verse's meaning. The verse text stays fixed & respected;
+   the canvas behind it is the aid.
+   ============================================================ */
+let sceneIdx = 0
+let sceneSel = null
+let sceneT = 0
+let scenesRaf = null
+let sceneDims = { w: 0, h: 0, dpr: 1 }
+
+function hexA(hex, a) {
+	const n = parseInt(hex.slice(1), 16)
+	return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`
+}
+function glow(ctx, x, y, r, color, a) {
+	const g = ctx.createRadialGradient(x, y, 0, x, y, r)
+	g.addColorStop(0, hexA(color, a))
+	g.addColorStop(1, hexA(color, 0))
+	ctx.fillStyle = g
+	ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill()
+}
+
+function buildScenes() {
+	const S = D.scenes.verses
+	$("#scene-nav").innerHTML = S.map((s, k) => `<button data-k="${k}">${arNum(s.n)}</button>`).join("")
+	$("#scene-nav").querySelectorAll("button").forEach((b) =>
+		{ b.onclick = () => renderScene(Number(b.dataset.k)) })
+	renderScene(0)
+}
+
+function renderScene(k) {
+	sceneIdx = k
+	sceneSel = null
+	sceneT = 0
+	const s = D.scenes.verses[k]
+	const verse = D.surah.verses[s.n - 1]
+	const hot = {}
+	s.hotspots.forEach((h) => { hot[h.word] = h })
+	const words = verse.words.map((w) =>
+		`<span class="scene-word${hot[w.i] ? " hot" : ""}" data-wi="${w.i}">${w.text}</span>`).join(" ")
+	$("#scene-stage").innerHTML =
+		`<canvas class="scene-canvas" id="scene-canvas"></canvas>` +
+		`<div class="scene-overlay">` +
+		`<div class="scene-title">${s.title}</div>` +
+		`<div class="scene-verse">﴿ ${words} <span class="vmark">${arNum(s.n)}</span> ﴾</div>` +
+		`<div class="scene-hotnote" id="scene-hotnote">اضغط الكلمات المُضيئة لتتدبّرها</div>` +
+		`</div>`
+	$("#scene-stage").querySelectorAll(".scene-word.hot").forEach((el) =>
+		{ el.onclick = () => selectSceneWord(s, Number(el.dataset.wi), el) })
+	$("#scene-nav").querySelectorAll("button").forEach((b, i) => b.classList.toggle("active", i === k))
+	$("#scene-rationale").innerHTML =
+		`<b>${s.title}</b> ${gradeBadge(s.grade)}` +
+		`<div style="margin-top:6px">${s.design_rationale}</div>` +
+		`<div class="src">${s.sources}</div>`
+	sizeSceneCanvas()
+	if (!scenesRaf) { scenesLoop() }
+}
+
+function selectSceneWord(s, wi, el) {
+	sceneSel = wi
+	$("#scene-stage").querySelectorAll(".scene-word").forEach((e) => e.classList.remove("sel"))
+	el.classList.add("sel")
+	const h = s.hotspots.find((x) => x.word === wi)
+	const w = D.surah.verses[s.n - 1].words.find((x) => x.i === wi)
+	$("#scene-hotnote").innerHTML =
+		`<b>${h.label}</b>${w && w.root ? ` <span class="r">جذر: ${w.root}</span>` : ""} — ${h.note}`
+}
+
+function sizeSceneCanvas() {
+	const c = $("#scene-canvas")
+	if (!c) { return }
+	const st = $("#scene-stage")
+	const w = st.clientWidth, h = st.clientHeight
+	const dpr = window.devicePixelRatio || 1
+	c.width = w * dpr; c.height = h * dpr
+	sceneDims = { w, h, dpr }
+}
+
+function scenesLoop() {
+	const c = $("#scene-canvas")
+	if (!c || !$("#layer-scenes").classList.contains("visible")) { scenesRaf = null; return }
+	const { w, h, dpr } = sceneDims
+	const ctx = c.getContext("2d")
+	ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+	ctx.clearRect(0, 0, w, h)
+	sceneT += 0.016
+	const s = D.scenes.verses[sceneIdx]
+	;(SCENE_DRAW[s.scene_key] || (() => {}))(ctx, w, h, sceneT)
+	scenesRaf = requestAnimationFrame(scenesLoop)
+}
+
+// deterministic pseudo-random points for a scene (index-seeded, no Math.random at draw)
+const SCENE_DOTS = Array.from({ length: 40 }, (_, i) => {
+	const a = i * 2.399963
+	return { a, r: 0.35 + ((i * 97) % 100) / 100 * 0.6, ph: (i % 10) / 10 }
+})
+
+const SCENE_DRAW = {
+	two_mercies(ctx, w, h) {
+		const cx = w / 2, cy = h / 2, m = Math.min(w, h)
+		const p = 0.5 + 0.5 * Math.sin(sceneT * 0.7)
+		const wide = sceneSel === 4 ? 0.10 : 0.14 + 0.05 * p
+		const core = sceneSel === 3 ? 0.10 : 0.16 + 0.08 * (1 - p)
+		glow(ctx, cx, cy, m * 0.85, COLORS.aqua, wide)          // الرحمن: وسعت كل شيء
+		glow(ctx, cx, cy, m * 0.32, "#e0a02a", core)            // الرحيم: قلبٌ دافئ
+	},
+	all_praise(ctx, w, h) {
+		const cx = w / 2, cy = h / 2, R = Math.min(w, h) * 0.52
+		SCENE_DOTS.forEach((d, i) => {
+			const pulse = 0.85 + 0.15 * Math.sin(sceneT * 0.8 + i)
+			const r = R * d.r * pulse
+			const x = cx + Math.cos(d.a + sceneT * 0.04) * r
+			const y = cy + Math.sin(d.a + sceneT * 0.04) * r * 0.7
+			ctx.strokeStyle = hexA(COLORS.blue, 0.10)
+			ctx.lineWidth = 1
+			ctx.beginPath(); ctx.moveTo(cx, cy)
+			ctx.lineTo(cx + (x - cx) * 0.62, cy + (y - cy) * 0.62)  // thread fades before the text
+			ctx.stroke()
+			glow(ctx, x, y, 10, COLORS.aqua, 0.5)
+		})
+		glow(ctx, cx, cy, 60, "#e0a02a", 0.18)
+	},
+	mercy_bridge(ctx, w, h) {
+		const cy = h / 2, lx = w * 0.13, rx = w * 0.87
+		const grad = ctx.createLinearGradient(lx, cy, rx, cy)
+		grad.addColorStop(0, hexA(COLORS.blue, 0.0))
+		grad.addColorStop(0.5, hexA("#e0a02a", 0.5))
+		grad.addColorStop(1, hexA(COLORS.blue, 0.0))
+		ctx.strokeStyle = grad; ctx.lineWidth = 4
+		ctx.beginPath(); ctx.moveTo(lx, cy); ctx.lineTo(rx, cy); ctx.stroke()
+		const px = lx + (rx - lx) * (0.5 + 0.5 * Math.sin(sceneT * 0.9))
+		glow(ctx, px, cy, 40, "#e0a02a", 0.4)
+		glow(ctx, lx, cy, 46, COLORS.blue, 0.4)
+		glow(ctx, rx, cy, 46, COLORS.violet, 0.4)
+		sceneLabel(ctx, "الربوبية (٢)", rx, cy + 62)
+		sceneLabel(ctx, "الجزاء (٤)", lx, cy + 62)
+	},
+	sole_king(ctx, w, h) {
+		const cx = w / 2
+		ctx.fillStyle = "rgba(6,6,6,0.55)"; ctx.fillRect(0, 0, w, h)  // everything dims
+		SCENE_DOTS.slice(0, 16).forEach((d) => {
+			const fade = Math.max(0, 0.5 - (sceneT * 0.08 + d.ph) % 1.2)  // lesser lights die out
+			const x = cx + Math.cos(d.a) * w * 0.4 * d.r
+			const y = h * 0.5 + Math.sin(d.a) * h * 0.36 * d.r
+			glow(ctx, x, y, 8, "#9a9a90", fade)
+		})
+		const p = 0.7 + 0.3 * Math.sin(sceneT * 1.1)
+		glow(ctx, cx, h * 0.2, 70, "#e7c66a", 0.32 * p)             // only the Sovereign remains
+		glow(ctx, cx, h * 0.2, 24, "#fff2cc", 0.5 * p)
+	},
+	exclusivity_turn(ctx, w, h) {
+		const tx = w * 0.5, ty = h * 0.34  // converge onto «إياك» (upper-centre of the text)
+		for (let i = 0; i < 10; i++) {
+			const a = (i / 10) * Math.PI * 2
+			const prog = (sceneT * 0.5 + i / 10) % 1
+			const d0 = Math.min(w, h) * 0.5
+			const sx = tx + Math.cos(a) * d0 * (1 - prog)
+			const sy = ty + Math.sin(a) * d0 * 0.7 * (1 - prog)
+			ctx.strokeStyle = hexA(COLORS.magenta, 0.5 * (1 - prog))
+			ctx.lineWidth = 2
+			ctx.beginPath(); ctx.moveTo(sx, sy)
+			ctx.lineTo(tx + Math.cos(a) * 26, ty + Math.sin(a) * 18); ctx.stroke()
+		}
+		glow(ctx, tx, ty, 44, COLORS.magenta, 0.4)
+		sceneLabel(ctx, "↯ الالتفات: من الغيبة إلى الخطاب", w / 2, h - 26, COLORS.magenta)
+	},
+	straight_path(ctx, w, h) {
+		const cx = w / 2
+		// crooked, fading side-paths
+		ctx.strokeStyle = hexA("#6b6a64", 0.25); ctx.lineWidth = 2
+		for (const s of [-1, 1]) {
+			ctx.beginPath(); ctx.moveTo(cx + s * 40, h)
+			ctx.bezierCurveTo(cx + s * 160, h * 0.7, cx - s * 120, h * 0.4, cx + s * 80, h * 0.12)
+			ctx.stroke()
+		}
+		// the one straight, luminous path
+		const grad = ctx.createLinearGradient(cx, h, cx, h * 0.1)
+		grad.addColorStop(0, hexA(COLORS.blue, 0.0))
+		grad.addColorStop(1, hexA("#cfe6ff", 0.8))
+		ctx.strokeStyle = grad; ctx.lineWidth = 4
+		ctx.beginPath(); ctx.moveTo(cx, h - 6); ctx.lineTo(cx, h * 0.1); ctx.stroke()
+		const p = 0.7 + 0.3 * Math.sin(sceneT * 1.2)
+		glow(ctx, cx, h * 0.12, 55, "#cfe6ff", 0.4 * p)            // the light at the end
+	},
+	role_and_bounds(ctx, w, h) {
+		const cx = w / 2
+		// two branches veering off into darkness
+		const branch = (dir, color) => {
+			ctx.strokeStyle = hexA(color, 0.35); ctx.lineWidth = 2
+			ctx.beginPath(); ctx.moveTo(cx, h * 0.5)
+			ctx.quadraticCurveTo(cx + dir * w * 0.2, h * 0.62, cx + dir * w * 0.42, h * 0.92)
+			ctx.stroke()
+		}
+		branch(1, COLORS.red)      // المغضوب عليهم
+		branch(-1, COLORS.orange)  // الضالّون
+		sceneLabel(ctx, "المغضوب عليهم", cx + w * 0.30, h * 0.95, COLORS.red)
+		sceneLabel(ctx, "الضالّون", cx - w * 0.30, h * 0.95, COLORS.orange)
+		// the straight, lit path of the guided
+		const grad = ctx.createLinearGradient(cx, h * 0.5, cx, h * 0.08)
+		grad.addColorStop(0, hexA("#cfe6ff", 0.1))
+		grad.addColorStop(1, hexA("#cfe6ff", 0.85))
+		ctx.strokeStyle = grad; ctx.lineWidth = 4
+		ctx.beginPath(); ctx.moveTo(cx, h * 0.5); ctx.lineTo(cx, h * 0.08); ctx.stroke()
+		const p = 0.7 + 0.3 * Math.sin(sceneT * 1.1)
+		glow(ctx, cx, h * 0.1, 50, "#cfe6ff", 0.4 * p)
+	},
+}
+
+function sceneLabel(ctx, text, x, y, color) {
+	ctx.fillStyle = color || COLORS.ink2
+	ctx.font = "14px system-ui"
+	ctx.textAlign = "center"
+	ctx.fillText(text, x, y)
 }
 
 /* ============================================================
@@ -1294,6 +1511,7 @@ function invDrawBreath(arcv, progress) {
 /* ---------- boot ---------- */
 buildInvitation()
 buildDialogue()
+buildScenes()
 buildScale()
 buildRing()
 graphInit()
@@ -1303,6 +1521,6 @@ buildFramework()
 buildObservatory()
 drawRadar()
 window.addEventListener("resize", () => {
-	graphResize(); drawRadar(); drawBridge(); drawObsChart(); drawScale()
+	graphResize(); drawRadar(); drawBridge(); drawObsChart(); drawScale(); sizeSceneCanvas()
 	if ($("#layer-dialogue").classList.contains("visible")) { drawBreath(D.arc.verses[dlgIndex], 0) }
 })

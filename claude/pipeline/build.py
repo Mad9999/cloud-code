@@ -72,6 +72,19 @@ def validate_tadabbur(tadabbur):
 	print("  OK: tadabbur graded and sourced; only verse 1 lacks divine response")
 
 
+def validate_scenes(scenes):
+	verses = scenes["verses"]
+	if len(verses) != 7:
+		fail("scenes must cover 7 verses")
+	for v in verses:
+		for field in ("scene_key", "title", "design_rationale", "sources"):
+			if not v.get(field):
+				fail(f"scene {v['n']}: missing {field}")
+		if v.get("grade") != "ijtihadi":
+			fail(f"scene {v['n']}: design must be graded ijtihadi (an aid, not a claim)")
+	print("  OK: 7 scenes, each with a graded + sourced design rationale")
+
+
 def validate_fawasil(fw):
 	if fw["total_ayahs"] != 6236:
 		fail(f"Quran ayah total {fw['total_ayahs']} != 6236")
@@ -100,6 +113,8 @@ def main():
 		letters = json.load(f)
 	with open(BASE / "data" / "tadabbur_001.json", encoding="utf-8") as f:
 		tadabbur = json.load(f)
+	with open(BASE / "data" / "scenes_001.json", encoding="utf-8") as f:
+		scenes = json.load(f)
 
 	print("phonetic profile ...")
 	phonetics = phonetic_profile.build()
@@ -107,6 +122,9 @@ def main():
 
 	print("tadabbur & dialogue layer ...")
 	validate_tadabbur(tadabbur)
+
+	print("verse scenes (الآية تُضيء) ...")
+	validate_scenes(scenes)
 
 	print("spiritual arc ...")
 	spiritual_arc = arc.build()
@@ -135,6 +153,7 @@ def main():
 		"acoustics": acoustics,
 		"tadabbur": tadabbur,
 		"arc": spiritual_arc,
+		"scenes": scenes,
 	})
 	write_payload("fawasil.js", "FAWASIL_DATA", fw)
 	write_payload("control.js", "CONTROL_DATA", control)

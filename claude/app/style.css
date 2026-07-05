@@ -350,6 +350,47 @@ table.stats td:first-child, table.stats th:first-child { text-align: right; font
 .link-card .src { color: var(--muted); font-size: 11.5px; margin-top: 6px; }
 .link-card .typechip { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-inline-end: 6px; }
 
+/* Layer: الآية تُضيء (verse scenes) */
+.scene-nav { display: flex; gap: 7px; justify-content: center; flex-wrap: wrap; margin-bottom: 12px; }
+.scene-nav button {
+	width: 34px; height: 34px; border-radius: 50%;
+	border: 1px solid var(--border); background: #202020; color: var(--ink-2);
+	font-family: var(--arabic); font-size: 15px; cursor: pointer;
+}
+.scene-nav button.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+.scene-stage {
+	position: relative;
+	height: 420px;
+	border-radius: 14px;
+	overflow: hidden;
+	background: #131312;
+	border: 1px solid var(--border);
+}
+.scene-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.scene-overlay {
+	position: absolute; inset: 0;
+	display: flex; flex-direction: column; align-items: center; justify-content: center;
+	gap: 16px; padding: 20px; text-align: center; pointer-events: none;
+}
+.scene-title { font-family: var(--arabic); color: var(--yellow); font-size: 18px; }
+.scene-verse {
+	font-family: var(--arabic); color: var(--ink); font-size: 32px; line-height: 2;
+	max-width: 720px; text-shadow: 0 2px 18px rgba(0, 0, 0, 0.7);
+}
+.scene-verse .vmark { color: var(--yellow); font-size: 20px; }
+.scene-word { pointer-events: auto; border-radius: 6px; padding: 0 3px; cursor: default; }
+.scene-word.hot { cursor: pointer; border-bottom: 2px dotted var(--yellow); text-shadow: 0 0 16px rgba(201, 133, 0, 0.7); }
+.scene-word.hot:hover { background: rgba(201, 133, 0, 0.16); }
+.scene-word.sel { background: var(--yellow); color: #14100a; }
+.scene-hotnote {
+	pointer-events: none;
+	max-width: 620px; font-size: 14.5px; color: var(--ink-2);
+	background: rgba(20, 20, 19, 0.82); border: 1px solid var(--border);
+	border-radius: 12px; padding: 10px 16px; backdrop-filter: blur(3px);
+}
+.scene-hotnote b { color: var(--ink); font-family: var(--arabic); font-size: 17px; }
+.scene-hotnote .r { color: var(--aqua); font-size: 12.5px; font-family: var(--arabic); }
+
 /* Layer: المحاورة (dialogue) */
 .dialogue-panel { text-align: center; }
 #dialogue-stage {
