@@ -1312,6 +1312,18 @@ let sceneSel = null
 let sceneT = 0
 let scenesRaf = null
 let sceneDims = { w: 0, h: 0, dpr: 1 }
+let sceneSetIdx = 0
+
+// scene sets: al-Fatiha (words from D.surah) and al-Baqara greats (words from
+// the whole-Quran morphology). Each set knows how to fetch a verse's words.
+const SCENE_SETS = [
+	{ name: "الفاتحة", verses: D.scenes.verses,
+		wordsFor: (n) => D.surah.verses[n - 1].words },
+	{ name: "البقرة (مختارات)", verses: (window.SCENES_BAQARA || { verses: [] }).verses,
+		wordsFor: (n) => (EX.verse_words["2:" + n] || []).map(([text, root], i) => ({ i: i + 1, text, root })) },
+]
+function sceneVerses() { return SCENE_SETS[sceneSetIdx].verses }
+function sceneWords(n) { return SCENE_SETS[sceneSetIdx].wordsFor(n) }
 
 function hexA(hex, a) {
 	const n = parseInt(hex.slice(1), 16)
@@ -1326,22 +1338,30 @@ function glow(ctx, x, y, r, color, a) {
 }
 
 function buildScenes() {
-	const S = D.scenes.verses
-	$("#scene-nav").innerHTML = S.map((s, k) => `<button data-k="${k}">${arNum(s.n)}</button>`).join("")
+	$("#scene-set").innerHTML = SCENE_SETS.map((st, i) =>
+		`<button class="scene-set-btn${i === 0 ? " sel" : ""}" data-s="${i}">${st.name}</button>`).join("")
+	$("#scene-set").querySelectorAll(".scene-set-btn").forEach((b) =>
+		{ b.onclick = () => { sceneSetIdx = +b.dataset.s; buildSceneNav(); renderScene(0) } })
+	buildSceneNav()
+	renderScene(0)
+}
+
+function buildSceneNav() {
+	$("#scene-set").querySelectorAll(".scene-set-btn").forEach((b, i) => b.classList.toggle("sel", i === sceneSetIdx))
+	$("#scene-nav").innerHTML = sceneVerses().map((s, k) => `<button data-k="${k}">${arNum(s.n)}</button>`).join("")
 	$("#scene-nav").querySelectorAll("button").forEach((b) =>
 		{ b.onclick = () => renderScene(Number(b.dataset.k)) })
-	renderScene(0)
 }
 
 function renderScene(k) {
 	sceneIdx = k
 	sceneSel = null
 	sceneT = 0
-	const s = D.scenes.verses[k]
-	const verse = D.surah.verses[s.n - 1]
+	const s = sceneVerses()[k]
+	const vwords = sceneWords(s.n)
 	const hot = {}
 	s.hotspots.forEach((h) => { hot[h.word] = h })
-	const words = verse.words.map((w) =>
+	const words = vwords.map((w) =>
 		`<span class="scene-word${hot[w.i] ? " hot" : ""}" data-wi="${w.i}">${w.text}</span>`).join(" ")
 	$("#scene-stage").innerHTML =
 		`<canvas class="scene-canvas" id="scene-canvas"></canvas>` +
@@ -1366,7 +1386,7 @@ function selectSceneWord(s, wi, el) {
 	$("#scene-stage").querySelectorAll(".scene-word").forEach((e) => e.classList.remove("sel"))
 	el.classList.add("sel")
 	const h = s.hotspots.find((x) => x.word === wi)
-	const w = D.surah.verses[s.n - 1].words.find((x) => x.i === wi)
+	const w = sceneWords(s.n).find((x) => x.i === wi)
 	$("#scene-hotnote").innerHTML =
 		`<b>${h.label}</b>${w && w.root ? ` <span class="r">جذر: ${w.root}</span>` : ""} — ${h.note}`
 }
@@ -1389,7 +1409,7 @@ function scenesLoop() {
 	ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 	ctx.clearRect(0, 0, w, h)
 	sceneT += 0.016
-	const s = D.scenes.verses[sceneIdx]
+	const s = sceneVerses()[sceneIdx]
 	;(SCENE_DRAW[s.scene_key] || (() => {}))(ctx, w, h, sceneT)
 	scenesRaf = requestAnimationFrame(scenesLoop)
 }
@@ -1508,6 +1528,48 @@ const SCENE_DRAW = {
 		ctx.beginPath(); ctx.moveTo(cx, h * 0.5); ctx.lineTo(cx, h * 0.08); ctx.stroke()
 		const p = 0.7 + 0.3 * Math.sin(sceneT * 1.1)
 		glow(ctx, cx, h * 0.1, 50, "#cfe6ff", 0.4 * p)
+	},
+	// آية الكرسي: everything held & encompassed; a centre that never dims
+	kursi(ctx, w, h) {
+		const cx = w / 2, cy = h / 2, m = Math.min(w, h)
+		const big = sceneSel === 42 ? 0.98 : 0.82                 // وسع كرسيّه
+		glow(ctx, cx, cy, m * big, COLORS.blue, 0.10)            // the vast kursi
+		ctx.strokeStyle = hexA(COLORS.aqua, 0.22); ctx.lineWidth = 1.5
+		ctx.beginPath(); ctx.arc(cx, cy, m * big * 0.5, 0, Math.PI * 2); ctx.stroke()
+		const orbR = m * 0.27                                     // heavens & earth held within
+		;[0, Math.PI].forEach((base, idx) => {
+			const a = base + sceneT * 0.11
+			const x = cx + Math.cos(a) * orbR, y = cy + Math.sin(a) * orbR * 0.78
+			glow(ctx, x, y, 15, idx ? COLORS.aqua : COLORS.violet, 0.45)
+		})
+		SCENE_DOTS.slice(0, 10).forEach((d) => {                 // intercessors kindle only by leave
+			const rr = m * 0.37 * d.r
+			const x = cx + Math.cos(d.a) * rr, y = cy + Math.sin(d.a) * rr * 0.78
+			const dist = Math.hypot(x - cx, y - cy) / (m * 0.42)
+			const permit = (sceneSel === 23 ? 0.6 : 0.22) - dist * (sceneSel === 23 ? 0.45 : 0.18)
+			glow(ctx, x, y, 8, "#e0a02a", Math.max(0, permit))
+		})
+		const alive = sceneSel === 7 ? 1 : 0.82 + 0.05 * Math.sin(sceneT * 0.8)  // الحيّ القيّوم — never off
+		glow(ctx, cx, cy, 74, "#f0c85a", 0.5 * alive)
+		glow(ctx, cx, cy, 30, "#fff2cc", 0.6 * alive)
+	},
+	// خواتيم البقرة: burdens lifted, pleas rising and answered («قد فعلت»)
+	dua_end(ctx, w, h) {
+		const cx = w / 2, m = Math.min(w, h)
+		for (let i = 0; i < 5; i++) {
+			const ph = (sceneT * 0.12 + i * 0.2) % 1
+			const x = cx + (i - 2) * m * 0.15
+			const y = h * 0.9 - ph * h * 0.72
+			const a = Math.sin(ph * Math.PI)
+			glow(ctx, x, y, 12, "#cfe6ff", 0.42 * a)             // a plea ascends
+			if (ph > 0.72) { glow(ctx, x, h * 0.15, 22, "#e0a02a", 0.32 * (ph - 0.72) / 0.28) }  // answered
+		}
+		const lift = sceneSel === 24 ? 1 : 0.5 + 0.5 * Math.sin(sceneT * 0.5)   // الإصر يُرفع
+		ctx.fillStyle = hexA(COLORS.violet, 0.16 * (1 - lift * 0.6))
+		ctx.fillRect(cx - m * 0.22, h * 0.82 - lift * h * 0.26, m * 0.44, 9)
+		if (sceneSel === 6) { glow(ctx, cx, h / 2, m * 0.5, "#cfe6ff", 0.10) }   // إلا وسعها: يُسر
+		if (sceneSel === 39) { glow(ctx, cx, h / 2, m * 0.5, "#e0a02a", 0.12) }  // العفو والرحمة
+		if (sceneSel === 45) { glow(ctx, cx, h / 2, m * 0.6, COLORS.aqua, 0.12) }  // مولانا: نصرٌ وحفظ
 	},
 }
 

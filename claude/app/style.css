@@ -483,6 +483,9 @@ table.stats td:first-child, table.stats th:first-child { text-align: right; font
 .disc-ayah .rx-ref { font-family: var(--ui); font-size: 11.5px; color: var(--aqua); background: #202020; border-radius: 6px; padding: 1px 7px; margin-inline-end: 8px; white-space: nowrap; }
 
 /* Layer: الآية تُضيء (verse scenes) */
+.scene-set { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px; }
+.scene-set-btn { font-family: var(--arabic); font-size: 15px; color: var(--ink-2); background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 5px 16px; cursor: pointer; }
+.scene-set-btn.sel, .scene-set-btn:hover { background: rgba(25, 158, 112, 0.14); border-color: rgba(25, 158, 112, 0.5); color: var(--ink); }
 .scene-nav { display: flex; gap: 7px; justify-content: center; flex-wrap: wrap; margin-bottom: 12px; }
 .scene-nav button {
 	width: 34px; height: 34px; border-radius: 50%;
