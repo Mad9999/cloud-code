@@ -42,6 +42,7 @@
 		<button data-layer="phonetic">البصمة الصوتية</button>
 		<button data-layer="acoustic">التردد الفيزيائي</button>
 		<button data-layer="observatory">مرصد الفواصل</button>
+		<button data-layer="explorer">مستكشف الجذر</button>
 		<span class="tab-sep"></span>
 		<button id="reopen-invitation" class="tab-ghost">↻ الافتتاحية</button>
 	</nav>
@@ -147,6 +148,15 @@
 			</div>
 		</section>
 
+		<section class="layer" id="layer-explorer">
+			<div class="panel">
+				<h2>مستكشف الجذر — كل كلمة بوّابة <span class="badge qati">حقائق محسوبة</span></h2>
+				<div class="hint">القرآن كله مبنيٌّ من ١٦٥١ جذرًا فقط. اضغط أيّ كلمة من الفاتحة لترى جذرها، وأين ينتشر في القرآن كلّه (٦٢٣٦ آية) — فتشعر كيف أن الفاتحة مفتاحٌ موصولٌ بكل المصحف. هذه حقائق يكشفها الحاسوب، لا تزيد على القرآن شيئًا.</div>
+				<div id="explorer-verses" class="rx-verses"></div>
+				<div class="info-card" id="explorer-detail"></div>
+			</div>
+		</section>
+
 		<section class="layer" id="layer-observatory">
 			<div class="panel">
 				<h2>مرصد الفواصل — تجربة حيّة على القرآن كاملاً <span class="badge qati">قياس</span></h2>
@@ -179,6 +189,7 @@
 	<script src="generated/data.js"></script>
 	<script src="generated/fawasil.js"></script>
 	<script src="generated/control.js"></script>
+	<script src="generated/explorer.js"></script>
 	<script src="app.js"></script>
 </body>
 </html>

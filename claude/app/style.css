@@ -350,6 +350,25 @@ table.stats td:first-child, table.stats th:first-child { text-align: right; font
 .link-card .src { color: var(--muted); font-size: 11.5px; margin-top: 6px; }
 .link-card .typechip { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-inline-end: 6px; }
 
+/* Layer: مستكشف الجذر (root explorer) */
+.rx-verses { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.rx-verse { font-family: var(--arabic); font-size: 22px; color: var(--ink); line-height: 2; }
+.rx-verse .rx-num { color: var(--yellow); font-size: 14px; }
+.rx-word { cursor: pointer; border-radius: 6px; padding: 0 3px; border-bottom: 2px dotted rgba(57, 135, 229, 0.5); transition: background 0.12s; }
+.rx-word:hover { background: rgba(57, 135, 229, 0.16); }
+.rx-word.sel { background: var(--blue); color: #fff; }
+.rx-head b { font-family: var(--arabic); font-size: 19px; color: var(--ink); }
+.rx-head .root { color: var(--aqua); }
+.rx-head .gloss { color: var(--ink-2); font-size: 13.5px; margin-top: 2px; }
+.rx-stat { margin-top: 10px; font-size: 14.5px; color: var(--ink-2); }
+.rx-stat b { color: var(--blue); font-variant-numeric: tabular-nums; }
+.rx-surahs { margin-top: 6px; font-size: 13px; color: var(--muted); }
+.rx-list { margin-top: 8px; max-height: 340px; overflow-y: auto; border: 1px solid var(--grid); border-radius: 10px; }
+.rx-occ { font-family: var(--arabic); font-size: 16px; color: var(--ink-2); padding: 8px 12px; border-bottom: 1px solid var(--grid); line-height: 1.9; }
+.rx-occ:last-child { border-bottom: none; }
+.rx-occ .rx-ref { font-family: var(--ui); font-size: 11.5px; color: var(--aqua); background: #202020; border-radius: 6px; padding: 1px 7px; margin-inline-end: 6px; white-space: nowrap; }
+.rx-more { padding: 10px 12px; color: var(--muted); font-size: 13px; text-align: center; }
+
 /* Layer: الآية تُضيء (verse scenes) */
 .scene-nav { display: flex; gap: 7px; justify-content: center; flex-wrap: wrap; margin-bottom: 12px; }
 .scene-nav button {

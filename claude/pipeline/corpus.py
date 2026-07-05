@@ -92,7 +92,55 @@ def build():
 	}
 
 
+def build_explorer():
+	"""Compact app payload for the Root Explorer: the whole-Qur'an text (so any
+	occurrence is readable) + surah names + the concordance for every root that
+	Al-Fatiha uses (each Fatiha word becomes a gate to everywhere its root
+	appears across the 6236 verses). All computed facts — never generated."""
+	c = build()
+	# whole-Qur'an simple text, indexed "s:a" -> text
+	quran = {}
+	with open(BASE / "data" / "quran-simple.txt", encoding="utf-8") as f:
+		for line in f:
+			line = line.strip()
+			if not line or line.startswith("#"):
+				continue
+			s, a, text = line.split("|", 2)
+			quran[f"{s}:{a}"] = text
+	with open(BASE / "data" / "surah_meta.json", encoding="utf-8") as f:
+		meta = json.load(f)
+	surah_names = {n: m["name"] for n, m in meta.items()}
+	# roots used in Al-Fatiha (from the golden dataset's word roots)
+	with open(BASE / "data" / "surah_001.json", encoding="utf-8") as f:
+		surah1 = json.load(f)
+	fatiha_roots = sorted({w["root"] for v in surah1["verses"] for w in v["words"] if w["root"]})
+	roots = {}
+	for r in fatiha_roots:
+		if r in c["roots"]:
+			d = c["roots"][r]
+			roots[r] = {
+				"count": d["count"], "ayah_count": d["ayah_count"],
+				"surah_count": len(d["surahs"]), "lemma": d["lemma"],
+				"ayahs": d["ayahs"],
+			}
+	return {"quran": quran, "surah_names": surah_names, "roots": roots,
+		"distinct_roots_total": c["distinct_roots"]}
+
+
 if __name__ == "__main__":
+	import sys
+	if "--explorer" in sys.argv:
+		payload = build_explorer()
+		out = BASE / "app" / "generated" / "explorer.js"
+		out.parent.mkdir(parents=True, exist_ok=True)
+		with open(out, "w", encoding="utf-8") as f:
+			f.write("window.EXPLORER_DATA = ")
+			json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
+			f.write(";\n")
+		miss = [r for r in payload["roots"]]
+		print(f"wrote explorer.js ({out.stat().st_size // 1024} KiB) — "
+			f"{len(payload['roots'])} Fatiha roots, {len(payload['quran'])} verses of text")
+		sys.exit(0)
 	c = build()
 	print("distinct roots:", c["distinct_roots"], "| root-bearing tokens:", c["total_tokens_with_root"])
 	top = sorted(c["roots"].items(), key=lambda kv: -kv[1]["count"])[:10]
