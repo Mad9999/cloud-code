@@ -1086,13 +1086,14 @@ let tsCurIdx = 0
 // The tadabbur tab shows the short surahs (full coverage, verses[]) AND
 // al-Baqara (progressive, passages[]). A unified entry list drives the picker.
 const TB = window.TADABBUR_BAQARA
+const LONG_SURAHS = [TB, window.TADABBUR_ALIMRAN].filter(Boolean)
 const TS_ENTRIES = TS.surahs.map((su) => ({
 	kind: "short", n: su.n, name: stripSurah(EX.surah_names[su.n] || ("سورة " + su.n)),
 	type: EX.surah_type[su.n], theme: su.theme, fadl: su.fadl, sabab: su.sabab, verses: su.verses,
-})).concat([{
-	kind: "long", n: TB.n, name: TB.name + " (مختارات)", type: EX.surah_type[TB.n],
-	passages: TB.passages, coverage: TB.coverage,
-}])
+})).concat(LONG_SURAHS.map((L) => ({
+	kind: "long", n: L.n, name: L.name + (L.coverage && L.coverage.covered >= L.coverage.total ? "" : " (مختارات)"),
+	type: EX.surah_type[L.n], passages: L.passages, coverage: L.coverage, audio: L.audio,
+})))
 let tsCurEntry = TS_ENTRIES[0]
 
 function pad3(n) { return String(n).padStart(3, "0") }
@@ -1224,7 +1225,7 @@ function renderTadabburShort(i) {
 	const whole = tsWholeMode()
 
 	// for al-Baqara audio is vendored only for the great passages; show ▶ there
-	const audioSet = long ? new Set(TB.audio || []) : null
+	const audioSet = long ? new Set(e.audio || []) : null
 	const listenBtn = long ? "" : ` <button class="ts-listen" id="ts-listen">${whole ? "▶ استمع للسورة" : "▶ استمع للسورة متتابعةً"}</button>`
 	let html = `<div class="ts-head"><b>${e.name}</b> <span class="mut">· ${e.type}${long ? "" : " · " + arNum(e.verses.length) + " آية"}${e.theme ? " · " + e.theme : ""}</span>${listenBtn}</div>`
 
