@@ -1161,10 +1161,29 @@ function buildTadabburShort() {
 	renderTadabburShort(0)
 }
 
+// the ayah's echoes across the whole Qur'an, brought into the worship view but
+// graded against the chance baseline (رقم القاعدة ١٦): each link labelled by its
+// computed lift, so a near-chance coincidence can't pose as «تجاوب». On demand.
+function tsEchoHtml(ref) {
+	const nbrs = (AL.links[ref] || []).slice(0, 4)
+	if (!nbrs.length) { return "" }
+	const rows = nbrs.map(([o, sc, rs]) => {
+		const [os, oa] = o.split(":")
+		const lf = echoLift(sc)
+		const chips = rs.map((r) => `<span class="ec-root">${r}</span>`).join("")
+		return `<div class="ts-echo-row"><span class="rx-ref">${sname(os)} ${arNum(oa)}</span> ${chips}` +
+			`<span class="ec-band ${lf.cls}">${lf.label}</span><div class="ec-txt">${ayahText(os, oa)}</div></div>`
+	}).join("")
+	return `<div class="ts-echo-note">مواضعُ تشترك معها في لفظٍ مميّز — موزونةٌ على الصدفة، للتدبّر لا للاستدلال:</div>${rows}`
+}
+
 // one verse card, shared by short surahs and al-Baqara passages
 function tsVerseCard(s, v, showPlay) {
 	const names = (v.names && v.names.length) ? `<span class="ts-names">الأسماء الفاعلة: ${v.names.join(" · ")}</span>` : ""
 	const playBtn = showPlay ? `<button class="ts-play" data-a="${v.n}" title="استمع لهذه الآية">▶</button> ` : ""
+	const ref = s + ":" + v.n
+	const echoBtn = (AL.links[ref] && AL.links[ref].length)
+		? `<button class="ts-echo-btn" data-ref="${ref}">⇄ صداها في القرآن (${arNum(AL.links[ref].length)})</button>` : ""
 	return `<div class="ts-verse" data-a="${v.n}">` +
 		`<div class="ts-ayah">${playBtn}﴿ ${ayahText(s, v.n)} <span class="vmark">${arNum(v.n)}</span> ﴾</div>` +
 		`<div class="ts-reflect">${v.reflection.text}` +
@@ -1172,6 +1191,7 @@ function tsVerseCard(s, v, showPlay) {
 		`<div class="ts-meta">${names}` +
 		`<span class="ts-heart">القلب: ${v.heart_state.text} ${gradeBadge("ijtihadi")}</span></div>` +
 		`<div class="ts-action">↦ ${v.action.text} ${gradeBadge("ijtihadi")}</div>` +
+		(echoBtn ? `<div class="ts-echo-wrap">${echoBtn}<div class="ts-echo-body" hidden></div></div>` : "") +
 		`</div>`
 }
 
@@ -1230,6 +1250,14 @@ function renderTadabburShort(i) {
 	if (listenEl) { listenEl.addEventListener("click", () => { if (tsSeq) { tsStop() } else { tsPlaySurah(e) } }) }
 	const srcBtn = $("#ts-body").querySelector(".ts-src-btn")
 	if (srcBtn) { srcBtn.addEventListener("click", () => { const t = document.querySelector('#tabs button[data-layer="sources"]'); if (t) { t.click() } }) }
+	$("#ts-body").querySelectorAll(".ts-echo-btn").forEach((b) =>
+		b.addEventListener("click", () => {
+			const body = b.nextElementSibling
+			if (body.hidden) {
+				if (!body.dataset.filled) { body.innerHTML = tsEchoHtml(b.dataset.ref); body.dataset.filled = "1" }
+				body.hidden = false; b.classList.add("open")
+			} else { body.hidden = true; b.classList.remove("open") }
+		}))
 	$("#ts-body").querySelectorAll(".ts-play").forEach((b) =>
 		b.addEventListener("click", () => {
 			const a = +b.dataset.a

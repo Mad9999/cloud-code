@@ -415,6 +415,13 @@ table.stats td:first-child, table.stats th:first-child { text-align: right; font
 .ts-reflect .src { display: block; color: var(--muted); font-family: var(--ui); font-size: 11.5px; margin-top: 8px; }
 .ts-meta { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 10px; font-family: var(--arabic); font-size: 14px; color: var(--muted); }
 .ts-action { font-family: var(--arabic); font-size: 15.5px; color: var(--yellow); margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--grid); }
+.ts-echo-wrap { margin-top: 10px; }
+.ts-echo-btn { font-family: var(--ui); font-size: 12px; color: var(--violet); background: rgba(144, 133, 233, 0.1); border: 1px solid rgba(144, 133, 233, 0.32); border-radius: 7px; padding: 3px 11px; cursor: pointer; }
+.ts-echo-btn:hover, .ts-echo-btn.open { background: rgba(144, 133, 233, 0.22); }
+.ts-echo-body { margin-top: 8px; }
+.ts-echo-note { font-family: var(--arabic); font-size: 13px; color: var(--muted); line-height: 1.8; margin-bottom: 6px; }
+.ts-echo-row { padding: 7px 0; border-top: 1px solid var(--grid); }
+.ts-echo-row:first-of-type { border-top: none; }
 .ts-listen { font-family: var(--ui); font-size: 12.5px; color: var(--aqua); background: rgba(25, 158, 112, 0.12); border: 1px solid rgba(25, 158, 112, 0.4); border-radius: 999px; padding: 4px 14px; cursor: pointer; margin-inline-start: 8px; }
 .ts-listen:hover { background: rgba(25, 158, 112, 0.22); }
 .ts-play { font-family: var(--ui); font-size: 11px; color: var(--aqua); background: rgba(25, 158, 112, 0.1); border: 1px solid rgba(25, 158, 112, 0.35); border-radius: 50%; width: 26px; height: 26px; cursor: pointer; vertical-align: middle; margin-inline-end: 6px; }
