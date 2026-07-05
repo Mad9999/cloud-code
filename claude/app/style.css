@@ -382,6 +382,10 @@ table.stats td:first-child, table.stats th:first-child { text-align: right; font
 .rx-occ:last-child { border-bottom: none; }
 .rx-occ .rx-ref { font-family: var(--ui); font-size: 11.5px; color: var(--aqua); background: #202020; border-radius: 6px; padding: 1px 7px; margin-inline-end: 6px; white-space: nowrap; }
 .rx-more { padding: 10px 12px; color: var(--muted); font-size: 13px; text-align: center; }
+.rx-echo { font-family: var(--ui); font-size: 11.5px; color: var(--violet); background: rgba(144, 133, 233, 0.1); border: 1px solid rgba(144, 133, 233, 0.32); border-radius: 6px; padding: 1px 8px; cursor: pointer; margin-inline-start: 4px; white-space: nowrap; }
+.rx-echo:hover, .rx-echo.sel { background: rgba(144, 133, 233, 0.22); }
+.ec-root { font-family: var(--arabic); font-size: 13.5px; color: var(--violet); background: rgba(144, 133, 233, 0.12); border-radius: 5px; padding: 0 6px; margin-inline-end: 3px; }
+.ec-txt { font-family: var(--arabic); font-size: 15.5px; color: var(--ink-2); line-height: 1.9; margin-top: 4px; }
 .ex-disc { margin-top: 8px; padding: 8px 12px; border-radius: 8px; background: rgba(25, 158, 112, 0.09); border: 1px solid rgba(25, 158, 112, 0.28); font-family: var(--arabic); font-size: 15px; color: var(--ink-2); line-height: 1.85; }
 .ex-disc b { color: var(--ink); }
 .ex-disc .mut { font-family: var(--ui); font-size: 11px; color: var(--muted); }

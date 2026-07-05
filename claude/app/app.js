@@ -876,6 +876,7 @@ function showSmPanel(nd) {
    everywhere its root appears across the whole Qur'an. Computed facts.
    ============================================================ */
 const EX = window.EXPLORER_DATA
+const AL = window.AYAH_LINKS
 
 function sname(s) {
 	return (EX.surah_names[s] || ("سورة " + s)).replace(/^سُ?ورَةُ\s*/, "")
@@ -894,6 +895,8 @@ function buildExplorer() {
 	$("#ex-surah").onchange = () => renderExplorerSurah(Number($("#ex-surah").value))
 	// one delegated click handler for the whole (possibly large) verse list
 	$("#explorer-verses").addEventListener("click", (e) => {
+		const echo = e.target.closest(".rx-echo")
+		if (echo) { showEchoes(echo.dataset.ref, echo); return }
 		const el = e.target.closest(".rx-word")
 		if (el) { showRootExplorer(el.dataset.root, el.textContent, el) }
 	})
@@ -917,15 +920,39 @@ function renderExplorerSurah(n) {
 		uniqNote
 	let html = ""
 	for (let a = 1; a <= cnt; a++) {
-		const ws = EX.verse_words[n + ":" + a] || []
+		const ref = n + ":" + a
+		const ws = EX.verse_words[ref] || []
 		const words = ws.map((w) =>
 			(w[1] && EX.roots[w[1]])
 				? `<span class="rx-word" data-root="${w[1]}">${w[0]}</span>`
 				: `<span>${w[0]}</span>`).join(" ")
-		html += `<div class="rx-verse"><span class="rx-num">${arNum(a)}</span> ${words}</div>`
+		const echo = (AL.links[ref] && AL.links[ref].length)
+			? ` <button class="rx-echo" data-ref="${ref}" title="مواضع يتردّد فيها صدى مفرداتها النادرة">⇄ صداها (${arNum(AL.links[ref].length)})</button>` : ""
+		html += `<div class="rx-verse"><span class="rx-num">${arNum(a)}</span> ${words}${echo}</div>`
 	}
 	$("#explorer-verses").innerHTML = html
-	$("#explorer-detail").innerHTML = "اضغط أيّ كلمة مُبرَزة لترى جذرها وأين ينتشر في القرآن كلّه."
+	$("#explorer-detail").innerHTML = "اضغط أيّ كلمة مُبرَزة لترى جذرها وأين ينتشر في القرآن كلّه — أو «⇄ صداها» لترى مواضعَ تُشبهها لغةً."
+}
+
+// The echo of a verse (السؤال السادس): where else across the whole Qur'an its
+// DISTINCTIVE vocabulary reappears — pure root-sharing, the shared roots shown
+// as proof. We surface the structure; the meaning is the reader's.
+function showEchoes(ref, btn) {
+	$("#explorer-verses").querySelectorAll(".rx-echo.sel").forEach((e) => e.classList.remove("sel"))
+	if (btn) { btn.classList.add("sel") }
+	const nbrs = AL.links[ref] || []
+	const [s, a] = ref.split(":")
+	const rows = nbrs.map(([o, sc, rs]) => {
+		const [os, oa] = o.split(":")
+		const chips = rs.map((r) => `<span class="ec-root">${r}</span>`).join("")
+		return `<div class="rx-occ"><span class="rx-ref">${sname(os)} ${arNum(oa)}</span> ${chips} ` +
+			`<span class="mut" style="font-family:var(--ui);font-size:11px">صدىً ${sc}</span><div class="ec-txt">${ayahText(os, oa)}</div></div>`
+	}).join("")
+	$("#explorer-detail").innerHTML =
+		`<div class="rx-head"><b>صدى الآية</b> — ${sname(s)} ${arNum(a)}</div>` +
+		`<div class="rx-stat" style="font-family:var(--arabic);font-size:16px;color:var(--ink)">${ayahText(s, a)}</div>` +
+		`<div class="rx-surahs">مواضعُ تتردّد فيها مفرداتها النادرة (مرتّبةً بقوّة الاشتراك؛ الجذور المشتركة تحتها). حقيقةٌ محسوبة — المعنى تتدبّره أنت.</div>` +
+		`<div class="rx-list">${rows}</div>`
 }
 
 function showRootExplorer(root, wtext, el) {

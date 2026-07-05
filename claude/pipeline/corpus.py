@@ -207,6 +207,63 @@ def build_surah_map(top_k=6):
 	return {"surahs": out}
 
 
+def build_ayah_links(top_k=6, df_ceiling=300, min_shared_idf=2.4):
+	"""Ayah-level echoes (السؤال البحثي السادس: شبكة الجواب) — for each of the
+	6236 verses, the OTHER verses whose language echoes it, measured by the
+	rare roots they share. idf-weighting means ubiquitous roots (أله/قول, in
+	thousands of verses) create NO link; only distinctive shared vocabulary
+	binds two verses. A verse that says صمد/كفأ finds its kin, not every verse
+	that merely says «قال». Pure counting — the shared roots are shown as proof,
+	the meaning is left to the reader.
+
+	  * df_ceiling — a root present in more than this many verses is too common
+	    to generate a candidate link (structural words, not distinctive echoes).
+	  * min_shared_idf — a pair must share distinctive vocabulary worth at least
+	    this combined idf, else no edge (kills one-weak-root coincidences)."""
+	import math
+	ayah_roots = defaultdict(set)          # (s,a) -> {root, ...}
+	for s, a, _w, _seg, _form, root in parse_all():
+		if root:
+			ayah_roots[(s, a)].add(root)
+	ayahs = sorted(ayah_roots)
+	n = len(ayahs)
+	inv = defaultdict(list)                # root -> [ayah_key, ...]
+	for k in ayahs:
+		for r in ayah_roots[k]:
+			inv[r].append(k)
+	idf = {r: math.log(n / len(v)) for r, v in inv.items()}
+
+	def key(k):
+		return f"{k[0]}:{k[1]}"
+
+	out = {}
+	for k in ayahs:
+		roots = ayah_roots[k]
+		distinctive = [r for r in roots if len(inv[r]) <= df_ceiling]
+		scores = defaultdict(float)
+		shared = defaultdict(list)
+		for r in distinctive:
+			w = idf[r]
+			for other in inv[r]:
+				if other != k:
+					scores[other] += w
+					shared[other].append(r)
+		ranked = sorted(scores.items(), key=lambda kv: -kv[1])
+		nbrs = []
+		for other, sc in ranked:
+			if sc < min_shared_idf:
+				break
+			roots_sorted = sorted(shared[other], key=lambda r: -idf[r])[:3]
+			nbrs.append([key(other), round(sc, 2), roots_sorted])
+			if len(nbrs) >= top_k:
+				break
+		if nbrs:
+			out[key(k)] = nbrs
+	linked = len(out)
+	total_edges = sum(len(v) for v in out.values())
+	return {"links": out, "stats": {"verses_with_echoes": linked, "total_verses": n, "edges": total_edges}}
+
+
 def build_discoveries(per_surah_cap=8, feed_cap=60):
 	"""What the AI surfaces that a reader passes over (رقم القاعدة ١١+١٢): purely
 	COMPUTED, verifiable facts — never generated meaning. Two honest categories:
@@ -278,6 +335,18 @@ def build_discoveries(per_surah_cap=8, feed_cap=60):
 
 if __name__ == "__main__":
 	import sys
+	if "--links" in sys.argv:
+		payload = build_ayah_links()
+		out = BASE / "app" / "generated" / "ayah_links.js"
+		out.parent.mkdir(parents=True, exist_ok=True)
+		with open(out, "w", encoding="utf-8") as f:
+			f.write("window.AYAH_LINKS = ")
+			json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
+			f.write(";\n")
+		st = payload["stats"]
+		print(f"wrote ayah_links.js ({out.stat().st_size // 1024} KiB) — "
+			f"{st['verses_with_echoes']}/{st['total_verses']} verses linked, {st['edges']} edges")
+		sys.exit(0)
 	if "--discoveries" in sys.argv:
 		payload = build_discoveries()
 		out = BASE / "app" / "generated" / "discoveries.js"
