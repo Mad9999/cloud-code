@@ -74,6 +74,7 @@ $("#tabs").addEventListener("click", (e) => {
 	if (btn.dataset.layer === "scale") { drawScale() }
 	if (btn.dataset.layer === "scenes") { sizeSceneCanvas(); if (!scenesRaf) { scenesLoop() } }
 	if (btn.dataset.layer !== "dialogue") { stopDialogue() }
+	if (btn.dataset.layer !== "tadabbur-short") { tsStop() }
 	if (btn.dataset.layer === "suramap") { smResize() }
 	const research = ["discover", "graph", "phonetic", "acoustic", "observatory", "explorer", "suramap"]
 	$("#research-disclaimer").classList.toggle("show", research.includes(btn.dataset.layer))
@@ -1060,6 +1061,45 @@ function buildDiscoveries() {
    divine response; that belongs to al-Fatiha alone (Muslim 395).
    ============================================================ */
 const TS = window.TADABBUR_SHORT
+let tsAudio = null
+let tsSeq = null
+
+function pad3(n) { return String(n).padStart(3, "0") }
+
+function tsStop() {
+	if (tsAudio) { tsAudio.pause(); tsAudio = null }
+	tsSeq = null
+	document.querySelectorAll("#ts-body .ts-verse.playing").forEach((e) => e.classList.remove("playing"))
+	const sb = $("#ts-listen")
+	if (sb) { sb.textContent = "▶ استمع للسورة متتابعةً" }
+}
+
+function tsPlayVerse(s, a, onEnd) {
+	if (tsAudio) { tsAudio.pause() }
+	document.querySelectorAll("#ts-body .ts-verse.playing").forEach((e) => e.classList.remove("playing"))
+	const row = document.querySelector(`#ts-body .ts-verse[data-a="${a}"]`)
+	if (row) { row.classList.add("playing") }
+	tsAudio = new Audio(`../audio/${pad3(s)}${pad3(a)}.mp3`)
+	tsAudio.onended = () => {
+		if (row) { row.classList.remove("playing") }
+		if (onEnd) { onEnd() }
+	}
+	tsAudio.play().catch(() => {})
+}
+
+function tsPlaySurah(su) {
+	tsStop()
+	const btn = $("#ts-listen")
+	if (btn) { btn.textContent = "■ إيقاف" }
+	tsSeq = { su, k: 0 }
+	const step = () => {
+		if (!tsSeq || tsSeq.k >= su.verses.length) { tsStop(); return }
+		const v = su.verses[tsSeq.k]
+		tsSeq.k += 1
+		tsPlayVerse(su.n, v.n, step)
+	}
+	step()
+}
 
 function buildTadabburShort() {
 	$("#ts-picker").innerHTML = TS.surahs.map((su, i) =>
@@ -1070,10 +1110,12 @@ function buildTadabburShort() {
 }
 
 function renderTadabburShort(i) {
+	tsStop()
 	$("#ts-picker").querySelectorAll(".ts-tab").forEach((b, k) => b.classList.toggle("sel", k === i))
 	const su = TS.surahs[i]
 	const nm = stripSurah(EX.surah_names[su.n] || ("سورة " + su.n))
-	let html = `<div class="ts-head"><b>${nm}</b> <span class="mut">· ${EX.surah_type[su.n]} · ${arNum(su.verses.length)} آية · ${su.theme}</span></div>`
+	let html = `<div class="ts-head"><b>${nm}</b> <span class="mut">· ${EX.surah_type[su.n]} · ${arNum(su.verses.length)} آية · ${su.theme}</span>` +
+		` <button class="ts-listen" id="ts-listen">▶ استمع للسورة متتابعةً</button></div>`
 	if (su.fadl) {
 		html += `<div class="ts-note ts-fadl">✦ <b>فضلها:</b> ${su.fadl.text} <span class="src">${su.fadl.source} ${gradeBadge(su.fadl.grade)}</span></div>`
 	}
@@ -1082,8 +1124,8 @@ function renderTadabburShort(i) {
 	}
 	html += su.verses.map((v) => {
 		const names = (v.names && v.names.length) ? `<span class="ts-names">الأسماء الفاعلة: ${v.names.join(" · ")}</span>` : ""
-		return `<div class="ts-verse">` +
-			`<div class="ts-ayah">﴿ ${ayahText(su.n, v.n)} <span class="vmark">${arNum(v.n)}</span> ﴾</div>` +
+		return `<div class="ts-verse" data-a="${v.n}">` +
+			`<div class="ts-ayah"><button class="ts-play" data-a="${v.n}" title="استمع لهذه الآية بصوت الشيخ الحصري">▶</button> ﴿ ${ayahText(su.n, v.n)} <span class="vmark">${arNum(v.n)}</span> ﴾</div>` +
 			`<div class="ts-reflect">${v.reflection.text}` +
 			`<span class="src">${v.reflection.source} ${gradeBadge(v.reflection.grade)}</span></div>` +
 			`<div class="ts-meta">${names}` +
@@ -1092,6 +1134,15 @@ function renderTadabburShort(i) {
 			`</div>`
 	}).join("")
 	$("#ts-body").innerHTML = html
+	$("#ts-listen").addEventListener("click", () => {
+		if (tsSeq) { tsStop() } else { tsPlaySurah(su) }
+	})
+	$("#ts-body").querySelectorAll(".ts-play").forEach((b) =>
+		b.addEventListener("click", () => {
+			const a = +b.dataset.a
+			const row = document.querySelector(`#ts-body .ts-verse[data-a="${a}"]`)
+			if (row && row.classList.contains("playing")) { tsStop() } else { tsStop(); tsPlayVerse(su.n, a) }
+		}))
 }
 
 /* ============================================================
