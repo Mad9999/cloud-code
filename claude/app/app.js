@@ -1329,6 +1329,8 @@ const SCENE_SETS = [
 		wordsFor: (n) => (EX.verse_words["2:" + n] || []).map(([text, root], i) => ({ i: i + 1, text, root })) },
 	{ name: "آل عمران (مختارات)", verses: (window.SCENES_ALIMRAN || { verses: [] }).verses,
 		wordsFor: (n) => (EX.verse_words["3:" + n] || []).map(([text, root], i) => ({ i: i + 1, text, root })) },
+	{ name: "النساء (مختارات)", verses: (window.SCENES_NISA || { verses: [] }).verses,
+		wordsFor: (n) => (EX.verse_words["4:" + n] || []).map(([text, root], i) => ({ i: i + 1, text, root })) },
 ].filter((st) => st.verses.length)
 function sceneVerses() { return SCENE_SETS[sceneSetIdx].verses }
 function sceneWords(n) { return SCENE_SETS[sceneSetIdx].wordsFor(n) }
@@ -1621,6 +1623,70 @@ const SCENE_DRAW = {
 		// بيدك الخير: a warm glow that never leaves the whole scene
 		const kh = sceneSel === 19
 		glow(ctx, cx, cy, m * (kh ? 0.5 : 0.42), "#e0a02a", kh ? 0.12 : 0.06)
+	},
+	// النساء ١٣٥: a balance whose beam stays level toward Allah; desire (الهوى)
+	// gusts at it but cannot tip it — justice is not swayed by kin, wealth, or self.
+	qist(ctx, w, h) {
+		const cx = w / 2, cy = h / 2, m = Math.min(w, h)
+		// شهداء لله: the anchor above that keeps the beam true
+		glow(ctx, cx, cy - m * 0.34, m * 0.13, "#e0a02a", 0.16)
+		// الهوى tries to tip it; the beam wobbles a hair then holds level
+		const gust = sceneSel === 25
+		const tilt = gust ? 0.05 * Math.sin(sceneT * 3) : 0.012 * Math.sin(sceneT * 1.1)
+		if (gust) {
+			for (let i = 0; i < 4; i++) {
+				const yy = cy - m * 0.1 + i * m * 0.06
+				const px = ((sceneT * 60 + i * 40) % (m * 0.5))
+				ctx.strokeStyle = hexA(COLORS.red, 0.22)
+				ctx.lineWidth = 1
+				ctx.beginPath(); ctx.moveTo(cx - m * 0.28 + px, yy); ctx.lineTo(cx - m * 0.16 + px, yy); ctx.stroke()
+			}
+		}
+		ctx.save()
+		ctx.translate(cx, cy)
+		ctx.rotate(tilt)
+		// the fulcrum column, rooted (toward Allah)
+		ctx.strokeStyle = hexA("#e0a02a", 0.5)
+		ctx.lineWidth = 2.5
+		ctx.beginPath(); ctx.moveTo(0, -m * 0.22); ctx.lineTo(0, 0); ctx.stroke()
+		// the level beam
+		const bw = m * 0.3, beamOn = sceneSel === 5 || sceneSel === 6
+		ctx.strokeStyle = hexA(beamOn ? "#e0a02a" : COLORS.ink2, beamOn ? 0.7 : 0.5)
+		ctx.lineWidth = beamOn ? 3 : 2
+		ctx.beginPath(); ctx.moveTo(-bw, 0); ctx.lineTo(bw, 0); ctx.stroke()
+		// two pans: near (self/kin) and far (rich/poor)
+		const near = sceneSel === 11
+		;[[-bw, near], [bw, false]].forEach(([x, hot]) => {
+			ctx.strokeStyle = hexA(COLORS.muted, 0.4)
+			ctx.lineWidth = 1
+			ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, m * 0.08); ctx.stroke()
+			glow(ctx, x, m * 0.1, m * (hot ? 0.09 : 0.05), hot ? COLORS.blue : COLORS.aqua, hot ? 0.35 : 0.18)
+		})
+		ctx.restore()
+	},
+	// النساء ١٧٤: darkness at the edges yields to a clear rising light (the Quran);
+	// a sharp ray = برهان (proof to the mind), a soft glow = نور مبين (light to the heart).
+	burhan_nur(ctx, w, h) {
+		const cx = w / 2, cy = h / 2, m = Math.min(w, h)
+		// darkness pooled at the edges (before the light)
+		const vig = ctx.createRadialGradient(cx, cy, m * 0.1, cx, cy, m * 0.7)
+		vig.addColorStop(0, hexA("#000000", 0))
+		vig.addColorStop(1, hexA("#000000", 0.5))
+		ctx.fillStyle = vig
+		ctx.fillRect(0, 0, w, h)
+		// نورًا مبينًا: a soft spreading glow that dispels the dark
+		const nur = sceneSel === 10 || sceneSel === 11
+		const p = 0.5 + 0.5 * Math.sin(sceneT * 0.6)
+		glow(ctx, cx, cy, m * (nur ? 0.62 : 0.46 + 0.04 * p), "#e0a02a", nur ? 0.15 : 0.10)
+		// برهان: a sharp, steady vertical ray that cuts the darkness of doubt
+		const bur = sceneSel === 5
+		const rw = bur ? 10 : 5
+		const rg = ctx.createLinearGradient(cx - rw, 0, cx + rw, 0)
+		rg.addColorStop(0, hexA("#cfe6ff", 0))
+		rg.addColorStop(0.5, hexA("#cfe6ff", bur ? 0.5 : 0.28))
+		rg.addColorStop(1, hexA("#cfe6ff", 0))
+		ctx.fillStyle = rg
+		ctx.fillRect(cx - rw, cy - m * 0.42, rw * 2, m * 0.84)
 	},
 	dua_end(ctx, w, h) {
 		const cx = w / 2, m = Math.min(w, h)
