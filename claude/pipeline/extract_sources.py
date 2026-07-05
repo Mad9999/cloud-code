@@ -163,6 +163,16 @@ def source_link(entry):
 	return url
 
 
+VERIF_LABEL = {
+	"verified": "✅ مؤكَّد (طُوبق العنوان داخل الملف)",
+	"unreadable_text": "⚠️ نصّ معطوب — تحقّق بشريّ",
+	"scanned_no_text": "⚠️ مسح ضوئي — تحقّق بشريّ",
+	"link_ok": "🔗 رابط حيّ (غير مفحوص المحتوى)",
+	"needs_review": "❗ يُراجَع (قد يكون كتابًا آخر)",
+}
+REVIEW_LEVELS = {"unreadable_text", "scanned_no_text", "needs_review"}
+
+
 def write_doc(catalog, records):
 	by_cat = {}
 	for e in catalog["books"]:
@@ -170,27 +180,40 @@ def write_doc(catalog, records):
 	rec_by_i = {r["i"]: r for r in records}
 
 	lines = [
-		"# مكتبة المصادر — الإسناد الكامل",
+		"# مكتبة المصادر — الإسناد والتحقّق",
 		"",
-		"> تُولَّد آليًّا من `pipeline/extract_sources.py` فوق `data/sources_catalog.json` (روابط متحقَّقة عبر ورشة، ومواقع القرصنة مرفوضة).",
-		"> **أمانة الحقوق**: يُجلب التراث العام والنسخ المجانية الرسمية فقط؛ والكتب المحميّة تُذكر للاستشهاد والاقتناء المشروع، ولا تُحمَّل.",
+		"> تُولَّد آليًّا من `pipeline/extract_sources.py` + `pipeline/verify_sources.py` فوق `data/sources_catalog.json`.",
+		"> **أمانة الحقوق**: يُجلب التراث العام والنسخ المجانية الرسمية فقط؛ والمحميّ يُذكر للاستشهاد ولا يُحمَّل (مواقع القرصنة مرفوضة).",
+		"> **أمانة الدقّة**: عمود «التحقّق» آليّ حتميّ — «مؤكَّد» يعني أن عنوان الكتاب طُوبق داخل نصّه المستخرَج. ما وُسم بتحقّقٍ بشريّ **لا يُعتمد دون فحص**. والميتاداتا (المؤلف/سنة الوفاة) **مصرَّح بها من مصدر آليّ، غير متحقَّقة مستقلًّا** بعد.",
 		"",
 	]
 	for cat, items in by_cat.items():
 		lines.append(f"## {cat}")
 		lines.append("")
-		lines.append("| # | الكتاب | الدرجة | المصدر | الحالة |")
-		lines.append("|---|---|---|---|---|")
+		lines.append("| # | الكتاب | الدرجة | المصدر | الحالة | التحقّق |")
+		lines.append("|---|---|---|---|---|---|")
 		for e in sorted(items, key=lambda x: x["i"]):
 			rec = rec_by_i.get(e["i"], {})
 			status = rec.get("result", {}).get("status", "—")
 			url = source_link(e)
 			src_cell = f"[رابط]({url})" if url.startswith("http") else (url or "—")
+			verif = VERIF_LABEL.get(e.get("verification"), "—")
 			lines.append(
 				f"| {e['i']} | {attribution(e)} | {TIER_LABEL.get(e.get('tier'), '—')} "
-				f"| {src_cell} | {status} |"
+				f"| {src_cell} | {status} | {verif} |"
 			)
 		lines.append("")
+
+	review = [e for e in catalog["books"] if e.get("verification") in REVIEW_LEVELS]
+	if review:
+		lines.append("## بحاجة إلى فحص بشريّ (لم يتأكّد آليًّا)")
+		lines.append("")
+		lines.append("> هذه ملفات نُزّلت لكن تعذّر تأكيد محتواها آليًّا (مسح ضوئي أو ترميز نصّ معطوب). **ليست خاطئة بالضرورة** — لكن لا تُعتمد حتى تُفتَح وتُراجَع.")
+		lines.append("")
+		for e in sorted(review, key=lambda x: x["i"]):
+			lines.append(f"- **#{e['i']}** {attribution(e)} — {VERIF_LABEL.get(e.get('verification'))}")
+		lines.append("")
+
 	DOC.parent.mkdir(parents=True, exist_ok=True)
 	DOC.write_text("\n".join(lines) + "\n", encoding="utf-8")
 

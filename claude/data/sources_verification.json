@@ -1,0 +1,665 @@
+{
+	"total": 50,
+	"counts": {
+		"verified": 19,
+		"link_ok": 19,
+		"unreadable_text": 8,
+		"scanned_no_text": 4
+	},
+	"needs_review": [],
+	"records": [
+		{
+			"i": 1,
+			"title": "نظم الدرر في تناسب الآيات والسور",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "verified",
+				"title_hits": [
+					"نظم",
+					"الدرر",
+					"الايات"
+				],
+				"author_in_text": true,
+				"caveat": "طُوبق عنوان الكتاب داخل نصّه المستخرَج"
+			},
+			"pdf": "sources/pdf/01-نظم_الدرر_في_تناسب_الآيات_والسور.pdf"
+		},
+		{
+			"i": 2,
+			"title": "البرهان في علوم القرآن",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "verified",
+				"title_hits": [
+					"البرهان",
+					"القران"
+				],
+				"author_in_text": true,
+				"caveat": "طُوبق عنوان الكتاب داخل نصّه المستخرَج"
+			},
+			"pdf": "sources/pdf/02-البرهان_في_علوم_القرآن.pdf"
+		},
+		{
+			"i": 3,
+			"title": "الإتقان في علوم القرآن",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "verified",
+				"title_hits": [
+					"الاتقان",
+					"القران"
+				],
+				"author_in_text": true,
+				"caveat": "طُوبق عنوان الكتاب داخل نصّه المستخرَج"
+			},
+			"pdf": "sources/pdf/03-الإتقان_في_علوم_القرآن.pdf"
+		},
+		{
+			"i": 4,
+			"title": "التحرير والتنوير (تحرير المعنى السديد وتنوير العقل الجديد من تفسير الكتاب المجيد)",
+			"tier": "copyrighted",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "link_ok",
+				"link": "https://shamela.ws/book/9776",
+				"caveat": "رابط مصدر مذكور، غير مفحوص (شغّل --links للفحص)"
+			}
+		},
+		{
+			"i": 5,
+			"title": "مفاتيح الغيب = التفسير الكبير (تفسير الرازي)",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "verified",
+				"title_hits": [
+					"الغيب"
+				],
+				"author_in_text": true,
+				"caveat": "طُوبق عنوان الكتاب داخل نصّه المستخرَج"
+			},
+			"pdf": "sources/pdf/05-مفاتيح_الغيب_=_التفسير_الكبير_(تفسير_الرازي).pdf"
+		},
+		{
+			"i": 6,
+			"title": "الكشاف عن حقائق غوامض التنزيل وعيون الأقاويل في وجوه التأويل",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "unreadable_text",
+				"caveat": "طبقة النصّ في الـPDF معطوبة الترميز (تُقرأ كرموز لاتينية) — لا يمكن التحقّق آليًّا، لا يعني أنه كتابٌ خاطئ (تحقّق بشريّ)"
+			},
+			"pdf": "sources/pdf/06-الكشاف_عن_حقائق_غوامض_التنزيل_وعيون_الأقاويل_في_وجوه_التأويل.pdf"
+		},
+		{
+			"i": 7,
+			"title": "تناسق الدرر في تناسب السور (ويُطبع أيضًا باسم: أسرار ترتيب القرآن)",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "verified",
+				"title_hits": [
+					"الدرر",
+					"تناسب",
+					"السور"
+				],
+				"author_in_text": true,
+				"caveat": "طُوبق عنوان الكتاب داخل نصّه المستخرَج"
+			},
+			"pdf": "sources/pdf/07-تناسق_الدرر_في_تناسب_السور_(ويُطبع_أيضًا_باسم:_أسرار_ترتيب_ا.pdf"
+		},
+		{
+			"i": 8,
+			"title": "الموافقات في أصول الشريعة",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "verified",
+				"title_hits": [
+					"الموافقات",
+					"اصول",
+					"الشريعه"
+				],
+				"author_in_text": true,
+				"caveat": "طُوبق عنوان الكتاب داخل نصّه المستخرَج"
+			},
+			"pdf": "sources/pdf/08-الموافقات_في_أصول_الشريعة.pdf"
+		},
+		{
+			"i": 9,
+			"title": "أسباب النزول (أسباب نزول القرآن)",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "verified",
+				"title_hits": [
+					"اسباب",
+					"النزول"
+				],
+				"author_in_text": true,
+				"caveat": "طُوبق عنوان الكتاب داخل نصّه المستخرَج"
+			},
+			"pdf": "sources/pdf/09-أسباب_النزول_(أسباب_نزول_القرآن).pdf"
+		},
+		{
+			"i": 10,
+			"title": "بصائر ذوي التمييز في لطائف الكتاب العزيز",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "verified",
+				"title_hits": [
+					"الكتاب"
+				],
+				"author_in_text": true,
+				"caveat": "طُوبق عنوان الكتاب داخل نصّه المستخرَج"
+			},
+			"pdf": "sources/pdf/10-بصائر_ذوي_التمييز_في_لطائف_الكتاب_العزيز.pdf"
+		},
+		{
+			"i": 11,
+			"title": "Structure and Qur'anic Interpretation: A Study of Symmetry and Coherence in Islam's Holy Text",
+			"tier": "copyrighted",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "link_ok",
+				"link": "https://books.google.com/books/about/Structure_and_Qur_anic_Interpretation.html?id=io03ngEACAAJ",
+				"caveat": "رابط مصدر مذكور، غير مفحوص (شغّل --links للفحص)"
+			}
+		},
+		{
+			"i": 12,
+			"title": "دلائل الإعجاز في علم المعاني",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "verified",
+				"title_hits": [
+					"دلائل",
+					"الاعجاز",
+					"المعاني"
+				],
+				"author_in_text": true,
+				"caveat": "طُوبق عنوان الكتاب داخل نصّه المستخرَج"
+			},
+			"pdf": "sources/pdf/12-دلائل_الإعجاز_في_علم_المعاني.pdf"
+		},
+		{
+			"i": 13,
+			"title": "أسرار البلاغة في علم البيان",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "verified",
+				"title_hits": [
+					"اسرار",
+					"البلاغه",
+					"البيان"
+				],
+				"author_in_text": true,
+				"caveat": "طُوبق عنوان الكتاب داخل نصّه المستخرَج"
+			},
+			"pdf": "sources/pdf/13-أسرار_البلاغة_في_علم_البيان.pdf"
+		},
+		{
+			"i": 14,
+			"title": "الخصائص",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "unreadable_text",
+				"caveat": "طبقة النصّ في الـPDF معطوبة الترميز (تُقرأ كرموز لاتينية) — لا يمكن التحقّق آليًّا، لا يعني أنه كتابٌ خاطئ (تحقّق بشريّ)"
+			},
+			"pdf": "sources/pdf/14-الخصائص.pdf"
+		},
+		{
+			"i": 15,
+			"title": "مغني اللبيب عن كتب الأعاريب",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "verified",
+				"title_hits": [
+					"مغني",
+					"اللبيب",
+					"كتب",
+					"الاعاريب"
+				],
+				"author_in_text": true,
+				"caveat": "طُوبق عنوان الكتاب داخل نصّه المستخرَج"
+			},
+			"pdf": "sources/pdf/15-مغني_اللبيب_عن_كتب_الأعاريب.pdf"
+		},
+		{
+			"i": 16,
+			"title": "لسان العرب",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "verified",
+				"title_hits": [
+					"لسان",
+					"العرب"
+				],
+				"author_in_text": true,
+				"caveat": "طُوبق عنوان الكتاب داخل نصّه المستخرَج"
+			},
+			"pdf": "sources/pdf/16-لسان_العرب.pdf"
+		},
+		{
+			"i": 17,
+			"title": "معجم مقاييس اللغة",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "unreadable_text",
+				"caveat": "طبقة النصّ في الـPDF معطوبة الترميز (تُقرأ كرموز لاتينية) — لا يمكن التحقّق آليًّا، لا يعني أنه كتابٌ خاطئ (تحقّق بشريّ)"
+			},
+			"pdf": "sources/pdf/17-معجم_مقاييس_اللغة.pdf"
+		},
+		{
+			"i": 18,
+			"title": "لمسات بيانية في نصوص من التنزيل",
+			"tier": "copyrighted",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "link_ok",
+				"link": "https://archive.org/details/lmsatbyaniah",
+				"caveat": "رابط مصدر مذكور، غير مفحوص (شغّل --links للفحص)"
+			}
+		},
+		{
+			"i": 19,
+			"title": "التعبير القرآني",
+			"tier": "copyrighted",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "link_ok",
+				"link": "https://ibn-katheer.com/Book/detBooks/13/595/%D8%A7%D9%84%D8%AA%D8%B9%D8%A8%D9%8A%D8%B1-%D8%A7%D9%84%D9%82%D8%B1%D8%A2%D9%86%D9%8A",
+				"caveat": "رابط مصدر مذكور، غير مفحوص (شغّل --links للفحص)"
+			}
+		},
+		{
+			"i": 20,
+			"title": "كتاب الصناعتين: الكتابة والشعر",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "scanned_no_text",
+				"caveat": "ملفٌ ممسوح ضوئيًّا بلا طبقة نصّ — لا يمكن مطابقة العنوان آليًّا (تحقّق بشريّ)"
+			},
+			"pdf": "sources/pdf/20-كتاب_الصناعتين:_الكتابة_والشعر.pdf"
+		},
+		{
+			"i": 21,
+			"title": "سر الفصاحة",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "scanned_no_text",
+				"caveat": "ملفٌ ممسوح ضوئيًّا بلا طبقة نصّ — لا يمكن مطابقة العنوان آليًّا (تحقّق بشريّ)"
+			},
+			"pdf": "sources/pdf/21-سر_الفصاحة.pdf"
+		},
+		{
+			"i": 22,
+			"title": "المفصل في صنعة الإعراب",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "verified",
+				"title_hits": [
+					"المفصل"
+				],
+				"author_in_text": true,
+				"caveat": "طُوبق عنوان الكتاب داخل نصّه المستخرَج"
+			},
+			"pdf": "sources/pdf/22-المفصل_في_صنعة_الإعراب.pdf"
+		},
+		{
+			"i": 23,
+			"title": "الطراز المتضمِّن لأسرار البلاغة وعلوم حقائق الإعجاز",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "verified",
+				"title_hits": [
+					"الطراز",
+					"المتضمن",
+					"لاسرار",
+					"البلاغه",
+					"وعلوم"
+				],
+				"author_in_text": true,
+				"caveat": "طُوبق عنوان الكتاب داخل نصّه المستخرَج"
+			},
+			"pdf": "sources/pdf/23-الطراز_المتضمِّن_لأسرار_البلاغة_وعلوم_حقائق_الإعجاز.pdf"
+		},
+		{
+			"i": 24,
+			"title": "Discrete Mathematics and Its Applications",
+			"tier": "copyrighted",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "link_ok",
+				"link": "https://www.mheducation.com/highered/product/discrete-mathematics-and-its-applications-rosen.html",
+				"caveat": "رابط مصدر مذكور، غير مفحوص (شغّل --links للفحص)"
+			}
+		},
+		{
+			"i": 25,
+			"title": "Graph Theory (Graduate Texts in Mathematics 173)",
+			"tier": "free_official",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "unreadable_text",
+				"caveat": "طبقة النصّ في الـPDF معطوبة الترميز (تُقرأ كرموز لاتينية) — لا يمكن التحقّق آليًّا، لا يعني أنه كتابٌ خاطئ (تحقّق بشريّ)"
+			},
+			"pdf": "sources/pdf/25-Graph_Theory_(Graduate_Texts_in_Mathematics_173).pdf"
+		},
+		{
+			"i": 26,
+			"title": "Speech and Language Processing: An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition",
+			"tier": "free_official",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "unreadable_text",
+				"caveat": "طبقة النصّ في الـPDF معطوبة الترميز (تُقرأ كرموز لاتينية) — لا يمكن التحقّق آليًّا، لا يعني أنه كتابٌ خاطئ (تحقّق بشريّ)"
+			},
+			"pdf": "sources/pdf/26-Speech_and_Language_Processing:_An_Introduction_to_Natural_L.pdf"
+		},
+		{
+			"i": 27,
+			"title": "Networks, Crowds, and Markets: Reasoning about a Highly Connected World",
+			"tier": "free_official",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "unreadable_text",
+				"caveat": "طبقة النصّ في الـPDF معطوبة الترميز (تُقرأ كرموز لاتينية) — لا يمكن التحقّق آليًّا، لا يعني أنه كتابٌ خاطئ (تحقّق بشريّ)"
+			},
+			"pdf": "sources/pdf/27-Networks,_Crowds,_and_Markets:_Reasoning_about_a_Highly_Conn.pdf"
+		},
+		{
+			"i": 28,
+			"title": "Topology",
+			"tier": "copyrighted",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "link_ok",
+				"link": "https://archive.org/details/topology0002edmunk",
+				"caveat": "رابط مصدر مذكور، غير مفحوص (شغّل --links للفحص)"
+			}
+		},
+		{
+			"i": 29,
+			"title": "Pattern Recognition and Machine Learning",
+			"tier": "free_official",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "unreadable_text",
+				"caveat": "طبقة النصّ في الـPDF معطوبة الترميز (تُقرأ كرموز لاتينية) — لا يمكن التحقّق آليًّا، لا يعني أنه كتابٌ خاطئ (تحقّق بشريّ)"
+			},
+			"pdf": "sources/pdf/29-Pattern_Recognition_and_Machine_Learning.pdf"
+		},
+		{
+			"i": 30,
+			"title": "Introduction to Algorithms",
+			"tier": "copyrighted",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "link_ok",
+				"link": "https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/",
+				"caveat": "رابط مصدر مذكور، غير مفحوص (شغّل --links للفحص)"
+			}
+		},
+		{
+			"i": 31,
+			"title": "The Elements of Statistical Learning: Data Mining, Inference, and Prediction (2nd Edition)",
+			"tier": "free_official",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "link_ok",
+				"link": "https://hastie.su.domains/ElemStatLearn/",
+				"caveat": "رابط مصدر مذكور، غير مفحوص (شغّل --links للفحص)"
+			}
+		},
+		{
+			"i": 32,
+			"title": "Information Theory, Inference, and Learning Algorithms",
+			"tier": "free_official",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "unreadable_text",
+				"caveat": "طبقة النصّ في الـPDF معطوبة الترميز (تُقرأ كرموز لاتينية) — لا يمكن التحقّق آليًّا، لا يعني أنه كتابٌ خاطئ (تحقّق بشريّ)"
+			},
+			"pdf": "sources/pdf/32-Information_Theory,_Inference,_and_Learning_Algorithms.pdf"
+		},
+		{
+			"i": 33,
+			"title": "أساسيات المنطق الرياضي ونظرية المجموعات",
+			"tier": "uncertain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "link_ok",
+				"link": "https://archive.org/details/Abyamr_GMAIL_11",
+				"caveat": "رابط مصدر مذكور، غير مفحوص (شغّل --links للفحص)"
+			}
+		},
+		{
+			"i": 34,
+			"title": "الرعاية لتجويد القراءة وتحقيق لفظ التلاوة",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "scanned_no_text",
+				"caveat": "ملفٌ ممسوح ضوئيًّا بلا طبقة نصّ — لا يمكن مطابقة العنوان آليًّا (تحقّق بشريّ)"
+			},
+			"pdf": "sources/pdf/34-الرعاية_لتجويد_القراءة_وتحقيق_لفظ_التلاوة.pdf"
+		},
+		{
+			"i": 35,
+			"title": "التمهيد في علم التجويد",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "verified",
+				"title_hits": [
+					"التمهيد",
+					"التجويد"
+				],
+				"author_in_text": true,
+				"caveat": "طُوبق عنوان الكتاب داخل نصّه المستخرَج"
+			},
+			"pdf": "sources/pdf/35-التمهيد_في_علم_التجويد.pdf"
+		},
+		{
+			"i": 36,
+			"title": "النشر في القراءات العشر",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "verified",
+				"title_hits": [
+					"القراءات",
+					"العشر"
+				],
+				"author_in_text": true,
+				"caveat": "طُوبق عنوان الكتاب داخل نصّه المستخرَج"
+			},
+			"pdf": "sources/pdf/36-النشر_في_القراءات_العشر.pdf"
+		},
+		{
+			"i": 37,
+			"title": "Fundamentals of Acoustics",
+			"tier": "copyrighted",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "link_ok",
+				"link": "https://archive.org/details/fundamentalsofac0000kins",
+				"caveat": "رابط مصدر مذكور، غير مفحوص (شغّل --links للفحص)"
+			}
+		},
+		{
+			"i": 38,
+			"title": "Acoustic Phonetics",
+			"tier": "copyrighted",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "link_ok",
+				"link": "https://mitpress.mit.edu/9780262692502/acoustic-phonetics/",
+				"caveat": "رابط مصدر مذكور، غير مفحوص (شغّل --links للفحص)"
+			}
+		},
+		{
+			"i": 39,
+			"title": "The Physics of Sound",
+			"tier": "copyrighted",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "link_ok",
+				"link": "https://archive.org/details/physicsofsound00berg",
+				"caveat": "رابط مصدر مذكور، غير مفحوص (شغّل --links للفحص)"
+			}
+		},
+		{
+			"i": 40,
+			"title": "Digital Signal Processing: Principles, Algorithms, and Applications",
+			"tier": "copyrighted",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "link_ok",
+				"link": "https://archive.org/details/digitalsignalpro0000proa_r8t4",
+				"caveat": "رابط مصدر مذكور، غير مفحوص (شغّل --links للفحص)"
+			}
+		},
+		{
+			"i": 41,
+			"title": "علم الأصوات العام: أصوات اللغة العربية",
+			"tier": "copyrighted",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "link_ok",
+				"link": "https://www.neelwafurat.com/itempage.aspx?id=lbb7847-7705&search=books",
+				"caveat": "رابط مصدر مذكور، غير مفحوص (شغّل --links للفحص)"
+			}
+		},
+		{
+			"i": 42,
+			"title": "زاد المعاد في هدي خير العباد",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "verified",
+				"title_hits": [
+					"زاد",
+					"هدي",
+					"خير",
+					"العباد"
+				],
+				"author_in_text": true,
+				"caveat": "طُوبق عنوان الكتاب داخل نصّه المستخرَج"
+			},
+			"pdf": "sources/pdf/42-زاد_المعاد_في_هدي_خير_العباد.pdf"
+		},
+		{
+			"i": 43,
+			"title": "الرحيق المختوم",
+			"tier": "free_official",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "verified",
+				"title_hits": [
+					"الرحيق"
+				],
+				"author_in_text": true,
+				"caveat": "طُوبق عنوان الكتاب داخل نصّه المستخرَج"
+			},
+			"pdf": "sources/pdf/43-الرحيق_المختوم.pdf"
+		},
+		{
+			"i": 44,
+			"title": "إحياء علوم الدين",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "verified",
+				"title_hits": [
+					"احياء",
+					"الدين"
+				],
+				"author_in_text": true,
+				"caveat": "طُوبق عنوان الكتاب داخل نصّه المستخرَج"
+			},
+			"pdf": "sources/pdf/44-إحياء_علوم_الدين.pdf"
+		},
+		{
+			"i": 45,
+			"title": "Thinking, Fast and Slow",
+			"tier": "copyrighted",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "link_ok",
+				"link": "https://us.macmillan.com/books/9780374533557/thinkingfastandslow/",
+				"caveat": "رابط مصدر مذكور، غير مفحوص (شغّل --links للفحص)"
+			}
+		},
+		{
+			"i": 46,
+			"title": "The Psychology of Language: From Data to Theory",
+			"tier": "copyrighted",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "link_ok",
+				"link": "https://archive.org/details/psychologyoflang0000harl_c9f1",
+				"caveat": "رابط مصدر مذكور، غير مفحوص (شغّل --links للفحص)"
+			}
+		},
+		{
+			"i": 47,
+			"title": "مراجع المدرسة السلوكية في التدرج وتغيير العادات",
+			"tier": "uncertain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "link_ok",
+				"link": "https://archive.org/details/conditioned-reflexes-an-investigation-of-the-physiological-activity-of-the-cerebral-cortex",
+				"caveat": "رابط مصدر مذكور، غير مفحوص (شغّل --links للفحص)"
+			}
+		},
+		{
+			"i": 48,
+			"title": "أصول الفقه",
+			"tier": "copyrighted",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "link_ok",
+				"link": "https://archive.org/details/20220929_20220929_1154",
+				"caveat": "رابط مصدر مذكور، غير مفحوص (شغّل --links للفحص)"
+			}
+		},
+		{
+			"i": 49,
+			"title": "مقاصد الشريعة الإسلامية",
+			"tier": "public_domain",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "scanned_no_text",
+				"caveat": "ملفٌ ممسوح ضوئيًّا بلا طبقة نصّ — لا يمكن مطابقة العنوان آليًّا (تحقّق بشريّ)"
+			},
+			"pdf": "sources/pdf/49-مقاصد_الشريعة_الإسلامية.pdf"
+		},
+		{
+			"i": 50,
+			"title": "فقه السيرة",
+			"tier": "copyrighted",
+			"metadata_note": "المؤلف وسنة الوفاة مصرَّح بهما من مصدر آليّ، غير متحقَّقين مستقلًّا",
+			"verification": {
+				"level": "link_ok",
+				"link": "https://www.shoroukbookstores.com/books/view.aspx?id=52f43edb-2b40-444f-a89c-c8206ae771a3",
+				"caveat": "رابط مصدر مذكور، غير مفحوص (شغّل --links للفحص)"
+			}
+		}
+	]
+}
