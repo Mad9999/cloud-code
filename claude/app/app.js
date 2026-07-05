@@ -841,13 +841,31 @@ function smDraw() {
 	}
 }
 
+function smSelect(n) {
+	const nd = smG.nodes.find((x) => x.n === n)
+	if (nd) { smG.sel = nd; smG.alpha = Math.max(smG.alpha, 0.12); showSmPanel(nd) }
+}
+
+// The Surah Portrait: one place where a surah's whole picture comes together —
+// what you expect (identity, its salient roots) plus what you may not notice
+// (words confined to it) plus where it connects (its nearest surahs by shared
+// rare roots, each clickable to walk the web). Unifies map + explorer + كشوف.
 function showSmPanel(nd) {
+	const prof = (window.EXPLORER_DATA.surah_profile || {})[nd.n] || {}
+	const topR = (prof.top_roots || []).slice(0, 6).map(([r, c]) => `<b class="root">${r}</b> <span class="mut">${arNum(c)}</span>`).join("، ")
+	const disc = DISC.surahs[nd.n]
+	const uniq = (disc && disc.unique.length)
+		? disc.unique.slice(0, 6).map((u) => `«${u[1]}»`).join("، ") : ""
 	const rows = nd.neighbors.slice(0, 5).map(([m, sim, sh]) =>
-		`<div class="rx-occ"><span class="rx-ref">${smName(m)}</span> يجمعهما: ${sh.join("، ")} <span style="color:${COLORS.muted}">(${sim})</span></div>`).join("")
+		`<div class="rx-occ sm-nb" data-n="${m}"><span class="rx-ref">${smName(m)}</span> يجمعهما: ${sh.join("، ")} <span style="color:${COLORS.muted}">(${sim})</span></div>`).join("")
 	$("#suramap-info").innerHTML =
-		`<div class="rx-head"><b>${smName(nd.n)}</b> — ${nd.type} · ${arNum(nd.ayahs)} آية</div>` +
-		`<div class="rx-stat">أقرب السور إليها لغويًّا (بالجذور المشتركة النادرة):</div>` +
+		`<div class="rx-head"><b>${smName(nd.n)}</b> — ${nd.type} · ${arNum(nd.ayahs)} آية · ${arNum(nd.size)} كلمة</div>` +
+		(topR ? `<div class="sm-sec"><span class="sm-lbl">أبرز جذورها:</span> ${topR}</div>` : "") +
+		(uniq ? `<div class="sm-sec sm-uniq">✦ <span class="sm-lbl">كلماتٌ تفرّدت بها في القرآن كلّه:</span> ${uniq}</div>` : "") +
+		`<div class="rx-stat" style="margin-top:10px">أقرب السور إليها لغويًّا — اضغط سورةً لتنتقل إليها في الشبكة:</div>` +
 		`<div class="rx-list">${rows}</div>`
+	$("#suramap-info").querySelectorAll(".sm-nb").forEach((el) =>
+		el.addEventListener("click", () => smSelect(+el.dataset.n)))
 }
 
 /* ============================================================
