@@ -1452,6 +1452,7 @@ function renderDialogueVerse(i) {
 		<span class="action">↦ ${td.action.text}</span>
 		<span class="src">${td.reflection.source} ${gradeBadge(td.reflection.grade)} · حال القلب: ${td.heart_state.text} ${gradeBadge("ijtihadi")}</span>
 	</div>`
+	html += dialogueEchoHtml(verse.n)
 	$("#dialogue-stage").innerHTML = html
 
 	document.querySelectorAll("#dialogue-stage .dlg-word").forEach((el) =>
@@ -1459,6 +1460,25 @@ function renderDialogueVerse(i) {
 	document.querySelectorAll("#dialogue-controls .dot").forEach((d, k) =>
 		d.classList.toggle("active", k === i))
 	drawBreath(arcv, 0)
+}
+
+// Bring the ayah's echo into worship, softly: while you ponder your verse, see
+// how its words answer across the whole Book. Same computed data as the lab's
+// «صدى الآية», but framed for tadabbur — for reflection, not for counting.
+function dialogueEchoHtml(n) {
+	const nbrs = (AL.links["1:" + n] || []).slice(0, 3)
+	if (!nbrs.length) { return "" }
+	const rows = nbrs.map(([o, _sc, rs]) => {
+		const [os, oa] = o.split(":")
+		const chips = rs.map((r) => `<span class="ec-root">${r}</span>`).join("")
+		return `<div class="dlg-echo-row"><span class="rx-ref">${sname(os)} ${arNum(oa)}</span> ${chips}` +
+			`<div class="dlg-echo-txt">${ayahText(os, oa)}</div></div>`
+	}).join("")
+	return `<div class="dlg-echo">` +
+		`<span class="lbl">ولهذه الآية صدىً في كتاب الله — تتجاوبُ مفرداتُها مع مواضعَ أُخَر، فتدبّرها:</span>` +
+		`<div class="dlg-echo-list">${rows}</div>` +
+		`<span class="src">روابطُ لفظيّةٌ محسوبة (اشتراكُ جذورٍ نادرة) — للتدبّر لا للإحصاء ${gradeBadge("qati")}</span>` +
+		`</div>`
 }
 
 function showWordTadabbur(verse, wi, el) {
@@ -1551,6 +1571,8 @@ function revealDialogue() {
 	if (resp) { resp.classList.add("show") }
 	const refl = $("#dlg-reflect")
 	if (refl) { setTimeout(() => refl.classList.add("show"), resp ? 500 : 0) }
+	const echo = $(".dlg-echo")
+	if (echo) { setTimeout(() => echo.classList.add("show"), resp ? 900 : 300) }
 }
 window.__revealDialogue = revealDialogue
 
