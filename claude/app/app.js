@@ -680,6 +680,21 @@ function buildFramework() {
    their shared distinctive roots. Force-directed. Computed facts.
    ============================================================ */
 const SM = window.SURAH_MAP
+
+// Grade a surah-similarity against the shuffled null (رقم القاعدة ١٦): most
+// surah links are at chance level; only the strongest reflect real distinctive
+// shared vocabulary. Computed band, not a hand-drawn one.
+function simLift(sim) {
+	const t = SM.control.table
+	let row = null
+	for (const r of t) { if (sim >= r.score) { row = r } }
+	if (!row) { return { label: "قريبٌ من الصدفة", cls: "ec-chance" } }
+	if (row.lift === null) { return { label: "نادرٌ في مقابل الصدفة", cls: "ec-strong" } }
+	const x = row.lift
+	if (x >= 3) { return { label: `أعلى من الصدفة بنحو ${arNum(Math.round(x))}×`, cls: "ec-above" } }
+	if (x >= 1.5) { return { label: `أعلى من الصدفة قليلًا (${arNum(x)}×)`, cls: "ec-weak" } }
+	return { label: "قريبٌ من الصدفة", cls: "ec-chance" }
+}
 let smG = null
 
 function smName(n) {
@@ -856,13 +871,18 @@ function showSmPanel(nd) {
 	const disc = DISC.surahs[nd.n]
 	const uniq = (disc && disc.unique.length)
 		? disc.unique.slice(0, 6).map((u) => `«${u[1]}»`).join("، ") : ""
-	const rows = nd.neighbors.slice(0, 5).map(([m, sim, sh]) =>
-		`<div class="rx-occ sm-nb" data-n="${m}"><span class="rx-ref">${smName(m)}</span> يجمعهما: ${sh.join("، ")} <span style="color:${COLORS.muted}">(${sim})</span></div>`).join("")
+	const rows = nd.neighbors.slice(0, 5).map(([m, sim, sh]) => {
+		const lf = simLift(sim)
+		return `<div class="rx-occ sm-nb" data-n="${m}"><span class="rx-ref">${smName(m)}</span> يجمعهما: ${sh.join("، ")} ` +
+			`<span class="ec-band ${lf.cls}">${lf.label}</span></div>`
+	}).join("")
+	const c = SM.control
 	$("#suramap-info").innerHTML =
 		`<div class="rx-head"><b>${smName(nd.n)}</b> — ${nd.type} · ${arNum(nd.ayahs)} آية · ${arNum(nd.size)} كلمة</div>` +
 		(topR ? `<div class="sm-sec"><span class="sm-lbl">أبرز جذورها:</span> ${topR}</div>` : "") +
 		(uniq ? `<div class="sm-sec sm-uniq">✦ <span class="sm-lbl">كلماتٌ تفرّدت بها في القرآن كلّه:</span> ${uniq}</div>` : "") +
-		`<div class="rx-stat" style="margin-top:10px">أقرب السور إليها لغويًّا — اضغط سورةً لتنتقل إليها في الشبكة:</div>` +
+		`<div class="ec-control">⚖ <b>صمّام الأمانة:</b> قِسنا تشابُهَ السور على نموذجٍ عشوائيّ (خلطُ الجذور مع حفظ التكرارات). النتيجة الصادقة: <b>جِوارُ أكثر السور قريبٌ من الصدفة</b> (وسيطُ التشابه الحقيقيّ ${arNum(c.real_median_top_sim)} مقابل ${arNum(c.null_median_top_sim)} في العشوائيّ) — فطولُ السورة وكثرةُ ألفاظها الشائعة يكفيان لتشابهٍ ظاهر. لا يتجاوز الصدفةَ بوضوحٍ إلا القِلّةُ الأقوى. الوسمُ بجانب كلٍّ يبيّن ذلك؛ والجذورُ المشتركةُ حقٌّ في كلّ حال، والمعنى تتدبّره أنت.</div>` +
+		`<div class="rx-stat" style="margin-top:6px">أقرب السور إليها لغويًّا — اضغط سورةً لتنتقل إليها في الشبكة:</div>` +
 		`<div class="rx-list">${rows}</div>` +
 		`<div class="sm-ctx">هذه أرقامٌ محسوبة تصف البنية، لا تفسّر المعنى. للقصّة وسببِ النزول والتفسير المُسنَد، ارجع إلى <button class="sm-ctx-link" data-go="sources">المصادر المُسنَدة</button>.</div>`
 	$("#suramap-info").querySelectorAll(".sm-nb").forEach((el) =>
@@ -1011,7 +1031,10 @@ function buildDiscoveries() {
 		`<span class="disc-stat"><b>${arNum(g.distinct_roots)}</b> جذرًا يُبنى منه القرآن كلّه</span>` +
 		`<span class="disc-stat"><b>${arNum(g.hapax_total)}</b> جذرًا لا يردُ في المصحف إلا <b>مرّةً واحدة</b></span>` +
 		`<span class="disc-stat"><b>${arNum(Object.keys(DISC.surahs).length)}</b> سورةً لها كلماتٌ تفرّدت بها</span>`
-	$("#disc-feed").innerHTML = g.feed.map((f, i) =>
+	const c = DISC.control
+	$("#disc-feed").innerHTML =
+		`<div class="ec-control">⚖ <b>صمّام الأمانة:</b> الكلمةُ التي ترد <b>مرّةً واحدة</b> تنحصرُ في سورةٍ بالبداهة (وفي القرآن ${arNum(c.hapax)} منها) — <b>لا لطيفةَ إحصائية في ذلك</b>، فأيُّ نصٍّ فيه مفرداتٌ نادرة. اللافتُ حقًّا: جذرٌ <b>يتكرّر</b> (مرّتين فأكثر) ومع ذلك لا يغادرُ سورةً واحدة — وهذا في القرآن <b>${arNum(c.real_confined_recurring)}</b> جذرًا مقابل <b>${arNum(c.null_confined_recurring)}</b> فقط في نموذجٍ عشوائيّ، أي <b>أعلى من الصدفة بنحو ${arNum(Math.round(c.lift))}×</b>. وهذه التغذيةُ تعرضُ هذه المتكرّرةَ المنحصرة وحدها:</div>` +
+		g.feed.map((f, i) =>
 		`<div class="disc-item" data-s="${f.surah}" data-a="${f.ayah}">` +
 		`<div class="disc-line"><span class="disc-word">${f.form}</span>` +
 		`<span class="disc-say">لا يردُ جذرُها <b class="root">${f.root}</b> في القرآن كلّه إلا في ` +

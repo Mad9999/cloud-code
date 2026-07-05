@@ -264,6 +264,84 @@ def build_ayah_links(top_k=6, df_ceiling=300, min_shared_idf=2.4):
 	return {"links": out, "stats": {"verses_with_echoes": linked, "total_verses": n, "edges": total_edges}}
 
 
+def _surah_top_sim(surah_roots):
+	"""Each surah's strongest neighbour similarity (idf-weighted tf-idf cosine).
+	Shared by the real map and its null so scoring is identical."""
+	import math
+	surahs = sorted(surah_roots)
+	n = len(surahs)
+	df = Counter()
+	for s in surahs:
+		for r in surah_roots[s]:
+			df[r] += 1
+	idf = {r: math.log(n / df[r]) for r in df}
+	vecs = {s: {r: (1 + math.log(c)) * idf[r] for r, c in surah_roots[s].items()} for s in surahs}
+	norms = {s: math.sqrt(sum(x * x for x in v.values())) or 1 for s, v in vecs.items()}
+	best = {}
+	for a in surahs:
+		va = vecs[a]
+		top = 0.0
+		for b in surahs:
+			if b == a:
+				continue
+			vb = vecs[b]
+			common = set(va) & set(vb)
+			if common:
+				sc = sum(va[r] * vb[r] for r in common) / (norms[a] * norms[b])
+				if sc > top:
+					top = sc
+		best[a] = top
+	return best
+
+
+def build_surah_map_control(trials=20, seed=1234):
+	"""Chance baseline for the surah connection map (رقم القاعدة ١٦): shuffle the
+	Qur'an's root-tokens across surahs (preserving every surah's size and every
+	root's frequency), recompute nearest-neighbour similarity, and see how much
+	of the map is more than vocabulary statistics. Reported honestly whatever it
+	shows — long legal Medinan surahs sharing words is ordinary, not a wonder."""
+	import random
+	surah_roots = defaultdict(Counter)
+	edges = []
+	for s, _a, _w, _seg, _form, root in parse_all():
+		if root:
+			surah_roots[s][root] += 1
+			edges.append([s, root])
+	real = _surah_top_sim(surah_roots)
+	real_vals = sorted(real.values())
+	real_median = real_vals[len(real_vals) // 2]
+
+	rng = random.Random(seed)
+	null_medians = []
+	thresholds = [0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5]
+	null_counts = {t: 0 for t in thresholds}
+	for _t in range(trials):
+		col = [r for _s, r in edges]
+		rng.shuffle(col)
+		sr = defaultdict(Counter)
+		for (s, _r), nr in zip(edges, col):
+			sr[s][nr] += 1
+		nb = _surah_top_sim(sr)
+		nv = sorted(nb.values())
+		null_medians.append(nv[len(nv) // 2])
+		for t in thresholds:
+			null_counts[t] += sum(1 for v in nv if v >= t)
+	null_median = sum(null_medians) / len(null_medians)
+	table = []
+	for t in thresholds:
+		real_c = sum(1 for v in real_vals if v >= t)
+		null_c = null_counts[t] / trials
+		table.append({"score": t, "real": real_c, "null": round(null_c, 1),
+			"lift": round(real_c / null_c, 2) if null_c >= 1 else None})
+	return {
+		"trials": trials,
+		"real_median_top_sim": round(real_median, 3),
+		"null_median_top_sim": round(null_median, 3),
+		"table": table,
+		"surahs": len(surah_roots),
+	}
+
+
 def _top_echo_strength(ayah_roots, ayahs, df_ceiling, min_shared_idf):
 	"""Per-ayah strongest echo score (sum of idf of shared distinctive roots).
 	Shared with the null model so real & shuffled data use IDENTICAL scoring."""
@@ -366,6 +444,45 @@ def build_echo_control(trials=20, seed=1234, df_ceiling=300, min_shared_idf=2.4)
 	}
 
 
+def build_discoveries_control(trials=20, seed=1234):
+	"""Honesty guard for the كشوف (رقم القاعدة ١٦+١٧). A root that occurs ONCE is
+	trivially 'confined to one surah' — that is expected, not a wonder, and any
+	Zipfian text has hundreds of such hapaxes. The only statistically notable
+	fact is a root that RECURS (freq >= 2) yet still never leaves one surah. We
+	measure that against a shuffle: how many multi-occurrence roots stay confined
+	by chance? Reported honestly — including that hapax uniqueness is ordinary."""
+	import random
+	root_count = Counter()
+	root_surahs = defaultdict(set)
+	edges = []
+	for s, _a, _w, _seg, _form, root in parse_all():
+		if root:
+			root_count[root] += 1
+			root_surahs[root].add(s)
+			edges.append([s, root])
+	hapax = sum(1 for r, c in root_count.items() if c == 1)
+	real_confined = sum(1 for r, c in root_count.items() if c >= 2 and len(root_surahs[r]) == 1)
+
+	rng = random.Random(seed)
+	null_confined = []
+	for _t in range(trials):
+		col = [r for _s, r in edges]
+		rng.shuffle(col)
+		rs = defaultdict(set)
+		for (s, _r), nr in zip(edges, col):
+			rs[nr].add(s)
+		null_confined.append(sum(1 for r, c in root_count.items() if c >= 2 and len(rs[r]) == 1))
+	null_c = sum(null_confined) / len(null_confined)
+	return {
+		"trials": trials,
+		"hapax": hapax,                                # trivially confined — expected
+		"multi_occurrence_roots": sum(1 for c in root_count.values() if c >= 2),
+		"real_confined_recurring": real_confined,      # freq>=2 yet in one surah
+		"null_confined_recurring": round(null_c, 1),
+		"lift": round(real_confined / null_c, 2) if null_c >= 1 else None,
+	}
+
+
 def build_discoveries(per_surah_cap=8, feed_cap=60):
 	"""What the AI surfaces that a reader passes over (رقم القاعدة ١١+١٢): purely
 	COMPUTED, verifiable facts — never generated meaning. Two honest categories:
@@ -455,6 +572,7 @@ if __name__ == "__main__":
 		sys.exit(0)
 	if "--discoveries" in sys.argv:
 		payload = build_discoveries()
+		payload["control"] = build_discoveries_control()
 		out = BASE / "app" / "generated" / "discoveries.js"
 		out.parent.mkdir(parents=True, exist_ok=True)
 		with open(out, "w", encoding="utf-8") as f:
@@ -468,6 +586,7 @@ if __name__ == "__main__":
 		sys.exit(0)
 	if "--map" in sys.argv:
 		payload = build_surah_map()
+		payload["control"] = build_surah_map_control()
 		out = BASE / "app" / "generated" / "surah_map.js"
 		out.parent.mkdir(parents=True, exist_ok=True)
 		with open(out, "w", encoding="utf-8") as f:
