@@ -1097,10 +1097,9 @@ let tsCurEntry = TS_ENTRIES[0]
 
 function pad3(n) { return String(n).padStart(3, "0") }
 function curReciter() { return RECITERS.find((x) => x.id === tsReciter) || RECITERS[0] }
-// al-Baqara is currently vendored in al-Husary only; short surahs honour the
-// reciter picker. So the audio folder follows the reciter, except long surahs
-// which force al-Husary (root folder).
-function audioDir() { return (tsCurEntry && tsCurEntry.kind === "long") ? "" : curReciter().dir }
+// audio folder follows the reciter (al-Husary lives at the root). al-Baqara's
+// great passages are vendored for the per-ayah reciters (not al-Luhaidan).
+function audioDir() { return curReciter().dir }
 function entryVerses(e) { return e.kind === "long" ? e.passages.flatMap((p) => p.verses) : e.verses }
 
 function tsWholeMode() { return curReciter().whole && tsCurEntry && tsCurEntry.kind === "short" }
@@ -1204,9 +1203,15 @@ function renderTadabburShort(i) {
 	const e = tsCurEntry
 	const long = e.kind === "long"
 	tsStop()
-	// reciter controls: short surahs honour the picker; al-Baqara is al-Husary only
+	// reciter controls. al-Baqara's audio covers its great passages in the
+	// per-ayah reciters (not al-Luhaidan, whose recitation is whole-surah).
 	if (long) {
-		$("#ts-reciter").innerHTML = `<span class="ts-rec-note">التلاوة بصوت الشيخ محمود خليل الحصري. (بقيّةُ القرّاء تُضاف مع اكتمال السورة بإذن الله.)</span>`
+		const baqReciters = RECITERS.filter((r) => !r.whole)
+		if (!baqReciters.some((r) => r.id === tsReciter)) { tsReciter = "husary" }
+		$("#ts-reciter").innerHTML = `<label class="ts-rec-lbl">القارئ: <select id="ts-rec-sel">` +
+			baqReciters.map((r) => `<option value="${r.id}"${r.id === tsReciter ? " selected" : ""}>${r.name}</option>`).join("") +
+			`</select></label> <span class="ts-rec-note">الصوتُ للمقاطع الكبرى من البقرة (بصوت القارئ المختار)؛ والتدبّرُ لكلّ آية.</span>`
+		$("#ts-rec-sel").addEventListener("change", (ev) => { tsReciter = ev.target.value; renderTadabburShort(tsCurIdx) })
 	} else {
 		$("#ts-reciter").innerHTML = `<label class="ts-rec-lbl">القارئ: <select id="ts-rec-sel">` +
 			RECITERS.map((r) => `<option value="${r.id}"${r.id === tsReciter ? " selected" : ""}>${r.name}</option>`).join("") +
