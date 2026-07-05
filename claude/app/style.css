@@ -425,6 +425,9 @@ table.stats td:first-child, table.stats th:first-child { text-align: right; font
 .ts-rec-lbl { font-family: var(--arabic); font-size: 15px; color: var(--ink-2); }
 .ts-rec-lbl select { font-family: var(--arabic); font-size: 15px; background: var(--surface); color: var(--ink); border: 1px solid var(--border); border-radius: 8px; padding: 5px 10px; }
 .ts-rec-note { font-family: var(--arabic); font-size: 12.5px; color: var(--muted); }
+.ts-srclink { font-family: var(--arabic); font-size: 14.5px; line-height: 1.9; color: var(--ink-2); background: rgba(57, 135, 229, 0.06); border: 1px solid rgba(57, 135, 229, 0.24); border-radius: 12px; padding: 13px 16px; margin-top: 6px; }
+.ts-src-chip { font-family: var(--arabic); font-size: 13.5px; color: var(--blue); background: rgba(57, 135, 229, 0.12); border-radius: 6px; padding: 1px 8px; }
+.ts-src-btn { font-family: var(--arabic); font-size: 14.5px; color: var(--aqua); background: none; border: none; padding: 0; cursor: pointer; text-decoration: underline; }
 
 /* Layer: المصادر المُسنَدة (sourced context library) */
 .src-cat { margin-bottom: 22px; }

@@ -1178,10 +1178,20 @@ function renderTadabburShort(i) {
 			`<div class="ts-action">↦ ${v.action.text} ${gradeBadge("ijtihadi")}</div>` +
 			`</div>`
 	}).join("")
+	// bridge to the sourced library: which trusted classical works to consult
+	// for THIS surah (tafsir always; asbab if it has a sabab) — we point, we
+	// don't summarise. Same honesty as the surah portrait.
+	const catLabel = (k) => ((window.QURAN_CONTEXT.categories.find((c) => c[0] === k) || [])[1] || k)
+	const cats = ["tafsir_mathur"].concat(su.sabab ? ["asbab"] : [])
+	const chips = cats.map((k) => `<span class="ts-src-chip">${catLabel(k)}</span>`).join(" ")
+	html += `<div class="ts-srclink">للاستزادة المُسنَدة في ${nm} — ارجع إلى ${chips} ` +
+		`في <button class="ts-src-btn" type="button">المصادر المُسنَدة</button>. (نَدُلّ ولا نُلخّص؛ المعنى الكامل عند أهله.)</div>`
 	$("#ts-body").innerHTML = html
 	$("#ts-listen").addEventListener("click", () => {
 		if (tsSeq) { tsStop() } else { tsPlaySurah(su) }
 	})
+	const srcBtn = $("#ts-body").querySelector(".ts-src-btn")
+	if (srcBtn) { srcBtn.addEventListener("click", () => { const t = document.querySelector('#tabs button[data-layer="sources"]'); if (t) { t.click() } }) }
 	$("#ts-body").querySelectorAll(".ts-play").forEach((b) =>
 		b.addEventListener("click", () => {
 			const a = +b.dataset.a
