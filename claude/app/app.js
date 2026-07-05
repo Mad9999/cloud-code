@@ -683,38 +683,63 @@ const EX = window.EXPLORER_DATA
 function sname(s) {
 	return (EX.surah_names[s] || ("سورة " + s)).replace(/^سُ?ورَةُ\s*/, "")
 }
-
-function buildExplorer() {
-	$("#explorer-verses").innerHTML = D.surah.verses.map((v) => {
-		const words = v.words.map((w) =>
-			(w.root && EX.roots[w.root])
-				? `<span class="rx-word" data-root="${w.root}" data-wi="${w.i}">${w.text}</span>`
-				: `<span>${w.text}</span>`).join(" ")
-		return `<div class="rx-verse"><span class="rx-num">${arNum(v.n)}</span> ﴿ ${words} ﴾</div>`
-	}).join("")
-	$("#explorer-verses").querySelectorAll(".rx-word").forEach((el) =>
-		{ el.onclick = () => showRootExplorer(el.dataset.root, Number(el.dataset.wi), el) })
-	$("#explorer-detail").innerHTML =
-		`اضغط أيّ كلمة مُبرَزة لترى جذرها وأين ينتشر في القرآن كلّه. (مثال: جذر «رحم» يظهر ٣٣٩ مرة في ٣١٣ آية عبر ٦٢ سورة.)`
+function ayahText(s, a) {
+	const ws = EX.verse_words[s + ":" + a]
+	return ws ? ws.map((w) => w[0]).join(" ") : ""
 }
 
-function showRootExplorer(root, wi, el) {
-	$("#explorer-verses").querySelectorAll(".rx-word").forEach((e) => e.classList.remove("sel"))
+function buildExplorer() {
+	const nums = Object.keys(EX.surah_names).map(Number).sort((a, b) => a - b)
+	$("#explorer-controls").innerHTML =
+		`<label class="ex-pick">السورة: <select id="ex-surah">` +
+		nums.map((n) => `<option value="${n}">${arNum(n)} · ${sname(n)}</option>`).join("") +
+		`</select></label>`
+	$("#ex-surah").onchange = () => renderExplorerSurah(Number($("#ex-surah").value))
+	// one delegated click handler for the whole (possibly large) verse list
+	$("#explorer-verses").addEventListener("click", (e) => {
+		const el = e.target.closest(".rx-word")
+		if (el) { showRootExplorer(el.dataset.root, el.textContent, el) }
+	})
+	renderExplorerSurah(1)
+}
+
+function renderExplorerSurah(n) {
+	const cnt = EX.surah_ayahs[n]
+	const prof = EX.surah_profile[n] || {}
+	const topR = (prof.top_roots || []).map(([r, c]) => `${r} (${arNum(c)})`).join("، ")
+	$("#explorer-header").innerHTML =
+		`<b>${sname(n)}</b> — ${EX.surah_type[n]} · ${arNum(cnt)} آية` +
+		`${topR ? ` · أبرز جذورها: ${topR}` : ""}` +
+		`${prof.unique_roots ? ` · جذورٌ تفرّدت بها: ${arNum(prof.unique_roots)}` : ""}`
+	let html = ""
+	for (let a = 1; a <= cnt; a++) {
+		const ws = EX.verse_words[n + ":" + a] || []
+		const words = ws.map((w) =>
+			(w[1] && EX.roots[w[1]])
+				? `<span class="rx-word" data-root="${w[1]}">${w[0]}</span>`
+				: `<span>${w[0]}</span>`).join(" ")
+		html += `<div class="rx-verse"><span class="rx-num">${arNum(a)}</span> ${words}</div>`
+	}
+	$("#explorer-verses").innerHTML = html
+	$("#explorer-detail").innerHTML = "اضغط أيّ كلمة مُبرَزة لترى جذرها وأين ينتشر في القرآن كلّه."
+}
+
+function showRootExplorer(root, wtext, el) {
+	$("#explorer-verses").querySelectorAll(".rx-word.sel").forEach((e) => e.classList.remove("sel"))
 	el.classList.add("sel")
 	const r = EX.roots[root]
-	const word = D.surah.verses.flatMap((v) => v.words).find((w) => w.i === wi) || { text: root, gloss: "" }
+	if (!r) { return }
 	const perSurah = {}
 	r.ayahs.forEach(([s]) => { perSurah[s] = (perSurah[s] || 0) + 1 })
 	const topS = Object.entries(perSurah).sort((a, b) => b[1] - a[1]).slice(0, 6)
 		.map(([s, c]) => `${sname(s)} (${arNum(c)})`).join("، ")
 	const cap = 80
 	const rows = r.ayahs.slice(0, cap).map(([s, a]) =>
-		`<div class="rx-occ"><span class="rx-ref">${sname(s)} ${arNum(a)}</span> ${EX.quran[s + ":" + a] || ""}</div>`).join("")
+		`<div class="rx-occ"><span class="rx-ref">${sname(s)} ${arNum(a)}</span> ${ayahText(s, a)}</div>`).join("")
 	const more = r.ayahs.length > cap
 		? `<div class="rx-more">و ${arNum(r.ayahs.length - cap)} موضعًا آخر في المصحف…</div>` : ""
 	$("#explorer-detail").innerHTML =
-		`<div class="rx-head"><b>${word.text}</b> — الجذر <b class="root">${root}</b>` +
-		`${r.lemma ? ` (${r.lemma})` : ""}<div class="gloss">${word.gloss || ""}</div></div>` +
+		`<div class="rx-head"><b>${wtext}</b> — الجذر <b class="root">${root}</b></div>` +
 		`<div class="rx-stat">ظهر هذا الجذر في القرآن كلّه: <b>${arNum(r.count)}</b> مرة · في <b>${arNum(r.ayah_count)}</b> آية · عبر <b>${arNum(r.surah_count)}</b> سورة</div>` +
 		`<div class="rx-surahs">أكثر السور حضورًا: ${topS}</div>` +
 		`<h3>حيث يظهر عبر المصحف (عيّنة):</h3><div class="rx-list">${rows}${more}</div>`

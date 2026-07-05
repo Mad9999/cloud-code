@@ -92,39 +92,72 @@ def build():
 	}
 
 
-def build_explorer():
-	"""Compact app payload for the Root Explorer: the whole-Qur'an text (so any
-	occurrence is readable) + surah names + the concordance for every root that
-	Al-Fatiha uses (each Fatiha word becomes a gate to everywhere its root
-	appears across the 6236 verses). All computed facts — never generated."""
-	c = build()
-	# whole-Qur'an simple text, indexed "s:a" -> text
-	quran = {}
-	with open(BASE / "data" / "quran-simple.txt", encoding="utf-8") as f:
+def parse_all():
+	"""Yield every morphological token: (s, a, w, seg, form, root|None)."""
+	with open(MORPH, encoding="utf-8") as f:
 		for line in f:
-			line = line.strip()
-			if not line or line.startswith("#"):
+			line = line.rstrip("\n")
+			if not line or "\t" not in line:
 				continue
-			s, a, text = line.split("|", 2)
-			quran[f"{s}:{a}"] = text
+			parts = line.split("\t")
+			if len(parts) < 4:
+				continue
+			loc, form, _tag, feats = parts[:4]
+			s, a, w, seg = loc.split(":")
+			m = ROOT_RE.search(feats)
+			yield int(s), int(a), int(w), int(seg), form, (m.group(1) if m else None)
+
+
+def build_explorer():
+	"""Whole-Qur'an payload for the Root Explorer (all 114 surahs). Single pass:
+	reconstruct each verse's words (segment forms concatenated, with the stem's
+	root) + a full root concordance. Each word of the whole Qur'an becomes a
+	gate to everywhere its root appears. Computed facts — never generated."""
+	words = defaultdict(lambda: defaultdict(lambda: {"text": "", "root": None}))
+	roots = defaultdict(lambda: {"count": 0, "lemmas": Counter(), "ayahs": set(), "surahs": set()})
+	surah_root_counts = defaultdict(Counter)
+	for s, a, w, _seg, form, root in parse_all():
+		e = words[(s, a)][w]
+		e["text"] += form
+		if root:
+			e["root"] = root
+			r = roots[root]
+			r["count"] += 1
+			r["ayahs"].add((s, a))
+			r["surahs"].add(s)
+			surah_root_counts[s][root] += 1
+
+	verse_words = {}
+	for (s, a), wd in words.items():
+		verse_words[f"{s}:{a}"] = [[wd[w]["text"], wd[w]["root"]] for w in sorted(wd)]
+
+	root_spread = {r: len(d["surahs"]) for r, d in roots.items()}
+	roots_out = {}
+	for r, d in roots.items():
+		roots_out[r] = {
+			"count": d["count"], "ayah_count": len(d["ayahs"]),
+			"surah_count": len(d["surahs"]),
+			"ayahs": sorted([[s, a] for s, a in d["ayahs"]]),
+		}
+	surah_profile = {}
+	for s, cnt in surah_root_counts.items():
+		surah_profile[s] = {
+			"top_roots": cnt.most_common(6),
+			"unique_roots": sum(1 for r in cnt if root_spread[r] == 1),
+		}
+
 	with open(BASE / "data" / "surah_meta.json", encoding="utf-8") as f:
 		meta = json.load(f)
 	surah_names = {n: m["name"] for n, m in meta.items()}
-	# roots used in Al-Fatiha (from the golden dataset's word roots)
-	with open(BASE / "data" / "surah_001.json", encoding="utf-8") as f:
-		surah1 = json.load(f)
-	fatiha_roots = sorted({w["root"] for v in surah1["verses"] for w in v["words"] if w["root"]})
-	roots = {}
-	for r in fatiha_roots:
-		if r in c["roots"]:
-			d = c["roots"][r]
-			roots[r] = {
-				"count": d["count"], "ayah_count": d["ayah_count"],
-				"surah_count": len(d["surahs"]), "lemma": d["lemma"],
-				"ayahs": d["ayahs"],
-			}
-	return {"quran": quran, "surah_names": surah_names, "roots": roots,
-		"distinct_roots_total": c["distinct_roots"]}
+	surah_ayahs = {n: m["ayahs"] for n, m in meta.items()}
+	surah_type = {n: ("مكية" if m["revelationType"] == "Meccan" else "مدنية") for n, m in meta.items()}
+
+	return {
+		"verse_words": verse_words, "roots": roots_out,
+		"surah_names": surah_names, "surah_ayahs": surah_ayahs,
+		"surah_type": surah_type, "surah_profile": surah_profile,
+		"distinct_roots_total": len(roots_out),
+	}
 
 
 if __name__ == "__main__":
@@ -137,9 +170,9 @@ if __name__ == "__main__":
 			f.write("window.EXPLORER_DATA = ")
 			json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
 			f.write(";\n")
-		miss = [r for r in payload["roots"]]
 		print(f"wrote explorer.js ({out.stat().st_size // 1024} KiB) — "
-			f"{len(payload['roots'])} Fatiha roots, {len(payload['quran'])} verses of text")
+			f"{len(payload['roots'])} roots, {len(payload['verse_words'])} verses, "
+			f"{len(payload['surah_names'])} surahs")
 		sys.exit(0)
 	c = build()
 	print("distinct roots:", c["distinct_roots"], "| root-bearing tokens:", c["total_tokens_with_root"])

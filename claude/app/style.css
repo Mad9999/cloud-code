@@ -351,7 +351,14 @@ table.stats td:first-child, table.stats th:first-child { text-align: right; font
 .link-card .typechip { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-inline-end: 6px; }
 
 /* Layer: مستكشف الجذر (root explorer) */
-.rx-verses { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.ex-pick { font-size: 14px; color: var(--ink-2); }
+.ex-pick select {
+	font-family: var(--arabic); font-size: 15px; background: #202020; color: var(--ink);
+	border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; margin-inline-start: 6px;
+}
+#explorer-header { margin-bottom: 12px; font-size: 13.5px; color: var(--ink-2); }
+#explorer-header b { font-family: var(--arabic); font-size: 17px; color: var(--ink); }
+.rx-verses { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; max-height: 460px; overflow-y: auto; padding-inline: 4px; }
 .rx-verse { font-family: var(--arabic); font-size: 22px; color: var(--ink); line-height: 2; }
 .rx-verse .rx-num { color: var(--yellow); font-size: 14px; }
 .rx-word { cursor: pointer; border-radius: 6px; padding: 0 3px; border-bottom: 2px dotted rgba(57, 135, 229, 0.5); transition: background 0.12s; }
