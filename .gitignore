@@ -169,3 +169,6 @@ dist
 # Python
 __pycache__/
 *.pyc
+
+# Downloaded source PDFs (large; not tracked — see data/sources_manifest.json for provenance)
+claude/sources/pdf/
