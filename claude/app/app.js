@@ -1083,23 +1083,42 @@ const RECITERS = [
 let tsReciter = "husary"
 let tsCurIdx = 0
 
+// The tadabbur tab shows the short surahs (full coverage, verses[]) AND
+// al-Baqara (progressive, passages[]). A unified entry list drives the picker.
+const TB = window.TADABBUR_BAQARA
+const TS_ENTRIES = TS.surahs.map((su) => ({
+	kind: "short", n: su.n, name: stripSurah(EX.surah_names[su.n] || ("سورة " + su.n)),
+	type: EX.surah_type[su.n], theme: su.theme, fadl: su.fadl, sabab: su.sabab, verses: su.verses,
+})).concat([{
+	kind: "long", n: TB.n, name: TB.name + " (مختارات)", type: EX.surah_type[TB.n],
+	passages: TB.passages, coverage: TB.coverage,
+}])
+let tsCurEntry = TS_ENTRIES[0]
+
 function pad3(n) { return String(n).padStart(3, "0") }
 function curReciter() { return RECITERS.find((x) => x.id === tsReciter) || RECITERS[0] }
+// al-Baqara is currently vendored in al-Husary only; short surahs honour the
+// reciter picker. So the audio folder follows the reciter, except long surahs
+// which force al-Husary (root folder).
+function audioDir() { return (tsCurEntry && tsCurEntry.kind === "long") ? "" : curReciter().dir }
+function entryVerses(e) { return e.kind === "long" ? e.passages.flatMap((p) => p.verses) : e.verses }
+
+function tsWholeMode() { return curReciter().whole && tsCurEntry && tsCurEntry.kind === "short" }
 
 function tsStop() {
 	if (tsAudio) { tsAudio.pause(); tsAudio = null }
 	tsSeq = null
 	document.querySelectorAll("#ts-body .ts-verse.playing").forEach((e) => e.classList.remove("playing"))
 	const sb = $("#ts-listen")
-	if (sb) { sb.textContent = curReciter().whole ? "▶ استمع للسورة" : "▶ استمع للسورة متتابعةً" }
+	if (sb) { sb.textContent = tsWholeMode() ? "▶ استمع للسورة" : "▶ استمع للسورة متتابعةً" }
 }
 
 function tsPlayVerse(s, a, onEnd) {
 	if (tsAudio) { tsAudio.pause() }
 	document.querySelectorAll("#ts-body .ts-verse.playing").forEach((e) => e.classList.remove("playing"))
 	const row = document.querySelector(`#ts-body .ts-verse[data-a="${a}"]`)
-	if (row) { row.classList.add("playing") }
-	tsAudio = new Audio(`../audio/${curReciter().dir}${pad3(s)}${pad3(a)}.mp3`)
+	if (row) { row.classList.add("playing"); row.scrollIntoView({ block: "nearest" }) }
+	tsAudio = new Audio(`../audio/${audioDir()}${pad3(s)}${pad3(a)}.mp3`)
 	tsAudio.onended = () => {
 		if (row) { row.classList.remove("playing") }
 		if (onEnd) { onEnd() }
@@ -1108,95 +1127,108 @@ function tsPlayVerse(s, a, onEnd) {
 }
 
 // whole-surah playback (al-Luhaidan): one file per surah, no per-ayah step
-function tsPlayWhole(su) {
+function tsPlayWhole(e) {
 	tsStop()
 	const btn = $("#ts-listen")
 	if (btn) { btn.textContent = "■ إيقاف" }
 	tsSeq = { whole: true }
-	tsAudio = new Audio(`../audio/${curReciter().dir}${pad3(su.n)}.mp3`)
+	tsAudio = new Audio(`../audio/${audioDir()}${pad3(e.n)}.mp3`)
 	tsAudio.onended = () => tsStop()
 	tsAudio.play().catch(() => {})
 }
 
-function tsPlaySurah(su) {
-	if (curReciter().whole) { tsPlayWhole(su); return }
+function tsPlaySurah(e) {
+	if (tsWholeMode()) { tsPlayWhole(e); return }
 	tsStop()
 	const btn = $("#ts-listen")
 	if (btn) { btn.textContent = "■ إيقاف" }
-	tsSeq = { su, k: 0 }
+	const verses = entryVerses(e)
+	tsSeq = { k: 0 }
 	const step = () => {
-		if (!tsSeq || tsSeq.k >= su.verses.length) { tsStop(); return }
-		const v = su.verses[tsSeq.k]
+		if (!tsSeq || tsSeq.k >= verses.length) { tsStop(); return }
+		const v = verses[tsSeq.k]
 		tsSeq.k += 1
-		tsPlayVerse(su.n, v.n, step)
+		tsPlayVerse(e.n, v.n, step)
 	}
 	step()
 }
 
 function buildTadabburShort() {
-	$("#ts-picker").innerHTML = TS.surahs.map((su, i) =>
-		`<button class="ts-tab${i === 0 ? " sel" : ""}" data-i="${i}">${stripSurah(EX.surah_names[su.n] || ("سورة " + su.n))}</button>`).join("")
+	$("#ts-picker").innerHTML = TS_ENTRIES.map((e, i) =>
+		`<button class="ts-tab${i === 0 ? " sel" : ""}" data-i="${i}">${e.name}</button>`).join("")
 	$("#ts-picker").querySelectorAll(".ts-tab").forEach((b) =>
 		b.addEventListener("click", () => renderTadabburShort(+b.dataset.i)))
-	$("#ts-reciter").innerHTML = `<label class="ts-rec-lbl">القارئ: <select id="ts-rec-sel">` +
-		RECITERS.map((r) => `<option value="${r.id}">${r.name}</option>`).join("") +
-		`</select></label> <span class="ts-rec-note" id="ts-rec-note"></span>`
-	$("#ts-rec-sel").addEventListener("change", (e) => { tsReciter = e.target.value; renderTadabburShort(tsCurIdx) })
 	renderTadabburShort(0)
 }
 
+// one verse card, shared by short surahs and al-Baqara passages
+function tsVerseCard(s, v, showPlay) {
+	const names = (v.names && v.names.length) ? `<span class="ts-names">الأسماء الفاعلة: ${v.names.join(" · ")}</span>` : ""
+	const playBtn = showPlay ? `<button class="ts-play" data-a="${v.n}" title="استمع لهذه الآية">▶</button> ` : ""
+	return `<div class="ts-verse" data-a="${v.n}">` +
+		`<div class="ts-ayah">${playBtn}﴿ ${ayahText(s, v.n)} <span class="vmark">${arNum(v.n)}</span> ﴾</div>` +
+		`<div class="ts-reflect">${v.reflection.text}` +
+		`<span class="src">${v.reflection.source} ${gradeBadge(v.reflection.grade)}</span></div>` +
+		`<div class="ts-meta">${names}` +
+		`<span class="ts-heart">القلب: ${v.heart_state.text} ${gradeBadge("ijtihadi")}</span></div>` +
+		`<div class="ts-action">↦ ${v.action.text} ${gradeBadge("ijtihadi")}</div>` +
+		`</div>`
+}
+
 function renderTadabburShort(i) {
-	tsStop()
 	tsCurIdx = i
-	const whole = curReciter().whole
-	const note = $("#ts-rec-note")
-	if (note) {
-		note.innerHTML = whole
-			? "تلاواتٌ محفوظةٌ تعمل بلا إنترنت. اللحيدان: تلاوةُ السورةِ كاملةً (غير مقطّعةٍ آيةً-آية، فلا تُبرَز آيةً آية لديه)."
-			: "تلاواتٌ محفوظةٌ تعمل بلا إنترنت. اختر القارئ ثم اضغط ▶ لآيةٍ أو «استمع للسورة»."
+	tsCurEntry = TS_ENTRIES[i]
+	const e = tsCurEntry
+	const long = e.kind === "long"
+	tsStop()
+	// reciter controls: short surahs honour the picker; al-Baqara is al-Husary only
+	if (long) {
+		$("#ts-reciter").innerHTML = `<span class="ts-rec-note">التلاوة بصوت الشيخ محمود خليل الحصري. (بقيّةُ القرّاء تُضاف مع اكتمال السورة بإذن الله.)</span>`
+	} else {
+		$("#ts-reciter").innerHTML = `<label class="ts-rec-lbl">القارئ: <select id="ts-rec-sel">` +
+			RECITERS.map((r) => `<option value="${r.id}"${r.id === tsReciter ? " selected" : ""}>${r.name}</option>`).join("") +
+			`</select></label> <span class="ts-rec-note">${curReciter().whole
+				? "اللحيدان: تلاوةُ السورةِ كاملةً (غير مقطّعةٍ آيةً-آية لديه)."
+				: "تلاواتٌ محفوظةٌ تعمل بلا إنترنت."}</span>`
+		$("#ts-rec-sel").addEventListener("change", (ev) => { tsReciter = ev.target.value; renderTadabburShort(tsCurIdx) })
 	}
 	$("#ts-picker").querySelectorAll(".ts-tab").forEach((b, k) => b.classList.toggle("sel", k === i))
-	const su = TS.surahs[i]
-	const nm = stripSurah(EX.surah_names[su.n] || ("سورة " + su.n))
-	let html = `<div class="ts-head"><b>${nm}</b> <span class="mut">· ${EX.surah_type[su.n]} · ${arNum(su.verses.length)} آية · ${su.theme}</span>` +
+	const whole = tsWholeMode()
+
+	let html = `<div class="ts-head"><b>${e.name}</b> <span class="mut">· ${e.type}${long ? "" : " · " + arNum(e.verses.length) + " آية"}${e.theme ? " · " + e.theme : ""}</span>` +
 		` <button class="ts-listen" id="ts-listen">${whole ? "▶ استمع للسورة" : "▶ استمع للسورة متتابعةً"}</button></div>`
-	if (su.fadl) {
-		html += `<div class="ts-note ts-fadl">✦ <b>فضلها:</b> ${su.fadl.text} <span class="src">${su.fadl.source} ${gradeBadge(su.fadl.grade)}</span></div>`
+
+	if (long) {
+		html += `<div class="ts-coverage">تُبنى هذه السورة تدرّجًا بإذن الله — <b>${arNum(e.coverage.covered)}</b> من <b>${arNum(e.coverage.total)}</b> آية، بادئين بأعظم مقاطعها وأكثرها تلاوةً. كلُّ ما هنا مُسنَدٌ وموسوم؛ ولا نُوهم أنّ التغطية كاملة.</div>`
+		html += e.passages.map((p) => {
+			let ph = `<div class="ts-passage"><div class="ts-passage-head">${p.title} <span class="mut">(${arNum(p.range[0])}${p.range[1] !== p.range[0] ? "–" + arNum(p.range[1]) : ""})</span></div>`
+			if (p.fadl) { ph += `<div class="ts-note ts-fadl">✦ <b>فضلها:</b> ${p.fadl.text} <span class="src">${p.fadl.source} ${gradeBadge(p.fadl.grade)}</span></div>` }
+			ph += p.verses.map((v) => tsVerseCard(e.n, v, !whole)).join("")
+			return ph + `</div>`
+		}).join("")
+	} else {
+		if (e.fadl) { html += `<div class="ts-note ts-fadl">✦ <b>فضلها:</b> ${e.fadl.text} <span class="src">${e.fadl.source} ${gradeBadge(e.fadl.grade)}</span></div>` }
+		if (e.sabab) { html += `<div class="ts-note ts-sabab">◆ <b>سببُ نزولها:</b> ${e.sabab.text} <span class="src">${e.sabab.source} ${gradeBadge(e.sabab.grade)}</span></div>` }
+		html += e.verses.map((v) => tsVerseCard(e.n, v, !whole)).join("")
 	}
-	if (su.sabab) {
-		html += `<div class="ts-note ts-sabab">◆ <b>سببُ نزولها:</b> ${su.sabab.text} <span class="src">${su.sabab.source} ${gradeBadge(su.sabab.grade)}</span></div>`
-	}
-	html += su.verses.map((v) => {
-		const names = (v.names && v.names.length) ? `<span class="ts-names">الأسماء الفاعلة: ${v.names.join(" · ")}</span>` : ""
-		const playBtn = whole ? "" : `<button class="ts-play" data-a="${v.n}" title="استمع لهذه الآية">▶</button> `
-		return `<div class="ts-verse" data-a="${v.n}">` +
-			`<div class="ts-ayah">${playBtn}﴿ ${ayahText(su.n, v.n)} <span class="vmark">${arNum(v.n)}</span> ﴾</div>` +
-			`<div class="ts-reflect">${v.reflection.text}` +
-			`<span class="src">${v.reflection.source} ${gradeBadge(v.reflection.grade)}</span></div>` +
-			`<div class="ts-meta">${names}` +
-			`<span class="ts-heart">القلب: ${v.heart_state.text} ${gradeBadge("ijtihadi")}</span></div>` +
-			`<div class="ts-action">↦ ${v.action.text} ${gradeBadge("ijtihadi")}</div>` +
-			`</div>`
-	}).join("")
-	// bridge to the sourced library: which trusted classical works to consult
-	// for THIS surah (tafsir always; asbab if it has a sabab) — we point, we
-	// don't summarise. Same honesty as the surah portrait.
+
+	// bridge to the sourced library — we point, we don't summarise
 	const catLabel = (k) => ((window.QURAN_CONTEXT.categories.find((c) => c[0] === k) || [])[1] || k)
-	const cats = ["tafsir_mathur"].concat(su.sabab ? ["asbab"] : [])
+	const hasSabab = long ? e.passages.some((p) => p.sabab) : !!e.sabab
+	const cats = ["tafsir_mathur"].concat(hasSabab ? ["asbab"] : [])
 	const chips = cats.map((k) => `<span class="ts-src-chip">${catLabel(k)}</span>`).join(" ")
-	html += `<div class="ts-srclink">للاستزادة المُسنَدة في ${nm} — ارجع إلى ${chips} ` +
+	html += `<div class="ts-srclink">للاستزادة المُسنَدة في ${e.name} — ارجع إلى ${chips} ` +
 		`في <button class="ts-src-btn" type="button">المصادر المُسنَدة</button>. (نَدُلّ ولا نُلخّص؛ المعنى الكامل عند أهله.)</div>`
+
 	$("#ts-body").innerHTML = html
-	$("#ts-listen").addEventListener("click", () => {
-		if (tsSeq) { tsStop() } else { tsPlaySurah(su) }
-	})
+	$("#ts-listen").addEventListener("click", () => { if (tsSeq) { tsStop() } else { tsPlaySurah(e) } })
 	const srcBtn = $("#ts-body").querySelector(".ts-src-btn")
 	if (srcBtn) { srcBtn.addEventListener("click", () => { const t = document.querySelector('#tabs button[data-layer="sources"]'); if (t) { t.click() } }) }
 	$("#ts-body").querySelectorAll(".ts-play").forEach((b) =>
 		b.addEventListener("click", () => {
 			const a = +b.dataset.a
 			const row = document.querySelector(`#ts-body .ts-verse[data-a="${a}"]`)
-			if (row && row.classList.contains("playing")) { tsStop() } else { tsStop(); tsPlayVerse(su.n, a) }
+			if (row && row.classList.contains("playing")) { tsStop() } else { tsStop(); tsPlayVerse(e.n, a) }
 		}))
 }
 
