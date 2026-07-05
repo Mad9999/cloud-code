@@ -1064,33 +1064,34 @@ const TS = window.TADABBUR_SHORT
 let tsAudio = null
 let tsSeq = null
 
-// Reciters — all vendored locally per-ayah (work offline), each recitation
-// downloaded from everyayah after verifying the reciter's folder against its
-// official list. الحصري lives at the audio root (shared with the Fatiha
-// محاورة); the rest under audio/<id>/. (Muhammad al-Luhaidan is not carried
-// per-ayah on everyayah, so he is honestly omitted rather than faked.)
+// Reciters — all vendored locally (work offline), each recitation verified
+// (loads & plays in the browser). الحصري lives at the audio root (shared with
+// the Fatiha محاورة); per-ayah reciters under audio/<id>/SSSAAA.mp3, verified
+// against everyayah's official list. محمد اللحيدان is not carried per-ayah on
+// any per-ayah source (verified against everyayah AND quran.com), so his
+// recitation is the WHOLE surah (audio/lhdan/SSS.mp3, from mp3quran) — honest,
+// with the per-ayah step disabled and labelled for him.
 const RECITERS = [
 	{ id: "husary", name: "محمود خليل الحصري (مرتّل)", dir: "" },
 	{ id: "ayyoub", name: "محمد أيوب", dir: "ayyoub/" },
 	{ id: "minshawy", name: "محمد صديق المنشاوي (مرتّل)", dir: "minshawy/" },
 	{ id: "abdulbasit", name: "عبد الباسط عبد الصمد (مرتّل)", dir: "abdulbasit/" },
 	{ id: "alafasy", name: "مشاري العفاسي", dir: "alafasy/" },
+	{ id: "sudais", name: "عبد الرحمن السديس", dir: "sudais/" },
+	{ id: "lhdan", name: "محمد اللحيدان (السورة كاملةً)", dir: "lhdan/", whole: true },
 ]
 let tsReciter = "husary"
+let tsCurIdx = 0
 
 function pad3(n) { return String(n).padStart(3, "0") }
-
-function reciterUrl(s, a) {
-	const r = RECITERS.find((x) => x.id === tsReciter) || RECITERS[0]
-	return `../audio/${r.dir}${pad3(s)}${pad3(a)}.mp3`
-}
+function curReciter() { return RECITERS.find((x) => x.id === tsReciter) || RECITERS[0] }
 
 function tsStop() {
 	if (tsAudio) { tsAudio.pause(); tsAudio = null }
 	tsSeq = null
 	document.querySelectorAll("#ts-body .ts-verse.playing").forEach((e) => e.classList.remove("playing"))
 	const sb = $("#ts-listen")
-	if (sb) { sb.textContent = "▶ استمع للسورة متتابعةً" }
+	if (sb) { sb.textContent = curReciter().whole ? "▶ استمع للسورة" : "▶ استمع للسورة متتابعةً" }
 }
 
 function tsPlayVerse(s, a, onEnd) {
@@ -1098,7 +1099,7 @@ function tsPlayVerse(s, a, onEnd) {
 	document.querySelectorAll("#ts-body .ts-verse.playing").forEach((e) => e.classList.remove("playing"))
 	const row = document.querySelector(`#ts-body .ts-verse[data-a="${a}"]`)
 	if (row) { row.classList.add("playing") }
-	tsAudio = new Audio(reciterUrl(s, a))
+	tsAudio = new Audio(`../audio/${curReciter().dir}${pad3(s)}${pad3(a)}.mp3`)
 	tsAudio.onended = () => {
 		if (row) { row.classList.remove("playing") }
 		if (onEnd) { onEnd() }
@@ -1106,7 +1107,19 @@ function tsPlayVerse(s, a, onEnd) {
 	tsAudio.play().catch(() => {})
 }
 
+// whole-surah playback (al-Luhaidan): one file per surah, no per-ayah step
+function tsPlayWhole(su) {
+	tsStop()
+	const btn = $("#ts-listen")
+	if (btn) { btn.textContent = "■ إيقاف" }
+	tsSeq = { whole: true }
+	tsAudio = new Audio(`../audio/${curReciter().dir}${pad3(su.n)}.mp3`)
+	tsAudio.onended = () => tsStop()
+	tsAudio.play().catch(() => {})
+}
+
 function tsPlaySurah(su) {
+	if (curReciter().whole) { tsPlayWhole(su); return }
 	tsStop()
 	const btn = $("#ts-listen")
 	if (btn) { btn.textContent = "■ إيقاف" }
@@ -1127,18 +1140,26 @@ function buildTadabburShort() {
 		b.addEventListener("click", () => renderTadabburShort(+b.dataset.i)))
 	$("#ts-reciter").innerHTML = `<label class="ts-rec-lbl">القارئ: <select id="ts-rec-sel">` +
 		RECITERS.map((r) => `<option value="${r.id}">${r.name}</option>`).join("") +
-		`</select></label> <span class="ts-rec-note">تلاواتٌ محفوظةٌ تعمل بلا إنترنت. (اللحيدان غير متوفّرٍ آيةً-آية على مصدرنا، فلم يُدرَج.)</span>`
-	$("#ts-rec-sel").addEventListener("change", (e) => { tsStop(); tsReciter = e.target.value })
+		`</select></label> <span class="ts-rec-note" id="ts-rec-note"></span>`
+	$("#ts-rec-sel").addEventListener("change", (e) => { tsReciter = e.target.value; renderTadabburShort(tsCurIdx) })
 	renderTadabburShort(0)
 }
 
 function renderTadabburShort(i) {
 	tsStop()
+	tsCurIdx = i
+	const whole = curReciter().whole
+	const note = $("#ts-rec-note")
+	if (note) {
+		note.innerHTML = whole
+			? "تلاواتٌ محفوظةٌ تعمل بلا إنترنت. اللحيدان: تلاوةُ السورةِ كاملةً (غير مقطّعةٍ آيةً-آية، فلا تُبرَز آيةً آية لديه)."
+			: "تلاواتٌ محفوظةٌ تعمل بلا إنترنت. اختر القارئ ثم اضغط ▶ لآيةٍ أو «استمع للسورة»."
+	}
 	$("#ts-picker").querySelectorAll(".ts-tab").forEach((b, k) => b.classList.toggle("sel", k === i))
 	const su = TS.surahs[i]
 	const nm = stripSurah(EX.surah_names[su.n] || ("سورة " + su.n))
 	let html = `<div class="ts-head"><b>${nm}</b> <span class="mut">· ${EX.surah_type[su.n]} · ${arNum(su.verses.length)} آية · ${su.theme}</span>` +
-		` <button class="ts-listen" id="ts-listen">▶ استمع للسورة متتابعةً</button></div>`
+		` <button class="ts-listen" id="ts-listen">${whole ? "▶ استمع للسورة" : "▶ استمع للسورة متتابعةً"}</button></div>`
 	if (su.fadl) {
 		html += `<div class="ts-note ts-fadl">✦ <b>فضلها:</b> ${su.fadl.text} <span class="src">${su.fadl.source} ${gradeBadge(su.fadl.grade)}</span></div>`
 	}
@@ -1147,8 +1168,9 @@ function renderTadabburShort(i) {
 	}
 	html += su.verses.map((v) => {
 		const names = (v.names && v.names.length) ? `<span class="ts-names">الأسماء الفاعلة: ${v.names.join(" · ")}</span>` : ""
+		const playBtn = whole ? "" : `<button class="ts-play" data-a="${v.n}" title="استمع لهذه الآية">▶</button> `
 		return `<div class="ts-verse" data-a="${v.n}">` +
-			`<div class="ts-ayah"><button class="ts-play" data-a="${v.n}" title="استمع لهذه الآية بصوت الشيخ الحصري">▶</button> ﴿ ${ayahText(su.n, v.n)} <span class="vmark">${arNum(v.n)}</span> ﴾</div>` +
+			`<div class="ts-ayah">${playBtn}﴿ ${ayahText(su.n, v.n)} <span class="vmark">${arNum(v.n)}</span> ﴾</div>` +
 			`<div class="ts-reflect">${v.reflection.text}` +
 			`<span class="src">${v.reflection.source} ${gradeBadge(v.reflection.grade)}</span></div>` +
 			`<div class="ts-meta">${names}` +
