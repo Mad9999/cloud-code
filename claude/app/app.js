@@ -1064,7 +1064,26 @@ const TS = window.TADABBUR_SHORT
 let tsAudio = null
 let tsSeq = null
 
+// Reciters — all vendored locally per-ayah (work offline), each recitation
+// downloaded from everyayah after verifying the reciter's folder against its
+// official list. الحصري lives at the audio root (shared with the Fatiha
+// محاورة); the rest under audio/<id>/. (Muhammad al-Luhaidan is not carried
+// per-ayah on everyayah, so he is honestly omitted rather than faked.)
+const RECITERS = [
+	{ id: "husary", name: "محمود خليل الحصري (مرتّل)", dir: "" },
+	{ id: "ayyoub", name: "محمد أيوب", dir: "ayyoub/" },
+	{ id: "minshawy", name: "محمد صديق المنشاوي (مرتّل)", dir: "minshawy/" },
+	{ id: "abdulbasit", name: "عبد الباسط عبد الصمد (مرتّل)", dir: "abdulbasit/" },
+	{ id: "alafasy", name: "مشاري العفاسي", dir: "alafasy/" },
+]
+let tsReciter = "husary"
+
 function pad3(n) { return String(n).padStart(3, "0") }
+
+function reciterUrl(s, a) {
+	const r = RECITERS.find((x) => x.id === tsReciter) || RECITERS[0]
+	return `../audio/${r.dir}${pad3(s)}${pad3(a)}.mp3`
+}
 
 function tsStop() {
 	if (tsAudio) { tsAudio.pause(); tsAudio = null }
@@ -1079,7 +1098,7 @@ function tsPlayVerse(s, a, onEnd) {
 	document.querySelectorAll("#ts-body .ts-verse.playing").forEach((e) => e.classList.remove("playing"))
 	const row = document.querySelector(`#ts-body .ts-verse[data-a="${a}"]`)
 	if (row) { row.classList.add("playing") }
-	tsAudio = new Audio(`../audio/${pad3(s)}${pad3(a)}.mp3`)
+	tsAudio = new Audio(reciterUrl(s, a))
 	tsAudio.onended = () => {
 		if (row) { row.classList.remove("playing") }
 		if (onEnd) { onEnd() }
@@ -1106,6 +1125,10 @@ function buildTadabburShort() {
 		`<button class="ts-tab${i === 0 ? " sel" : ""}" data-i="${i}">${stripSurah(EX.surah_names[su.n] || ("سورة " + su.n))}</button>`).join("")
 	$("#ts-picker").querySelectorAll(".ts-tab").forEach((b) =>
 		b.addEventListener("click", () => renderTadabburShort(+b.dataset.i)))
+	$("#ts-reciter").innerHTML = `<label class="ts-rec-lbl">القارئ: <select id="ts-rec-sel">` +
+		RECITERS.map((r) => `<option value="${r.id}">${r.name}</option>`).join("") +
+		`</select></label> <span class="ts-rec-note">تلاواتٌ محفوظةٌ تعمل بلا إنترنت. (اللحيدان غير متوفّرٍ آيةً-آية على مصدرنا، فلم يُدرَج.)</span>`
+	$("#ts-rec-sel").addEventListener("change", (e) => { tsStop(); tsReciter = e.target.value })
 	renderTadabburShort(0)
 }
 
