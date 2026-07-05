@@ -264,6 +264,108 @@ def build_ayah_links(top_k=6, df_ceiling=300, min_shared_idf=2.4):
 	return {"links": out, "stats": {"verses_with_echoes": linked, "total_verses": n, "edges": total_edges}}
 
 
+def _top_echo_strength(ayah_roots, ayahs, df_ceiling, min_shared_idf):
+	"""Per-ayah strongest echo score (sum of idf of shared distinctive roots).
+	Shared with the null model so real & shuffled data use IDENTICAL scoring."""
+	import math
+	inv = defaultdict(list)
+	for k in ayahs:
+		for r in ayah_roots[k]:
+			inv[r].append(k)
+	n = len(ayahs)
+	idf = {r: math.log(n / len(v)) for r, v in inv.items()}
+	best = {}
+	for k in ayahs:
+		distinctive = [r for r in ayah_roots[k] if len(inv[r]) <= df_ceiling]
+		scores = defaultdict(float)
+		for r in distinctive:
+			w = idf[r]
+			for other in inv[r]:
+				if other != k:
+					scores[other] += w
+		top = max(scores.values()) if scores else 0.0
+		best[k] = top if top >= min_shared_idf else 0.0
+	return best
+
+
+def build_echo_control(trials=20, seed=1234, df_ceiling=300, min_shared_idf=2.4):
+	"""Honesty guard against reading intention into coincidence (رقم القاعدة ٥:
+	الانحياز ضدّ المبالغة). Before we let anyone — including ourselves — call an
+	echo «تجاوبًا»، we must know how strong echoes are BY CHANCE.
+
+	Null model: keep every verse's number of distinctive roots and every root's
+	total frequency fixed, but randomly REWIRE which verse each root-occurrence
+	lands in (a degree-preserving shuffle). This destroys any real topical
+	co-location while preserving vocabulary statistics. If the real Qur'an's
+	echoes are no stronger than this shuffle, then «صدى الآية» is a property of
+	word-frequency alone and must NOT be dressed as meaning. We report the honest
+	comparison whatever it says — including if it deflates the wonder."""
+	import random
+	ayah_roots = defaultdict(set)
+	for s, a, _w, _seg, _form, root in parse_all():
+		if root:
+			ayah_roots[(s, a)].add(root)
+	ayahs = sorted(ayah_roots)
+
+	real = _top_echo_strength(ayah_roots, ayahs, df_ceiling, min_shared_idf)
+	real_vals = sorted(real.values())
+	real_median = real_vals[len(real_vals) // 2]
+	real_strong = sum(1 for v in real_vals if v >= 8.0)   # "notable" echoes
+
+	# edge list (verse, root); permute the root column -> degree-preserving null
+	edges = [(k, r) for k in ayahs for r in ayah_roots[k]]
+	rng = random.Random(seed)
+	null_medians, null_strong_counts = [], []
+	for _t in range(trials):
+		roots_col = [r for _k, r in edges]
+		rng.shuffle(roots_col)
+		shuf = defaultdict(set)
+		for (k, _r), nr in zip(edges, roots_col):
+			shuf[k].add(nr)
+		nb = _top_echo_strength(shuf, ayahs, df_ceiling, min_shared_idf)
+		nv = sorted(nb.values())
+		null_medians.append(nv[len(nv) // 2])
+		null_strong_counts.append(sum(1 for v in nv if v >= 8.0))
+
+	null_median = sum(null_medians) / len(null_medians)
+	null_strong = sum(null_strong_counts) / len(null_strong_counts)
+
+	# empirical lift table: how many verses reach each score threshold, real vs
+	# the averaged null. Bands are DERIVED, not hand-drawn — so the product's
+	# "above chance by X" labels are computed, not tuned to a wanted result.
+	thresholds = [4, 6, 8, 10, 12, 14, 16, 18, 20, 25, 30]
+	# re-run nulls accumulating per-threshold counts (reuse the same shuffle seed
+	# path for reproducibility)
+	rng2 = random.Random(seed)
+	null_counts = {t: 0 for t in thresholds}
+	for _t in range(trials):
+		roots_col = [r for _k, r in edges]
+		rng2.shuffle(roots_col)
+		shuf = defaultdict(set)
+		for (k, _r), nr in zip(edges, roots_col):
+			shuf[k].add(nr)
+		nb = _top_echo_strength(shuf, ayahs, df_ceiling, min_shared_idf)
+		nv = list(nb.values())
+		for t in thresholds:
+			null_counts[t] += sum(1 for v in nv if v >= t)
+	table = []
+	for t in thresholds:
+		real_c = sum(1 for v in real_vals if v >= t)
+		null_c = null_counts[t] / trials
+		table.append({"score": t, "real": real_c, "null": round(null_c, 1),
+			"lift": round(real_c / null_c, 2) if null_c >= 1 else None})
+	return {
+		"trials": trials,
+		"real_median_top_echo": round(real_median, 2),
+		"null_median_top_echo": round(null_median, 2),
+		"real_notable_echoes": real_strong,           # verses whose top echo >= 8.0
+		"null_notable_echoes": round(null_strong, 1),
+		"ratio_notable": round(real_strong / null_strong, 2) if null_strong else None,
+		"table": table,
+		"verses": len(ayahs),
+	}
+
+
 def build_discoveries(per_surah_cap=8, feed_cap=60):
 	"""What the AI surfaces that a reader passes over (رقم القاعدة ١١+١٢): purely
 	COMPUTED, verifiable facts — never generated meaning. Two honest categories:
@@ -337,6 +439,7 @@ if __name__ == "__main__":
 	import sys
 	if "--links" in sys.argv:
 		payload = build_ayah_links()
+		payload["control"] = build_echo_control()
 		out = BASE / "app" / "generated" / "ayah_links.js"
 		out.parent.mkdir(parents=True, exist_ok=True)
 		with open(out, "w", encoding="utf-8") as f:
@@ -344,8 +447,11 @@ if __name__ == "__main__":
 			json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
 			f.write(";\n")
 		st = payload["stats"]
+		c = payload["control"]
 		print(f"wrote ayah_links.js ({out.stat().st_size // 1024} KiB) — "
 			f"{st['verses_with_echoes']}/{st['total_verses']} verses linked, {st['edges']} edges")
+		print(f"  echo control: real median {c['real_median_top_echo']} vs null {c['null_median_top_echo']}; "
+			f"notable-echo lift {c['ratio_notable']}× (weak echoes ~ chance; only strong ones exceed it)")
 		sys.exit(0)
 	if "--discoveries" in sys.argv:
 		payload = build_discoveries()

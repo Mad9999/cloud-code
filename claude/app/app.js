@@ -878,6 +878,22 @@ function showSmPanel(nd) {
 const EX = window.EXPLORER_DATA
 const AL = window.AYAH_LINKS
 
+// Grade an echo against the null model (رقم القاعدة ٥): most echoes are just
+// vocabulary coincidence. Return the COMPUTED lift-over-chance and an honest
+// band, so weak links can't masquerade as meaning — not even to us.
+function echoLift(score) {
+	const t = AL.control.table
+	let row = null
+	for (const r of t) { if (score >= r.score) { row = r } }
+	if (!row) { return { label: "قريبٌ من الصدفة", cls: "ec-chance" } }
+	if (row.lift === null) { return { label: "نادرٌ جدًّا في مقابل الصدفة", cls: "ec-strong" } }
+	const x = row.lift
+	if (x >= 8) { return { label: `أقوى من الصدفة بنحو ${arNum(Math.round(x))}×`, cls: "ec-strong" } }
+	if (x >= 3) { return { label: `أعلى من الصدفة بنحو ${arNum(Math.round(x))}×`, cls: "ec-above" } }
+	if (x >= 1.5) { return { label: `أعلى من الصدفة قليلًا (${arNum(x)}×)`, cls: "ec-weak" } }
+	return { label: "قد يكون توارُدَ لفظٍ عاديّ — قريبٌ من الصدفة", cls: "ec-chance" }
+}
+
 function sname(s) {
 	return (EX.surah_names[s] || ("سورة " + s)).replace(/^سُ?ورَةُ\s*/, "")
 }
@@ -945,13 +961,16 @@ function showEchoes(ref, btn) {
 	const rows = nbrs.map(([o, sc, rs]) => {
 		const [os, oa] = o.split(":")
 		const chips = rs.map((r) => `<span class="ec-root">${r}</span>`).join("")
+		const lf = echoLift(sc)
 		return `<div class="rx-occ"><span class="rx-ref">${sname(os)} ${arNum(oa)}</span> ${chips} ` +
-			`<span class="mut" style="font-family:var(--ui);font-size:11px">صدىً ${sc}</span><div class="ec-txt">${ayahText(os, oa)}</div></div>`
+			`<span class="ec-band ${lf.cls}">${lf.label}</span>` +
+			`<div class="ec-txt">${ayahText(os, oa)}</div></div>`
 	}).join("")
+	const c = AL.control
 	$("#explorer-detail").innerHTML =
 		`<div class="rx-head"><b>صدى الآية</b> — ${sname(s)} ${arNum(a)}</div>` +
 		`<div class="rx-stat" style="font-family:var(--arabic);font-size:16px;color:var(--ink)">${ayahText(s, a)}</div>` +
-		`<div class="rx-surahs">مواضعُ تتردّد فيها مفرداتها النادرة (مرتّبةً بقوّة الاشتراك؛ الجذور المشتركة تحتها). حقيقةٌ محسوبة — المعنى تتدبّره أنت.</div>` +
+		`<div class="ec-control">⚖ <b>صمّام الأمانة:</b> قِسنا هذه الروابط على نموذجٍ عشوائيّ (خلطنا جذور القرآن مع حفظ تكراراتها). النتيجة الصادقة: <b>أكثرُ الأصداء توارُدُ ألفاظٍ قريبٌ من الصدفة</b> (الوسيط الحقيقي ${arNum(c.real_median_top_echo)} مقابل ${arNum(c.null_median_top_echo)} في العشوائيّ)، ولا يتجاوز الصدفةَ بوضوحٍ إلا <b>الأقوى</b> منها. فلا تُقرأ ضعيفةُ الاشتراك «تجاوبًا»؛ الوسمُ بجانب كلٍّ يبيّن قوّته مقابل الصدفة. المعنى تتدبّره أنت.</div>` +
 		`<div class="rx-list">${rows}</div>`
 }
 
@@ -1468,16 +1487,20 @@ function renderDialogueVerse(i) {
 function dialogueEchoHtml(n) {
 	const nbrs = (AL.links["1:" + n] || []).slice(0, 3)
 	if (!nbrs.length) { return "" }
-	const rows = nbrs.map(([o, _sc, rs]) => {
+	const rows = nbrs.map(([o, sc, rs]) => {
 		const [os, oa] = o.split(":")
 		const chips = rs.map((r) => `<span class="ec-root">${r}</span>`).join("")
+		const lf = echoLift(sc)
 		return `<div class="dlg-echo-row"><span class="rx-ref">${sname(os)} ${arNum(oa)}</span> ${chips}` +
+			`<span class="ec-band ${lf.cls}">${lf.label}</span>` +
 			`<div class="dlg-echo-txt">${ayahText(os, oa)}</div></div>`
 	}).join("")
+	// honest framing: for al-Fatiha these shared-word links are near chance, so
+	// we invite reading, not inference — and say so plainly (رقم القاعدة ٥).
 	return `<div class="dlg-echo">` +
-		`<span class="lbl">ولهذه الآية صدىً في كتاب الله — تتجاوبُ مفرداتُها مع مواضعَ أُخَر، فتدبّرها:</span>` +
+		`<span class="lbl">مواضعُ تشترك مع هذه الآية في لفظٍ مميّز — قد تعينك على تدبّرها. وأمانةً: هذا الاشتراك في الفاتحة <b>قريبٌ من الصدفة</b> غالبًا (قِسناه على نموذجٍ عشوائيّ)، فهو دعوةٌ للقراءة والتأمّل، لا دليلَ بناءٍ خفيّ:</span>` +
 		`<div class="dlg-echo-list">${rows}</div>` +
-		`<span class="src">روابطُ لفظيّةٌ محسوبة (اشتراكُ جذورٍ نادرة) — للتدبّر لا للإحصاء ${gradeBadge("qati")}</span>` +
+		`<span class="src">اشتراكُ جذرٍ لفظيّ محسوب، موزونٌ على الصدفة — للتأمّل لا للاستدلال ${gradeBadge("ijtihadi")}</span>` +
 		`</div>`
 }
 

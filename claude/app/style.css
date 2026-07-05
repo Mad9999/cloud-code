@@ -386,6 +386,13 @@ table.stats td:first-child, table.stats th:first-child { text-align: right; font
 .rx-echo:hover, .rx-echo.sel { background: rgba(144, 133, 233, 0.22); }
 .ec-root { font-family: var(--arabic); font-size: 13.5px; color: var(--violet); background: rgba(144, 133, 233, 0.12); border-radius: 5px; padding: 0 6px; margin-inline-end: 3px; }
 .ec-txt { font-family: var(--arabic); font-size: 15.5px; color: var(--ink-2); line-height: 1.9; margin-top: 4px; }
+.ec-band { font-family: var(--ui); font-size: 11px; border-radius: 6px; padding: 1px 8px; white-space: nowrap; }
+.ec-band.ec-strong { color: var(--aqua); background: rgba(25, 158, 112, 0.14); }
+.ec-band.ec-above { color: var(--blue); background: rgba(57, 135, 229, 0.14); }
+.ec-band.ec-weak { color: var(--muted); background: rgba(137, 135, 129, 0.14); }
+.ec-band.ec-chance { color: var(--muted); background: rgba(137, 135, 129, 0.1); }
+.ec-control { font-family: var(--arabic); font-size: 13.5px; color: var(--ink-2); line-height: 1.9; background: rgba(201, 133, 0, 0.07); border: 1px solid rgba(201, 133, 0, 0.3); border-radius: 10px; padding: 11px 14px; margin: 10px 0; }
+.ec-control b { color: var(--ink); }
 .ex-disc { margin-top: 8px; padding: 8px 12px; border-radius: 8px; background: rgba(25, 158, 112, 0.09); border: 1px solid rgba(25, 158, 112, 0.28); font-family: var(--arabic); font-size: 15px; color: var(--ink-2); line-height: 1.85; }
 .ex-disc b { color: var(--ink); }
 .ex-disc .mut { font-family: var(--ui); font-size: 11px; color: var(--muted); }
