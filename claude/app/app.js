@@ -1201,7 +1201,10 @@ function renderTadabburShort(i) {
 	let html = `<div class="ts-head"><b>${e.name}</b> <span class="mut">· ${e.type}${long ? "" : " · " + arNum(e.verses.length) + " آية"}${e.theme ? " · " + e.theme : ""}</span>${listenBtn}</div>`
 
 	if (long) {
-		html += `<div class="ts-coverage">تُبنى هذه السورة تدرّجًا بإذن الله — <b>${arNum(e.coverage.covered)}</b> من <b>${arNum(e.coverage.total)}</b> آية، بادئين بأعظم مقاطعها وأكثرها تلاوةً. كلُّ ما هنا مُسنَدٌ وموسوم؛ ولا نُوهم أنّ التغطية كاملة. <span class="mut">(الصوتُ بصوت الحصري للمقاطع الكبرى؛ والتدبّرُ لكلِّ ما نُغطّيه.)</span></div>`
+		const done = e.coverage.covered >= e.coverage.total
+		html += done
+			? `<div class="ts-coverage ts-done">اكتملت بحمد الله — <b>${arNum(e.coverage.total)}</b> آية كاملةً، كلُّها مُسنَدةٌ وموسومة (ابن كثير/السعدي). <span class="mut">(الصوتُ بصوت الحصري للمقاطع الكبرى؛ والتدبّرُ لكلّ آية.)</span></div>`
+			: `<div class="ts-coverage">تُبنى هذه السورة تدرّجًا بإذن الله — <b>${arNum(e.coverage.covered)}</b> من <b>${arNum(e.coverage.total)}</b> آية، بادئين بأعظم مقاطعها وأكثرها تلاوةً. كلُّ ما هنا مُسنَدٌ وموسوم؛ ولا نُوهم أنّ التغطية كاملة. <span class="mut">(الصوتُ بصوت الحصري للمقاطع الكبرى؛ والتدبّرُ لكلِّ ما نُغطّيه.)</span></div>`
 		html += e.passages.map((p) => {
 			let ph = `<div class="ts-passage"><div class="ts-passage-head">${p.title} <span class="mut">(${arNum(p.range[0])}${p.range[1] !== p.range[0] ? "–" + arNum(p.range[1]) : ""})</span></div>`
 			if (p.fadl) { ph += `<div class="ts-note ts-fadl">✦ <b>فضلها:</b> ${p.fadl.text} <span class="src">${p.fadl.source} ${gradeBadge(p.fadl.grade)}</span></div>` }

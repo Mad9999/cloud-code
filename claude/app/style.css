@@ -430,6 +430,8 @@ table.stats td:first-child, table.stats th:first-child { text-align: right; font
 .ts-src-btn { font-family: var(--arabic); font-size: 14.5px; color: var(--aqua); background: none; border: none; padding: 0; cursor: pointer; text-decoration: underline; }
 .ts-coverage { font-family: var(--arabic); font-size: 14.5px; line-height: 1.9; color: var(--ink-2); background: rgba(201, 133, 0, 0.07); border: 1px solid rgba(201, 133, 0, 0.3); border-radius: 12px; padding: 12px 15px; margin-bottom: 14px; }
 .ts-coverage b { color: var(--yellow); }
+.ts-coverage.ts-done { background: rgba(25, 158, 112, 0.08); border-color: rgba(25, 158, 112, 0.32); }
+.ts-coverage.ts-done b { color: var(--aqua); }
 .ts-passage { margin-bottom: 18px; }
 .ts-passage-head { font-family: var(--arabic); font-size: 18px; color: var(--aqua); border-bottom: 1px solid var(--grid); padding-bottom: 6px; margin-bottom: 12px; }
 .ts-passage-head .mut { font-size: 14px; color: var(--muted); }
