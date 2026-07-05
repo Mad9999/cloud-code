@@ -863,9 +863,12 @@ function showSmPanel(nd) {
 		(topR ? `<div class="sm-sec"><span class="sm-lbl">أبرز جذورها:</span> ${topR}</div>` : "") +
 		(uniq ? `<div class="sm-sec sm-uniq">✦ <span class="sm-lbl">كلماتٌ تفرّدت بها في القرآن كلّه:</span> ${uniq}</div>` : "") +
 		`<div class="rx-stat" style="margin-top:10px">أقرب السور إليها لغويًّا — اضغط سورةً لتنتقل إليها في الشبكة:</div>` +
-		`<div class="rx-list">${rows}</div>`
+		`<div class="rx-list">${rows}</div>` +
+		`<div class="sm-ctx">هذه أرقامٌ محسوبة تصف البنية، لا تفسّر المعنى. للقصّة وسببِ النزول والتفسير المُسنَد، ارجع إلى <button class="sm-ctx-link" data-go="sources">المصادر المُسنَدة</button>.</div>`
 	$("#suramap-info").querySelectorAll(".sm-nb").forEach((el) =>
 		el.addEventListener("click", () => smSelect(+el.dataset.n)))
+	const go = $("#suramap-info").querySelector(".sm-ctx-link")
+	if (go) { go.addEventListener("click", () => { const b = document.querySelector('#tabs button[data-layer="sources"]'); if (b) { b.click() } }) }
 }
 
 /* ============================================================
@@ -980,6 +983,39 @@ function buildDiscoveries() {
 			}
 		})
 	})
+}
+
+/* ============================================================
+   Layer: المصادر المُسنَدة (sourced context library) — the trusted
+   classical references for stories, occasions of revelation, history,
+   tafsir-by-narration. We catalogue and point; we do not summarise.
+   ============================================================ */
+const QC = window.QURAN_CONTEXT
+
+function buildSources() {
+	const byCat = {}
+	QC.books.forEach((b) => { (byCat[b.category] = byCat[b.category] || []).push(b) })
+	let html = ""
+	for (const [key, label, blurb] of QC.categories) {
+		const books = byCat[key] || []
+		if (!books.length) { continue }
+		html += `<div class="src-cat"><div class="src-cat-head"><h3>${label}</h3><span class="src-cat-blurb">${blurb}</span></div>`
+		html += books.map((b) => {
+			const where = b.link
+				? `<a class="src-link" href="${b.link}" target="_blank" rel="noopener">اقرأ في ${b.read_at[0]} ↗</a>`
+				: `<span class="src-where">متوفّر مجانًا في: ${b.read_at.join(" · ")}</span>`
+			const caution = b.caution ? `<div class="src-caution">⚠ ${b.caution}</div>` : ""
+			return `<div class="src-book">` +
+				`<div class="src-title">${b.title}</div>` +
+				`<div class="src-author">${b.author} <span class="src-death">(ت ${b.death_h} / ${b.death_g})</span></div>` +
+				`<div class="src-cov">${b.coverage}</div>` +
+				caution +
+				`<div class="src-foot">${where} <span class="src-tier">تراثٌ في الملك العام</span></div>` +
+				`</div>`
+		}).join("")
+		html += `</div>`
+	}
+	$("#sources-lib").innerHTML = html
 }
 
 /* ============================================================
@@ -1823,6 +1859,7 @@ buildScenes()
 buildScale()
 buildExplorer()
 buildDiscoveries()
+buildSources()
 buildSurahMap()
 buildRing()
 graphInit()

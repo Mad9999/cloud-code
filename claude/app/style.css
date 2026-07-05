@@ -386,6 +386,25 @@ table.stats td:first-child, table.stats th:first-child { text-align: right; font
 .ex-disc b { color: var(--ink); }
 .ex-disc .mut { font-family: var(--ui); font-size: 11px; color: var(--muted); }
 
+/* Layer: المصادر المُسنَدة (sourced context library) */
+.src-cat { margin-bottom: 22px; }
+.src-cat-head { border-bottom: 1px solid var(--grid); padding-bottom: 6px; margin-bottom: 12px; }
+.src-cat-head h3 { font-family: var(--arabic); font-size: 20px; color: var(--aqua); margin: 0; display: inline; }
+.src-cat-blurb { font-family: var(--arabic); font-size: 13.5px; color: var(--muted); margin-inline-start: 10px; }
+.src-book { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 13px 15px; margin-bottom: 9px; }
+.src-title { font-family: var(--arabic); font-size: 18px; color: var(--ink); font-weight: 600; line-height: 1.5; }
+.src-author { font-family: var(--arabic); font-size: 14.5px; color: var(--ink-2); margin-top: 3px; }
+.src-death { color: var(--muted); font-size: 13px; }
+.src-cov { font-family: var(--arabic); font-size: 14.5px; color: var(--ink-2); line-height: 1.9; margin-top: 7px; }
+.src-caution { font-family: var(--arabic); font-size: 13.5px; color: var(--yellow); margin-top: 6px; line-height: 1.7; }
+.src-foot { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+.src-link { font-family: var(--ui); font-size: 13px; color: var(--blue); text-decoration: none; border: 1px solid rgba(57, 135, 229, 0.4); border-radius: 7px; padding: 4px 10px; }
+.src-link:hover { background: rgba(57, 135, 229, 0.12); }
+.src-where { font-family: var(--arabic); font-size: 13.5px; color: var(--muted); }
+.src-tier { font-family: var(--ui); font-size: 11px; color: var(--aqua); background: rgba(25, 158, 112, 0.12); border-radius: 6px; padding: 2px 8px; }
+.sm-ctx { font-family: var(--arabic); font-size: 13.5px; color: var(--muted); line-height: 1.85; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--grid); }
+.sm-ctx-link { font-family: var(--arabic); font-size: 13.5px; color: var(--aqua); background: none; border: none; padding: 0; cursor: pointer; text-decoration: underline; }
+
 /* Layer: كشوف محسوبة (computed discoveries) */
 .disc-stats { display: flex; flex-wrap: wrap; gap: 10px; margin: 6px 0 16px; }
 .disc-stat { flex: 1 1 180px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-family: var(--arabic); font-size: 14.5px; color: var(--ink-2); line-height: 1.7; }
