@@ -1195,15 +1195,17 @@ function renderTadabburShort(i) {
 	$("#ts-picker").querySelectorAll(".ts-tab").forEach((b, k) => b.classList.toggle("sel", k === i))
 	const whole = tsWholeMode()
 
-	let html = `<div class="ts-head"><b>${e.name}</b> <span class="mut">· ${e.type}${long ? "" : " · " + arNum(e.verses.length) + " آية"}${e.theme ? " · " + e.theme : ""}</span>` +
-		` <button class="ts-listen" id="ts-listen">${whole ? "▶ استمع للسورة" : "▶ استمع للسورة متتابعةً"}</button></div>`
+	// for al-Baqara audio is vendored only for the great passages; show ▶ there
+	const audioSet = long ? new Set(TB.audio || []) : null
+	const listenBtn = long ? "" : ` <button class="ts-listen" id="ts-listen">${whole ? "▶ استمع للسورة" : "▶ استمع للسورة متتابعةً"}</button>`
+	let html = `<div class="ts-head"><b>${e.name}</b> <span class="mut">· ${e.type}${long ? "" : " · " + arNum(e.verses.length) + " آية"}${e.theme ? " · " + e.theme : ""}</span>${listenBtn}</div>`
 
 	if (long) {
-		html += `<div class="ts-coverage">تُبنى هذه السورة تدرّجًا بإذن الله — <b>${arNum(e.coverage.covered)}</b> من <b>${arNum(e.coverage.total)}</b> آية، بادئين بأعظم مقاطعها وأكثرها تلاوةً. كلُّ ما هنا مُسنَدٌ وموسوم؛ ولا نُوهم أنّ التغطية كاملة.</div>`
+		html += `<div class="ts-coverage">تُبنى هذه السورة تدرّجًا بإذن الله — <b>${arNum(e.coverage.covered)}</b> من <b>${arNum(e.coverage.total)}</b> آية، بادئين بأعظم مقاطعها وأكثرها تلاوةً. كلُّ ما هنا مُسنَدٌ وموسوم؛ ولا نُوهم أنّ التغطية كاملة. <span class="mut">(الصوتُ بصوت الحصري للمقاطع الكبرى؛ والتدبّرُ لكلِّ ما نُغطّيه.)</span></div>`
 		html += e.passages.map((p) => {
 			let ph = `<div class="ts-passage"><div class="ts-passage-head">${p.title} <span class="mut">(${arNum(p.range[0])}${p.range[1] !== p.range[0] ? "–" + arNum(p.range[1]) : ""})</span></div>`
 			if (p.fadl) { ph += `<div class="ts-note ts-fadl">✦ <b>فضلها:</b> ${p.fadl.text} <span class="src">${p.fadl.source} ${gradeBadge(p.fadl.grade)}</span></div>` }
-			ph += p.verses.map((v) => tsVerseCard(e.n, v, !whole)).join("")
+			ph += p.verses.map((v) => tsVerseCard(e.n, v, audioSet.has(v.n))).join("")
 			return ph + `</div>`
 		}).join("")
 	} else {
@@ -1221,7 +1223,8 @@ function renderTadabburShort(i) {
 		`في <button class="ts-src-btn" type="button">المصادر المُسنَدة</button>. (نَدُلّ ولا نُلخّص؛ المعنى الكامل عند أهله.)</div>`
 
 	$("#ts-body").innerHTML = html
-	$("#ts-listen").addEventListener("click", () => { if (tsSeq) { tsStop() } else { tsPlaySurah(e) } })
+	const listenEl = $("#ts-listen")
+	if (listenEl) { listenEl.addEventListener("click", () => { if (tsSeq) { tsStop() } else { tsPlaySurah(e) } }) }
 	const srcBtn = $("#ts-body").querySelector(".ts-src-btn")
 	if (srcBtn) { srcBtn.addEventListener("click", () => { const t = document.querySelector('#tabs button[data-layer="sources"]'); if (t) { t.click() } }) }
 	$("#ts-body").querySelectorAll(".ts-play").forEach((b) =>
