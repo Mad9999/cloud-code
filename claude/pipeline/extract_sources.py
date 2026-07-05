@@ -23,7 +23,9 @@ Usage:
 
 import argparse
 import json
+import re
 import sys
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -65,25 +67,82 @@ def fetch_url_of(entry):
 
 def is_fetchable(entry):
 	"""Lawful to fetch: heritage public-domain, or an authorized free copy."""
-	return entry.get("tier") in FETCHABLE_TIERS and fetch_url_of(entry).startswith("http")
+	return entry.get("tier") in FETCHABLE_TIERS and bool(candidate_urls(entry))
+
+
+def candidate_urls(entry):
+	"""All http(s) URLs for this book: the verified fetch_url first, then every
+	digital source. Landing pages are resolved to a direct PDF later."""
+	urls = []
+	fu = fetch_url_of(entry)
+	if fu.startswith("http"):
+		urls.append(fu)
+	for s in entry.get("digital_sources", []):
+		ref = (s.get("ref") or "").strip()
+		if ref.startswith("http") and ref not in urls:
+			urls.append(ref)
+	return urls
+
+
+def _http_get(url, timeout):
+	req = urllib.request.Request(url, headers={"User-Agent": UA})
+	with urllib.request.urlopen(req, timeout=timeout) as resp:
+		return resp.read()
+
+
+def archive_pdf_url(url):
+	"""archive.org details/download page -> a direct .pdf download URL via the
+	metadata API (picks the largest real PDF, skipping OCR/text sidecars)."""
+	m = re.search(r"archive\.org/(?:details|download|metadata)/([^/?#]+)", url)
+	if not m:
+		return None
+	ident = m.group(1)
+	try:
+		meta = json.loads(_http_get(f"https://archive.org/metadata/{ident}", 45))
+	except Exception:  # noqa: BLE001
+		return None
+	pdfs = [f for f in meta.get("files", []) if str(f.get("name", "")).lower().endswith(".pdf")]
+	if not pdfs:
+		return None
+	pdfs.sort(key=lambda f: int(f.get("size", 0) or 0), reverse=True)
+	name = urllib.parse.quote(pdfs[0]["name"])
+	return f"https://archive.org/download/{ident}/{name}"
+
+
+def resolve_direct(entry):
+	"""Return a directly-downloadable PDF URL, resolving landing pages."""
+	cands = candidate_urls(entry)
+	for u in cands:
+		if u.lower().split("?")[0].endswith(".pdf"):
+			return u
+	for u in cands:
+		if "archive.org" in u:
+			direct = archive_pdf_url(u)
+			if direct:
+				return direct
+	# last resort: a raw URL we can try and then PDF-validate
+	return cands[0] if cands else None
 
 
 def fetch_pdf(entry):
-	url = fetch_url_of(entry)
 	PDF_DIR.mkdir(parents=True, exist_ok=True)
 	dest = PDF_DIR / safe_name(entry)
 	if dest.exists() and dest.stat().st_size > 0:
-		return {"status": "already_present", "path": str(dest.relative_to(BASE)), "url": url}
+		return {"status": "already_present", "path": str(dest.relative_to(BASE))}
+	url = resolve_direct(entry)
+	if not url:
+		return {"status": "failed", "reason": "no resolvable direct URL"}
 	try:
-		req = urllib.request.Request(url, headers={"User-Agent": UA})
-		with urllib.request.urlopen(req, timeout=90) as resp:
-			data = resp.read()
-		if not data:
-			return {"status": "failed", "reason": "empty response", "url": url}
-		dest.write_bytes(data)
-		return {"status": "fetched", "path": str(dest.relative_to(BASE)), "bytes": len(data), "url": url}
+		data = _http_get(url, 120)
 	except Exception as e:  # noqa: BLE001 - report any network/HTTP failure, keep going
 		return {"status": "failed", "reason": str(e), "url": url}
+	if not data:
+		return {"status": "failed", "reason": "empty response", "url": url}
+	if data[:5] != b"%PDF-":
+		# never keep an HTML landing/error page masquerading as a book
+		return {"status": "failed", "reason": "not a PDF (landing/error page)", "url": url}
+	dest.write_bytes(data)
+	return {"status": "fetched", "path": str(dest.relative_to(BASE)), "bytes": len(data), "url": url}
 
 
 def attribution(entry):
