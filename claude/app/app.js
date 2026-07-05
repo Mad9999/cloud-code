@@ -1327,7 +1327,9 @@ const SCENE_SETS = [
 		wordsFor: (n) => D.surah.verses[n - 1].words },
 	{ name: "البقرة (مختارات)", verses: (window.SCENES_BAQARA || { verses: [] }).verses,
 		wordsFor: (n) => (EX.verse_words["2:" + n] || []).map(([text, root], i) => ({ i: i + 1, text, root })) },
-]
+	{ name: "آل عمران (مختارات)", verses: (window.SCENES_ALIMRAN || { verses: [] }).verses,
+		wordsFor: (n) => (EX.verse_words["3:" + n] || []).map(([text, root], i) => ({ i: i + 1, text, root })) },
+].filter((st) => st.verses.length)
 function sceneVerses() { return SCENE_SETS[sceneSetIdx].verses }
 function sceneWords(n) { return SCENE_SETS[sceneSetIdx].wordsFor(n) }
 
@@ -1560,6 +1562,66 @@ const SCENE_DRAW = {
 		glow(ctx, cx, cy, 30, "#fff2cc", 0.6 * alive)
 	},
 	// خواتيم البقرة: burdens lifted, pleas rising and answered («قد فعلت»)
+	// آل عمران ١٨: three witnesses converge on one truth, girt by tawhid twice,
+	// held level by justice. Selecting a hotspot brightens its witness/beam.
+	shahida(ctx, w, h) {
+		const cx = w / 2, cy = h / 2, m = Math.min(w, h)
+		const p = 0.5 + 0.5 * Math.sin(sceneT * 0.6)
+		// the witnessed truth: a still central light — "لا إله إلا هو"
+		glow(ctx, cx, cy, m * 0.30, "#e0a02a", 0.16 + 0.05 * p)
+		// three witnesses, each a beam converging on the centre
+		const wit = [
+			{ a: -Math.PI / 2, sel: 1, c: "#e0a02a" },   // شهد الله — from above (highest)
+			{ a: Math.PI * 0.75, sel: 8, c: COLORS.aqua }, // الملائكة
+			{ a: Math.PI * 0.25, sel: 10, c: COLORS.blue }, // أولو العلم
+		]
+		wit.forEach((wt, i) => {
+			const on = sceneSel === wt.sel
+			const rr = m * 0.42
+			const x = cx + Math.cos(wt.a) * rr, y = cy + Math.sin(wt.a) * rr
+			const ph = 0.5 + 0.5 * Math.sin(sceneT * 0.9 + i * 2.1)
+			ctx.strokeStyle = hexA(wt.c, (on ? 0.5 : 0.18) + 0.12 * ph)
+			ctx.lineWidth = on ? 2.4 : 1.3
+			ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(cx, cy); ctx.stroke()
+			glow(ctx, x, y, m * (on ? 0.14 : 0.09), wt.c, on ? 0.4 : 0.22)
+		})
+		// tawhid girding the truth from both ends (لا إله إلا هو, twice)
+		ctx.strokeStyle = hexA("#e0a02a", 0.22 + 0.08 * p)
+		ctx.lineWidth = 1
+		ctx.beginPath(); ctx.arc(cx, cy, m * 0.34, 0, Math.PI * 2); ctx.stroke()
+		// قائمًا بالقسط: a perfectly level beam through the centre
+		const lvl = sceneSel === 12
+		ctx.strokeStyle = hexA("#cfe6ff", lvl ? 0.5 : 0.26)
+		ctx.lineWidth = lvl ? 2.4 : 1.4
+		ctx.beginPath(); ctx.moveTo(cx - m * 0.4, cy); ctx.lineTo(cx + m * 0.4, cy); ctx.stroke()
+		if (lvl) { glow(ctx, cx, cy, m * 0.42, "#cfe6ff", 0.08) }
+	},
+	// آل عمران ٢٦: dominion given and stripped around one still owner; honour and
+	// abasement alternate; a warm glow never leaves — all good is in His hand.
+	malik_mulk(ctx, w, h) {
+		const cx = w / 2, cy = h / 2, m = Math.min(w, h)
+		// the still owner at the centre — "مالك الملك"
+		glow(ctx, cx, cy, m * 0.16, "#e0a02a", 0.22)
+		const R = m * 0.34
+		const give = sceneSel === 5, take = sceneSel === 9
+		// bestowing arc — sweeps inward (تؤتي الملك)
+		const ga = sceneT * 0.5
+		ctx.strokeStyle = hexA(COLORS.aqua, give ? 0.6 : 0.3)
+		ctx.lineWidth = give ? 3 : 1.8
+		ctx.beginPath(); ctx.arc(cx, cy, R, ga, ga + Math.PI * 0.7); ctx.stroke()
+		// stripping arc — sweeps the other way (تنزع الملك)
+		const ta = -sceneT * 0.5 + Math.PI
+		ctx.strokeStyle = hexA(COLORS.muted, take ? 0.55 : 0.28)
+		ctx.lineWidth = take ? 3 : 1.8
+		ctx.beginPath(); ctx.arc(cx, cy, R, ta, ta + Math.PI * 0.7); ctx.stroke()
+		// honour (warm) and abasement (cool) alternating around the rim
+		const p = 0.5 + 0.5 * Math.sin(sceneT * 0.7)
+		glow(ctx, cx + R, cy, m * 0.10, "#e0a02a", 0.14 + 0.12 * p)        // تعزّ
+		glow(ctx, cx - R, cy, m * 0.10, COLORS.blue, 0.14 + 0.12 * (1 - p)) // تذلّ
+		// بيدك الخير: a warm glow that never leaves the whole scene
+		const kh = sceneSel === 19
+		glow(ctx, cx, cy, m * (kh ? 0.5 : 0.42), "#e0a02a", kh ? 0.12 : 0.06)
+	},
 	dua_end(ctx, w, h) {
 		const cx = w / 2, m = Math.min(w, h)
 		for (let i = 0; i < 5; i++) {
