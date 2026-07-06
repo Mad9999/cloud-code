@@ -1086,7 +1086,7 @@ let tsCurIdx = 0
 // The tadabbur tab shows the short surahs (full coverage, verses[]) AND
 // al-Baqara (progressive, passages[]). A unified entry list drives the picker.
 const TB = window.TADABBUR_BAQARA
-const LONG_SURAHS = [TB, window.TADABBUR_ALIMRAN, window.TADABBUR_NISA].filter(Boolean)
+const LONG_SURAHS = [TB, window.TADABBUR_ALIMRAN, window.TADABBUR_NISA, window.TADABBUR_MAIDA].filter(Boolean)
 const TS_ENTRIES = TS.surahs.map((su) => ({
 	kind: "short", n: su.n, name: stripSurah(EX.surah_names[su.n] || ("سورة " + su.n)),
 	type: EX.surah_type[su.n], theme: su.theme, fadl: su.fadl, sabab: su.sabab, verses: su.verses,
