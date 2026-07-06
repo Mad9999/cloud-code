@@ -56,7 +56,7 @@ def build():
 	data["coverage"] = {"covered": covered, "total": TOTAL}
 	OUT.parent.mkdir(parents=True, exist_ok=True)
 	with open(OUT, "w", encoding="utf-8") as f:
-		f.write("window.TADABBUR_KAHF = ")
+		f.write("window.TADABBUR_MARYAM = ")
 		json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
 		f.write(";\n")
 	print(f"tadabbur_maryam: {len(data['passages'])} passages, {covered}/{TOTAL} ayat covered "
