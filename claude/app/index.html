@@ -32,7 +32,8 @@
 	<nav class="tabs" id="tabs">
 		<span class="tab-group-label">للعابد · النور</span>
 		<button data-layer="dialogue" class="active">★ المحاورة</button>
-		<button data-layer="tadabbur-short">تدبّر السور القصار</button>
+		<button data-layer="tadabbur-short">التدبّر (كل السور)</button>
+		<button data-layer="tafsir">📖 التفاسير (نصًّا)</button>
 		<button data-layer="scenes">الآية تُضيء</button>
 		<button data-layer="scale">الميزان</button>
 		<button data-layer="ring">الهيكل الدائري</button>
@@ -155,11 +156,21 @@
 
 		<section class="layer" id="layer-tadabbur-short">
 			<div class="panel">
-				<h2>تدبّر السور القصار — ما تقرؤه في صلاتك <span class="badge mathur">مأثور مُسنَد</span></h2>
-				<div class="hint">هذه سورٌ تُصلّى كثيرًا، فلنتدبّرها. وأمانةً: هذا <b>تدبّرٌ لا محاورة</b> — «جوابُ الله بعد كل آية» خاصٌّ بالفاتحة لحديث «قسمتُ الصلاة» (مسلم ٣٩٥)، ولم يرد مثلُه لهذه السور فلا نصنعُه. المعاني منقولةٌ بتصرّفٍ يسير عن تفسير ابن كثير وتيسير السعدي مع الإحالة، وحالُ القلب والعملُ اجتهادٌ موسوم.</div>
+				<h2>التدبّر — كل سور المصحف <span class="badge ijtihad">تدبّرٌ على منهج المفسّرين</span></h2>
+				<div class="hint"><b>أمانةٌ صريحة:</b> هذه الوقفاتُ <b>تدبّرٌ مُصاغٌ على منهج ابن كثير والسعدي</b> واستنباطٌ من معانيهما — <b>وليست نقلًا حرفيًّا</b> من كتبهما. للنصِّ الحرفيِّ المنقولِ نسخًا (ابن كثير، السعدي، القرطبي، الطبري، البغوي، الميسّر) افتح تبويب <b>«📖 التفاسير (نصًّا)»</b> وقارِن بنفسك. وحالُ القلب والعملُ اجتهادٌ موسوم. و«جوابُ الله بعد كل آية» خاصٌّ بالفاتحة لحديث «قسمتُ الصلاة» (مسلم ٣٩٥) فلا نصنعُه لغيرها.</div>
 				<div class="ts-picker" id="ts-picker"></div>
 				<div class="ts-reciter" id="ts-reciter"></div>
 				<div class="ts-body" id="ts-body"></div>
+			</div>
+		</section>
+
+		<section class="layer" id="layer-tafsir">
+			<div class="panel">
+				<h2>📖 التفاسير المعتمدة — النصُّ الحرفيُّ لكل آية <span class="badge mathur">منقولٌ نصًّا</span></h2>
+				<div class="hint">هنا <b>النصُّ الحرفيُّ</b> لكتب التفسير المعتمدة، منقولٌ نسخًا (لا تلخيصَ ولا تصرّف) عبر واجهة <b>quran.com</b>: <b>الميسّر</b> (مجمع الملك فهد)، <b>ابن كثير</b>، <b>البغوي</b>، <b>السعدي</b>، <b>القرطبي</b>، <b>الطبري</b>. اختر السورة والآية لتقرأ ما قاله المفسّرون فيها بألفاظهم — فتتحقّق بنفسك. (كتبُ التراث في الملك العام؛ والسعدي والميسّر متاحان مجانًا للنشر.)</div>
+				<div class="tf-picker" id="tf-picker"></div>
+				<div class="tf-ayah" id="tf-ayah"></div>
+				<div class="tf-body" id="tf-body"></div>
 			</div>
 		</section>
 
@@ -234,6 +245,8 @@
 	<script src="generated/scenes_alimran.js"></script>
 	<script src="generated/scenes_nisa.js"></script>
 	<script src="generated/data.js"></script>
+	<script src="generated/tafsir_manifest.js"></script>
+	<script src="generated/quran_text.js"></script>
 	<script src="generated/fawasil.js"></script>
 	<script src="generated/control.js"></script>
 	<script src="generated/explorer.js"></script>

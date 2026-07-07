@@ -75,6 +75,7 @@ $("#tabs").addEventListener("click", (e) => {
 	if (btn.dataset.layer === "scenes") { sizeSceneCanvas(); if (!scenesRaf) { scenesLoop() } }
 	if (btn.dataset.layer !== "dialogue") { stopDialogue() }
 	if (btn.dataset.layer !== "tadabbur-short") { tsStop() }
+	if (btn.dataset.layer === "tafsir") { buildTafsir() }
 	if (btn.dataset.layer === "suramap") { smResize() }
 	const research = ["discover", "graph", "phonetic", "acoustic", "observatory", "explorer", "suramap"]
 	$("#research-disclaimer").classList.toggle("show", research.includes(btn.dataset.layer))
@@ -2359,6 +2360,86 @@ function invDrawBreath(arcv, progress) {
 }
 
 /* ---------- boot ---------- */
+/* ============================================================
+   Layer — التفاسير المعتمدة: verbatim tafsir browser.
+   Text is loaded on demand per (tafsir, surah) via injected <script>
+   tags (keeps file:// working, avoids a huge bundle). Rendered with
+   textContent so the copied wording is shown verbatim and safe.
+   ============================================================ */
+const TF = window.TAFSIR_MANIFEST
+const QT = window.QURAN_TEXT
+let tfSurah = 1, tfAyah = 1, tfBuilt = false
+const tfLoaded = {}
+function tfVar(slug, s) { return "TAFSIR_" + slug.toUpperCase() + "_" + s }
+
+function tfLoadSurah(s, cb) {
+	let pending = 0
+	TF.tafsirs.forEach((t) => {
+		const key = t.slug + ":" + s
+		if (tfLoaded[key] || window[tfVar(t.slug, s)]) { tfLoaded[key] = true; return }
+		pending++
+		const sc = document.createElement("script")
+		sc.src = "tafsir/" + t.slug + "/" + s + ".js"
+		const fin = () => { tfLoaded[key] = true; if (--pending === 0) { cb() } }
+		sc.onload = fin
+		sc.onerror = fin // file may not exist yet (staged fetch)
+		document.head.appendChild(sc)
+	})
+	if (pending === 0) { cb() }
+}
+
+function tfFillText(el, txt) {
+	el.textContent = ""
+	txt.split("\n").forEach((line, i) => {
+		if (i) { el.appendChild(document.createElement("br")) }
+		el.appendChild(document.createTextNode(line))
+	})
+}
+
+function tfRender() {
+	const s = tfSurah, a = tfAyah
+	const head = $("#tf-ayah")
+	head.innerHTML = `<div class="tf-ayah-num">${arNum(s)}:${arNum(a)} · سورة ${TF.names[s]}</div><div class="tf-ayah-text"></div>`
+	head.querySelector(".tf-ayah-text").textContent = QT[s + ":" + a] || ""
+	const body = $("#tf-body")
+	body.innerHTML = ""
+	TF.tafsirs.forEach((t) => {
+		const g = window[tfVar(t.slug, s)]
+		const txt = g && g[a]
+		const card = document.createElement("div")
+		card.className = "tf-card" + (txt ? "" : " tf-empty")
+		const h = document.createElement("div"); h.className = "tf-card-h"; h.textContent = t.name
+		const b = document.createElement("div"); b.className = "tf-card-b"
+		if (txt) { tfFillText(b, txt) } else { b.textContent = "— لم يُحمَّل نصُّ هذه السورة بعد —" }
+		card.appendChild(h); card.appendChild(b); body.appendChild(card)
+	})
+}
+
+function tfBuildAyahPicker() {
+	const n = TF.counts[tfSurah]
+	let opts = ""
+	for (let a = 1; a <= n; a++) { opts += `<option value="${a}"${a === tfAyah ? " selected" : ""}>${arNum(a)}</option>` }
+	$("#tf-ayah-sel").innerHTML = opts
+}
+
+function tfSelect(s, a) {
+	tfSurah = s; tfAyah = a
+	tfBuildAyahPicker()
+	tfLoadSurah(s, tfRender)
+}
+
+function buildTafsir() {
+	if (tfBuilt) { return }
+	tfBuilt = true
+	let sopts = ""
+	for (let s = 1; s <= 114; s++) { sopts += `<option value="${s}"${s === tfSurah ? " selected" : ""}>${arNum(s)}. ${TF.names[s]}</option>` }
+	$("#tf-picker").innerHTML = `<label>السورة <select id="tf-surah-sel">${sopts}</select></label> <label>الآية <select id="tf-ayah-sel"></select></label>`
+	tfBuildAyahPicker()
+	$("#tf-surah-sel").addEventListener("change", (e) => { tfSelect(+e.target.value, 1) })
+	$("#tf-ayah-sel").addEventListener("change", (e) => { tfAyah = +e.target.value; tfLoadSurah(tfSurah, tfRender) })
+	tfSelect(tfSurah, tfAyah)
+}
+
 buildInvitation()
 buildDialogue()
 buildScenes()
