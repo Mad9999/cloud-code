@@ -2405,12 +2405,20 @@ function tfRender() {
 	body.innerHTML = ""
 	TF.tafsirs.forEach((t) => {
 		const g = window[tfVar(t.slug, s)]
-		const txt = g && g[a]
+		const txt = g ? (g[a] || "").trim() : null
 		const card = document.createElement("div")
 		card.className = "tf-card" + (txt ? "" : " tf-empty")
 		const h = document.createElement("div"); h.className = "tf-card-h"; h.textContent = t.name
 		const b = document.createElement("div"); b.className = "tf-card-b"
-		if (txt) { tfFillText(b, txt) } else { b.textContent = "— لم يُحمَّل نصُّ هذه السورة بعد —" }
+		if (txt) {
+			tfFillText(b, txt)
+		} else if (!g) {
+			b.textContent = "— جارٍ التحميل… —"
+		} else {
+			// surah loaded but this ayah has no separate entry (e.g. as-Saadi
+			// comments on a passage, so the ayah's tafsir sits under a neighbour)
+			b.textContent = "— لم يُفرِد هذا المفسّرُ هذه الآيةَ بتفسيرٍ مستقلّ؛ يُنظَر تفسيرُها ضمن الآيات المجاورة —"
+		}
 		card.appendChild(h); card.appendChild(b); body.appendChild(card)
 	})
 }
