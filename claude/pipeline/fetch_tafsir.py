@@ -1,37 +1,44 @@
 #!/usr/bin/env python3
-"""Fetch verbatim tafsir text (copy-paste) from the quran.com API and store it
-keyed by ayah, so any ayah can be looked up against the actual books.
+"""Fetch verbatim tafsir text (copy-paste) and store it keyed by ayah, so any
+ayah can be looked up against the actual books.
 
-Sources (trusted classical/【contemporary】 tafsirs, fetched verbatim):
-  16 muyassar   التفسير الميسّر (مجمع الملك فهد)
-  14 ibnkathir  تفسير ابن كثير
-  94 baghawi    تفسير البغوي
-  91 saadi      تفسير السعدي
-  90 qurtubi    تفسير القرطبي
-  15 tabari     تفسير الطبري
+Source: spa5k/tafsir_api via the jsDelivr CDN (mirrors the quran.com tafsir
+data; CDN-cached so it is fast and not origin-rate-limited). Trusted tafsirs:
+  muyassar   التفسير الميسّر (مجمع الملك فهد)
+  ibnkathir  تفسير ابن كثير
+  baghawi    تفسير البغوي
+  saadi      تفسير السعدي
+  qurtubi    تفسير القرطبي
+  tabari     تفسير الطبري
 
-The text is fetched verbatim (only HTML tags stripped, entities unescaped,
-whitespace collapsed) — NOT paraphrased. Output: one JS file per (tafsir,surah)
-under app/tafsir/<slug>/<surah>.js assigning window.TAFSIR_<SLUG>_<surah>,
-loaded on demand by the browser (keeps file:// working, avoids a huge bundle).
+Text is fetched verbatim (only stray HTML stripped, entities unescaped,
+whitespace normalised, paragraph breaks kept) — NOT paraphrased. Output: one
+JS file per (tafsir,surah) under app/tafsir/<slug>/<surah>.js assigning
+window.TAFSIR_<SLUG>_<surah>, loaded on demand by the browser (keeps file://
+working, avoids a huge up-front bundle). Files are deterministically
+re-fetchable, so a container restart loses no hand-authored work.
 """
 import subprocess, json, re, html, sys, time
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-WORKERS = 4  # be gentle with the API (503s appear above this)
+# Source: spa5k/tafsir_api served via jsDelivr CDN — mirrors the quran.com
+# tafsir data but is CDN-cached, so it is fast and not origin-rate-limited.
+CDN = "https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir"
+WORKERS = 16
 
 BASE = Path(__file__).resolve().parent.parent
 QURAN = BASE / "data" / "quran-simple.txt"
 OUT = BASE / "app" / "tafsir"
 
+# (cdn_slug, out_slug, display_name)
 TAFSIRS = [
-    (16, "muyassar",  "التفسير الميسّر"),
-    (14, "ibnkathir", "تفسير ابن كثير"),
-    (94, "baghawi",   "تفسير البغوي"),
-    (91, "saadi",     "تفسير السعدي"),
-    (90, "qurtubi",   "تفسير القرطبي"),
-    (15, "tabari",    "تفسير الطبري"),
+    ("ar-tafsir-muyassar",   "muyassar",  "التفسير الميسّر"),
+    ("ar-tafsir-ibn-kathir", "ibnkathir", "تفسير ابن كثير"),
+    ("ar-tafsir-al-baghawi", "baghawi",   "تفسير البغوي"),
+    ("ar-tafseer-al-saddi",  "saadi",     "تفسير السعدي"),
+    ("ar-tafseer-al-qurtubi","qurtubi",   "تفسير القرطبي"),
+    ("ar-tafsir-al-tabari",  "tabari",    "تفسير الطبري"),
 ]
 
 def ayah_counts():
@@ -47,32 +54,37 @@ def ayah_counts():
     return counts
 
 def clean(t):
+    """Normalise the verbatim tafsir text: strip stray HTML, unescape entities,
+    keep paragraph breaks (blank lines) but collapse runs of spaces."""
     if not t:
         return ""
     t = re.sub(r"<[^>]+>", " ", t)
     t = html.unescape(t)
+    t = t.replace("\r", "\n")
+    # drop markdown separator artifacts (lines that are only * and spaces)
+    t = re.sub(r"(?m)^[ \t]*\*[ \t*]*$", "", t)
     t = re.sub(r"[ \t]+", " ", t)
-    t = re.sub(r"\s*\n\s*", "\n", t)
+    t = re.sub(r"[ \t]*\n[ \t]*", "\n", t)
+    t = re.sub(r"\n{3,}", "\n\n", t)
     return t.strip()
 
-def fetch_ayah(tid, s, a):
-    """Return (a, text) on success, (a, None) if all retries fail.
-    Retries with backoff on transient errors (503, non-JSON)."""
-    url = f"https://api.quran.com/api/v4/tafsirs/{tid}/by_ayah/{s}:{a}"
-    delay = 0.6
-    for attempt in range(7):
+def fetch_ayah(cdn_slug, s, a):
+    """Return (a, text) on success, (a, None) if all retries fail."""
+    url = f"{CDN}/{cdn_slug}/{s}/{a}.json"
+    delay = 0.5
+    for attempt in range(6):
         try:
-            out = subprocess.run(["curl", "-s", "--max-time", "45", url],
-                                 capture_output=True, text=True, timeout=55).stdout
-            d = json.loads(out)  # error pages (503/404 HTML) raise here -> retry
-            return a, clean(d.get("tafsir", {}).get("text") or "")
+            out = subprocess.run(["curl", "-s", "--max-time", "40", url],
+                                 capture_output=True, text=True, timeout=50).stdout
+            d = json.loads(out)
+            return a, clean(d.get("text") or "")
         except Exception:
-            if attempt < 6:
+            if attempt < 5:
                 time.sleep(delay)
-                delay = min(delay * 1.8, 12)
+                delay = min(delay * 1.7, 8)
     return a, None
 
-def build_surah(tid, slug, s, n, entries=None, targets=None):
+def build_surah(cdn_slug, slug, s, n, entries=None, targets=None):
     """Fetch `targets` ayat (default 1..n) into `entries`; return list of failures."""
     if entries is None:
         entries = {}
@@ -80,7 +92,7 @@ def build_surah(tid, slug, s, n, entries=None, targets=None):
         targets = list(range(1, n + 1))
     fails = []
     with ThreadPoolExecutor(max_workers=WORKERS) as ex:
-        futs = [ex.submit(fetch_ayah, tid, s, a) for a in targets]
+        futs = [ex.submit(fetch_ayah, cdn_slug, s, a) for a in targets]
         for fu in as_completed(futs):
             a, txt = fu.result()
             if txt is None:
@@ -115,16 +127,16 @@ def main():
     persistent = []
     for s in surahs:
         n = counts[s]
-        for tid, slug, name in TAFSIRS:
+        for cdn_slug, slug, name in TAFSIRS:
             if only and slug not in only:
                 continue
-            entries, fails = build_surah(tid, slug, s, n)
+            entries, fails = build_surah(cdn_slug, slug, s, n)
             # up to 3 extra passes over the failures (transient 503s)
             for _ in range(3):
                 if not fails:
                     break
                 time.sleep(2.0)
-                entries, fails = build_surah(tid, slug, s, n, entries, fails)
+                entries, fails = build_surah(cdn_slug, slug, s, n, entries, fails)
             filled = write_surah(slug, s, n, entries)
             flag = "" if not fails else f"  !! {len(fails)} gaps: {sorted(fails)}"
             print(f"  {slug:10} surah {s:3} : {filled}/{n} ayat{flag}", flush=True)
