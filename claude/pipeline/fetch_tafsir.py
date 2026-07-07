@@ -15,9 +15,11 @@ whitespace collapsed) — NOT paraphrased. Output: one JS file per (tafsir,surah
 under app/tafsir/<slug>/<surah>.js assigning window.TAFSIR_<SLUG>_<surah>,
 loaded on demand by the browser (keeps file:// working, avoids a huge bundle).
 """
-import subprocess, json, re, html, sys
+import subprocess, json, re, html, sys, time
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
+
+WORKERS = 4  # be gentle with the API (503s appear above this)
 
 BASE = Path(__file__).resolve().parent.parent
 QURAN = BASE / "data" / "quran-simple.txt"
@@ -54,38 +56,49 @@ def clean(t):
     return t.strip()
 
 def fetch_ayah(tid, s, a):
-    key = f"{s}:{a}"
-    url = f"https://api.quran.com/api/v4/tafsirs/{tid}/by_ayah/{key}"
-    for attempt in range(4):
+    """Return (a, text) on success, (a, None) if all retries fail.
+    Retries with backoff on transient errors (503, non-JSON)."""
+    url = f"https://api.quran.com/api/v4/tafsirs/{tid}/by_ayah/{s}:{a}"
+    delay = 0.6
+    for attempt in range(7):
         try:
-            out = subprocess.run(["curl", "-s", "--max-time", "40", url],
-                                 capture_output=True, text=True, timeout=50).stdout
-            d = json.loads(out)
+            out = subprocess.run(["curl", "-s", "--max-time", "45", url],
+                                 capture_output=True, text=True, timeout=55).stdout
+            d = json.loads(out)  # error pages (503/404 HTML) raise here -> retry
             return a, clean(d.get("tafsir", {}).get("text") or "")
         except Exception:
-            if attempt == 3:
-                return a, None
+            if attempt < 6:
+                time.sleep(delay)
+                delay = min(delay * 1.8, 12)
     return a, None
 
-def build_surah(tid, slug, s, n):
-    entries = {}
-    with ThreadPoolExecutor(max_workers=8) as ex:
-        futs = [ex.submit(fetch_ayah, tid, s, a) for a in range(1, n + 1)]
+def build_surah(tid, slug, s, n, entries=None, targets=None):
+    """Fetch `targets` ayat (default 1..n) into `entries`; return list of failures."""
+    if entries is None:
+        entries = {}
+    if targets is None:
+        targets = list(range(1, n + 1))
+    fails = []
+    with ThreadPoolExecutor(max_workers=WORKERS) as ex:
+        futs = [ex.submit(fetch_ayah, tid, s, a) for a in targets]
         for fu in as_completed(futs):
             a, txt = fu.result()
             if txt is None:
-                raise SystemExit(f"fetch_tafsir: FAILED {slug} {s}:{a}")
-            entries[a] = txt
+                fails.append(a)
+            else:
+                entries[a] = txt
+    return entries, fails
+
+def write_surah(slug, s, n, entries):
     d = OUT / slug
     d.mkdir(parents=True, exist_ok=True)
     var = f"TAFSIR_{slug.upper()}_{s}"
-    payload = {str(a): entries[a] for a in range(1, n + 1)}
+    payload = {str(a): entries.get(a, "") for a in range(1, n + 1)}
     with open(d / f"{s}.js", "w", encoding="utf-8") as f:
         f.write(f"window.{var} = ")
         json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
         f.write(";\n")
-    filled = sum(1 for a in entries.values() if a)
-    return filled
+    return sum(1 for a in range(1, n + 1) if payload[str(a)])
 
 def main():
     counts = ayah_counts()
@@ -99,13 +112,26 @@ def main():
     else:
         surahs = list(range(1, 115))
     only = sys.argv[2].split(",") if len(sys.argv) > 2 else None  # slugs filter
+    persistent = []
     for s in surahs:
         n = counts[s]
         for tid, slug, name in TAFSIRS:
             if only and slug not in only:
                 continue
-            filled = build_surah(tid, slug, s, n)
-            print(f"  {slug:10} surah {s:3} : {filled}/{n} ayat", flush=True)
+            entries, fails = build_surah(tid, slug, s, n)
+            # up to 3 extra passes over the failures (transient 503s)
+            for _ in range(3):
+                if not fails:
+                    break
+                time.sleep(2.0)
+                entries, fails = build_surah(tid, slug, s, n, entries, fails)
+            filled = write_surah(slug, s, n, entries)
+            flag = "" if not fails else f"  !! {len(fails)} gaps: {sorted(fails)}"
+            print(f"  {slug:10} surah {s:3} : {filled}/{n} ayat{flag}", flush=True)
+            for a in fails:
+                persistent.append(f"{slug} {s}:{a}")
+    if persistent:
+        print("PERSISTENT GAPS (" + str(len(persistent)) + "): " + ", ".join(persistent))
     print("done.")
 
 if __name__ == "__main__":
