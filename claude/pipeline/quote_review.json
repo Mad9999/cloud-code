@@ -1,0 +1,68 @@
+[
+ {
+  "file": "tadabbur_alimran.json",
+  "surah": 3,
+  "fragment": "لو قعدت لما أصابني",
+  "closest": null
+ },
+ {
+  "file": "tadabbur_baqara.json",
+  "surah": 2,
+  "fragment": "يا مقلّب القلوب ثبّت قلبي على دينك",
+  "closest": null
+ },
+ {
+  "file": "tadabbur_baqara.json",
+  "surah": 2,
+  "fragment": "لا علم لي إلا ما علّمني ربّي",
+  "closest": null
+ },
+ {
+  "file": "tadabbur_baqara.json",
+  "surah": 2,
+  "fragment": "سمعنا ثم نرى",
+  "closest": null
+ },
+ {
+  "file": "tadabbur_hud.json",
+  "surah": 11,
+  "fragment": "رحمةُ الله على لوطٍ، كان يأوي إلى ركنٍ شديد",
+  "closest": null
+ },
+ {
+  "file": "tadabbur_hud.json",
+  "surah": 11,
+  "fragment": "هي له خاصّةً أم للناس كافّةً؟",
+  "closest": null
+ },
+ {
+  "file": "tadabbur_maida.json",
+  "surah": 5,
+  "fragment": "لو علينا نزلت لاتخذناه عيدًا",
+  "closest": null
+ },
+ {
+  "file": "tadabbur_saffat.json",
+  "surah": 37,
+  "fragment": "كما صلّيت على إبراهيم",
+  "closest": null
+ },
+ {
+  "file": "tadabbur_short.json",
+  "surah": null,
+  "fragment": "قسمتُ الصلاة بيني وبين عبدي",
+  "closest": null
+ },
+ {
+  "file": "tadabbur_shuara.json",
+  "surah": 26,
+  "fragment": "أين ما كنت تعبد",
+  "closest": null
+ },
+ {
+  "file": "tadabbur_taha.json",
+  "surah": 20,
+  "fragment": "ربِّ يسّر لي أمري",
+  "closest": null
+ }
+]
