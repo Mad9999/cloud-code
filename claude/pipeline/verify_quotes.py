@@ -81,7 +81,11 @@ def tafsir_text(book, surah):
 		try:
 			raw = path.read_text(encoding="utf-8")
 			payload = json.loads(raw.split("=", 1)[1].rstrip().rstrip(";"))
-			_tafsir_cache[key] = squash(normalize(" ".join(payload.values())))
+			joined = " ".join(payload.values())
+			# strip critical-apparatus footnotes ([[...]]) so quotes can
+			# match across them; single [...] additions keep their word
+			joined = re.sub(r"\[\[.*?\]\]", " ", joined, flags=re.S)
+			_tafsir_cache[key] = squash(normalize(joined))
 		except (OSError, ValueError):
 			_tafsir_cache[key] = ""
 	return _tafsir_cache[key]
