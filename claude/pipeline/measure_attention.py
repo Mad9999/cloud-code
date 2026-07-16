@@ -41,18 +41,28 @@ def blocks(entries):
 
 
 def measure(book, surah, ayah):
+	"""Two readings, because they answer two questions.
+
+	'ratio' and 'rank' divide a block by the verses it covers, which is what
+	'does this verse ask for something' means. 'bulk' is the block whole, which
+	is what 'does this subject weigh' means, and the two come apart: Qurtubi's
+	riba block at 2:275-279 is 58,131 characters, his second largest in the
+	surah, and yet only 1.17x per verse because it is spread over five. Reading
+	only the share would have said the subject is ordinary. It is not.
+	"""
 	entries = load(book, surah)
 	bl = blocks(entries)
 	shares = sorted(((size / len(ayat), min(ayat)) for ayat, size in bl), reverse=True)
 	average = sum(s for s, _ in shares) / len(shares)
+	bulks = sorted(((size, min(ayat)) for ayat, size in bl), reverse=True)
 	span, size = next((a, s) for a, s in bl if ayah in a)
 	share = size / len(span)
-	rank = [start for _, start in shares].index(min(span)) + 1
 	return {
 		"span": f"{min(span)}-{max(span)}" if len(span) > 1 else str(ayah),
 		"chars": size,
 		"ratio": share / average,
-		"rank": rank,
+		"rank": [start for _, start in shares].index(min(span)) + 1,
+		"bulk_rank": [start for _, start in bulks].index(min(span)) + 1,
 		"of": len(shares),
 		"grouped": sum(len(a) for a, _ in bl if len(a) > 1),
 		"entries": len(entries),
@@ -64,13 +74,18 @@ def main():
 	if len(sys.argv) > 2:
 		ayah = int(sys.argv[2])
 		print(f"surah {surah}, ayah {ayah}")
-		print(f"{'book':10} {'span':>9} {'chars':>7} {'ratio':>7} {'rank':>12} {'grouped':>9}")
+		print(
+			f"{'book':10} {'span':>9} {'chars':>7} {'ratio':>7} {'rank':>10} {'bulk':>10} {'grouped':>9}"
+		)
 		for book in BOOKS:
 			m = measure(book, surah, ayah)
 			print(
 				f"{book:10} {m['span']:>9} {m['chars']:>7} {m['ratio']:>6.2f}x "
-				f"{str(m['rank']) + '/' + str(m['of']):>12} {str(m['grouped']) + '/' + str(m['entries']):>9}"
+				f"{str(m['rank']) + '/' + str(m['of']):>10} "
+				f"{str(m['bulk_rank']) + '/' + str(m['of']):>10} "
+				f"{str(m['grouped']) + '/' + str(m['entries']):>9}"
 			)
+		print("  ratio/rank: does this verse ask.  bulk: does this subject weigh.")
 		return
 	# no ayah given: list the verses this surah's imams dwell on most
 	entries = load("saadi", surah)
