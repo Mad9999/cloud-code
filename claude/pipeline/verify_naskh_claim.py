@@ -56,6 +56,21 @@ THRESHOLD = [
 	("ونسبةُ الإنكار إلى أصحاب القول الذي رجّحه", "وأنكروا أن يكون شيء منها منسوخا"),
 ]
 
+# It is not one man's rule in one place, and our own manhaj file already held
+# these two before we met the principle at 2:256 and wrote it up as if it were
+# new. The stop now carries them, so the test carries them: Tabari says it more
+# plainly at an-Nisa 8, and Saadi says it in this very surah, 76 verses earlier.
+ELSEWHERE = [
+	(
+		"tabari",
+		4,
+		8,
+		"ناف كل واحد منهما صاحبه، غير جائز اجتماع الحكم بهما في وقت واحد بوجه من الوجوه",
+	),
+	("tabari", 4, 8, "حجة يجب التسليم لها"),
+	("saadi", 2, 180, "مهما أمكن الجمع كان أحسن من ادعاء النسخ، الذي لم يدل عليه دليل صحيح"),
+]
+
 # He raises the objection against himself and grants it before answering.
 OBJECTION = [
 	("إيرادُ حجّة المخالف", "فإن قال قائل"),
@@ -104,6 +119,11 @@ def main():
 		if normalize(phrase) not in tab:
 			failures.append(f"threshold not found ({label}): {phrase}")
 	print("  OK: Tabari states the threshold for naskh, and rules by it, verbatim")
+
+	for book, surah, ayah, phrase in ELSEWHERE:
+		if normalize(phrase) not in tafsir(book, ayah, surah):
+			failures.append(f"the rule's second witness is gone ({book} {surah}:{ayah}): {phrase}")
+	print("  OK: the same rule stands at an-Nisa 8 and, in this surah, at 2:180")
 
 	for label, phrase in OBJECTION:
 		if normalize(phrase) not in tab:
