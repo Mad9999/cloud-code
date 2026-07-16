@@ -30,8 +30,18 @@ const AR = {
 	hafat_lisan: "حافة اللسان", tarf_lisan: "طرف اللسان", shafawi: "الشفتان",
 }
 const STATE_AR = { fatha: "فتحة", damma: "ضمة", kasra: "كسرة", sakin: "ساكن", madd: "مد" }
-const GRADE_AR = { qati: "قطعي", "ma'thur": "مأثور", ijtihadi: "اجتهادي" }
-const GRADE_CLASS = { qati: "qati", "ma'thur": "mathur", ijtihadi: "ijtihadi" }
+const // Four grades, not three. «مأثور» means transmitted, and for a long time it was
+// stamped on Ibn al-Qayyim's reading of the three tawhids, on Zamakhshari's
+// analysis of the iltifat, on Ibn Ashur (d. 1973) on the badal. Those are not
+// transmitted from anyone; they are the inferences of scholars, and a reader who
+// saw «مأثور» was told they had been handed down. Rule 2's own definition invited
+// it: «منقول عن مصدر معتمد يُذكر بالاسم (مسلم ٣٩٥، الكشاف، التحرير والتنوير...)»,
+// which puts a hadith in Muslim and a twentieth-century tafsir in one box.
+//
+// Nor do they belong in «اجتهادي» beside ours. Ibn al-Qayyim's inference and our
+// inference are not the same weight, and saying so would be a different lie.
+GRADE_AR = { qati: "قطعي", "ma'thur": "مأثور", "qawl_alim": "قولُ عالم", ijtihadi: "اجتهادي" }
+const GRADE_CLASS = { qati: "qati", "ma'thur": "mathur", "qawl_alim": "qawl-alim", ijtihadi: "ijtihadi" }
 const LINK_TYPE = {
 	mawdui: { label: "موضوعي", color: COLORS.violet },
 	munasaba: { label: "مناسبات", color: COLORS.yellow },

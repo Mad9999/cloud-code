@@ -214,6 +214,7 @@ section.layer.visible { display: block; }
 }
 .badge.qati { border-color: var(--aqua); color: var(--aqua); }
 .badge.mathur { border-color: var(--blue); color: var(--soft1); }
+.badge.qawl-alim { border-color: var(--violet); color: var(--violet); }
 .badge.ijtihadi { border-color: var(--yellow); color: var(--yellow); }
 
 .grade-key { font-size: 12px; color: var(--muted); margin-top: 8px; }
