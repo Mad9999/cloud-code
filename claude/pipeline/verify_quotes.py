@@ -73,6 +73,33 @@ def fragments(text):
 BOOKS = ("muyassar", "saadi", "ibnkathir", "baghawi", "qurtubi", "tabari")
 _tafsir_cache = {}
 
+# Fragments that match neither the Qur'an nor our six books, and are allowed to.
+# All of them are hadith we relay from a named source that is not in our corpus,
+# so no file here can confirm them and a human read them instead.
+#
+# This list exists because the review count was doing the opposite of its job.
+# It sat at nine for weeks. We read the number, saw it unchanged, and called that
+# green. Three of the nine were verses of the Qur'an bent to fit our sentence:
+# «لا علم لي إلا ما علّمني ربّي» for «لا علم لنا إلا ما علمتنا», «رب يسر لي أمري»
+# splicing 20:25 onto 20:26, «أين ما كنت تعبد» for «أين ما كنتم تعبدون». Each sat
+# in the action field, which addresses the reader as one person while the verse
+# addresses many, so the verse got bent rather than the sentence rebuilt. And the
+# field tells the reader to say the words. We were handing out altered Qur'an as
+# dhikr, and the valve had it listed the whole time.
+#
+# So the list is named, and the count must be zero. A number you read is a number
+# you stop reading. A failure you have to name is a failure you have to look at.
+ALLOWED_UNMATCHED = {
+	# the Prophet (peace be upon him) on Lut, relayed by Ibn Kathir
+	"رحمة الله على لوط، كان يأوي إلى ركن شديد",
+	# the man who asked whether the verse was his alone (Bukhari and Muslim)
+	"هي له خاصة أم للناس كافة؟",
+	# what the Jewish man said to Umar about 5:3 (Bukhari)
+	"لو علينا نزلت لاتخذناه عيدا",
+	# from the salat upon the Prophet (peace be upon him)
+	"كما صليت على إبراهيم",
+}
+
 # Surah names as our stops cite them, so a cross-surah quote can be checked
 # against the right file rather than landing in the review list unexamined.
 SURAH_NAMES = {
@@ -123,6 +150,16 @@ def tafsir_text(book, surah):
 		except (OSError, ValueError):
 			_tafsir_cache[key] = ""
 	return _tafsir_cache[key]
+
+
+_allowed_norm = None
+
+
+def norm_allowed(frag):
+	global _allowed_norm
+	if _allowed_norm is None:
+		_allowed_norm = {squash(normalize(a)) for a in ALLOWED_UNMATCHED}
+	return squash(normalize(frag)) in _allowed_norm
 
 
 def closest_ayah(norm, surahs, own):
@@ -272,11 +309,38 @@ def main():
 								"surah": own,
 								"fragment": frag,
 								"closest": closest_ayah(spaced, surahs, own),
+								"allowed": norm_allowed(frag),
 							}
 						)
 	OUT.write_text(
 		json.dumps(review, ensure_ascii=False, indent=1), encoding="utf-8"
 	)
+	strangers = [r for r in review if not r["allowed"]]
+	if strangers:
+		# The guard is the failure, not a classifier. We tried to have it tell a
+		# bent verse from our own phrase and it cannot: «لا علم لي إلا ما علمني
+		# ربي» (a bent 2:32) and «سمعنا ثم نرى» (ours) score the same against the
+		# mushaf by every measure tried. So it says what it knows, offers the
+		# nearest ayah as a lead rather than a verdict, and stops the build
+		# either way. Both need a hand; neither may pass.
+		print("\nUNVOUCHED FRAGMENT IN GUILLEMETS (rule 32):", file=sys.stderr)
+		for r in strangers:
+			near = r["closest"]
+			print(f"  {r['file']}: «{r['fragment']}»", file=sys.stderr)
+			print(
+				"    ^ not in the Qur'an and not in our six books. Either it is ours and the"
+				" guillemets are a lie, or it is a verse we bent to fit our sentence, or it is"
+				" a hadith from a source we do not hold. Name the source in ALLOWED_UNMATCHED,"
+				" or quote it right, or take the marks off.",
+				file=sys.stderr,
+			)
+			if near:
+				print(
+					f"    lead only, not a verdict: nearest ayah in this surah is"
+					f" {r['surah']}:{near['ayah']} at {near['overlap']} word overlap.",
+					file=sys.stderr,
+				)
+		sys.exit(1)
 	print(f"fragments checked: {total}")
 	print(f"  matched in own surah:   {matched_own}")
 	print(f"  matched elsewhere:      {matched_other} (cross-surah witness quotes)")
