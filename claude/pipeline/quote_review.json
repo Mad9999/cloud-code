@@ -8,12 +8,6 @@
  {
   "file": "tadabbur_baqara.json",
   "surah": 2,
-  "fragment": "يا مقلّب القلوب ثبّت قلبي على دينك",
-  "closest": null
- },
- {
-  "file": "tadabbur_baqara.json",
-  "surah": 2,
   "fragment": "لا علم لي إلا ما علّمني ربّي",
   "closest": null
  },
@@ -45,12 +39,6 @@
   "file": "tadabbur_saffat.json",
   "surah": 37,
   "fragment": "كما صلّيت على إبراهيم",
-  "closest": null
- },
- {
-  "file": "tadabbur_short.json",
-  "surah": null,
-  "fragment": "قسمتُ الصلاة بيني وبين عبدي",
   "closest": null
  },
  {
