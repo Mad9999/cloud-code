@@ -1772,10 +1772,17 @@ function sceneLabel(ctx, text, x, y, color) {
    Layer: الميزان (the scale)، the prophetic division made visible
    ============================================================ */
 let scaleSel = null
-const SC_PRAISE = [1, 2, 3, 4], SC_PIVOT = 5, SC_PETITION = [6, 7]
-const SC_COL = { praise: "#1c5cab", pivot: COLORS.magenta, petition: "#0e7a56" }
+// The hadith's division starts at «الحمد لله رب العالمين», which is verse 2 in
+// our count. Verse 1 is the basmala, and the hadith does not place it on either
+// side: Ibn Kathir relays it as «قسمت الصلاة بيني وبين عبدي نصفين، فإذا قال
+// العبد: الحمد لله رب العالمين، قال الله: حمدني عبدي». We had it at [1,2,3,4]
+// under a «مأثور» badge, which put a verse into a prophetic division that never
+// named it and then called the addition transmitted.
+const SC_PRAISE = [2, 3, 4], SC_PIVOT = 5, SC_PETITION = [6, 7], SC_OUTSIDE = [1]
+const SC_COL = { praise: "#1c5cab", pivot: COLORS.magenta, petition: "#0e7a56", outside: COLORS.neutral || "#6b6a64" }
 
 function scaleSide(n) {
+	if (SC_OUTSIDE.includes(n)) return "outside"
 	return n === SC_PIVOT ? "pivot" : SC_PRAISE.includes(n) ? "praise" : "petition"
 }
 
@@ -1855,7 +1862,7 @@ function drawScale() {
 		ctx.fillText(label, ex, panY + 74)
 	}
 	// RTL: praise on the right, petition on the left
-	drawPan(cx + beamHalf, SC_PRAISE, "praise", "ثناءٌ لله (١–٤)")
+	drawPan(cx + beamHalf, SC_PRAISE, "praise", "ثناءٌ لله (٢–٤)")
 	drawPan(cx - beamHalf, SC_PETITION, "petition", "عطاءٌ للعبد (٦–٧)")
 
 	// pivot: verse 5 rides the fulcrum — "between Me and My servant"
@@ -1868,7 +1875,7 @@ function showScaleInfo(n) {
 	const verse = D.surah.verses[n - 1]
 	const td = D.tadabbur.verses[n - 1]
 	const side = scaleSide(n)
-	const sideLabel = { praise: "كفّة الثناء لله", pivot: "نقطة الارتكاز، بين الله وعبده", petition: "كفّة العطاء للعبد" }[side]
+	const sideLabel = { praise: "كفّة الثناء لله", pivot: "نقطة الارتكاز، بين الله وعبده", petition: "كفّة العطاء للعبد", outside: "خارج القسمة: الحديثُ يبدأ بها من ﴿الحمد لله رب العالمين﴾" }[side]
 	let html = `<b>﴿${verse.uthmani}﴾</b> <span style="color:${SC_COL[side]}">${sideLabel}</span>`
 	if (td.divine_response) {
 		html += `<div style="margin-top:8px;color:${COLORS.aqua}">قال الله: «${td.divine_response}» <span class="src">${td.divine_response_source}</span></div>`
