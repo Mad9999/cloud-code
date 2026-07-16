@@ -40,6 +40,24 @@ def blocks(entries):
 	return [(sorted(ayat), len(text)) for text, ayat in grouped.items()]
 
 
+def covered_by(entries, ayah):
+	"""An empty entry is not silence: find the verse whose text speaks for it.
+
+	Saadi has 60 empty entries across the mushaf and Qurtubi two. They are not
+	gaps in the corpus. Saadi comments on a run of verses under one heading and
+	the extraction keys the prose to the first of them, so 2:286 is empty while
+	2:285 carries 1,917 characters that run through both and close with «تم
+	تفسير سورة البقرة». Left alone, this tool would have reported Saadi at
+	0.00x, last of 272, on the final verse of al-Baqara, and rule 33 would have
+	read that as 'he passes over it, so write nothing'. He does not pass over
+	it. He ends the surah there.
+	"""
+	for n in range(ayah - 1, 0, -1):
+		if entries.get(n, "").strip():
+			return n
+	return None
+
+
 def measure(book, surah, ayah):
 	"""Two readings, because they answer two questions.
 
@@ -51,7 +69,14 @@ def measure(book, surah, ayah):
 	only the share would have said the subject is ordinary. It is not.
 	"""
 	entries = load(book, surah)
-	bl = blocks(entries)
+	speaks_for = None
+	if not entries.get(ayah, "").strip():
+		speaks_for = covered_by(entries, ayah)
+		if speaks_for is None:
+			return {"span": str(ayah), "chars": 0, "ratio": 0.0, "rank": 0, "bulk_rank": 0,
+				"of": 0, "grouped": 0, "entries": len(entries), "covered_by": None}
+		ayah = speaks_for
+	bl = [(a, s) for a, s in blocks(entries) if s > 0]
 	shares = sorted(((size / len(ayat), min(ayat)) for ayat, size in bl), reverse=True)
 	average = sum(s for s, _ in shares) / len(shares)
 	bulks = sorted(((size, min(ayat)) for ayat, size in bl), reverse=True)
@@ -66,6 +91,7 @@ def measure(book, surah, ayah):
 		"of": len(shares),
 		"grouped": sum(len(a) for a, _ in bl if len(a) > 1),
 		"entries": len(entries),
+		"covered_by": speaks_for,
 	}
 
 
@@ -79,11 +105,12 @@ def main():
 		)
 		for book in BOOKS:
 			m = measure(book, surah, ayah)
+			note = f"  (empty here; spoken for by {m['covered_by']})" if m["covered_by"] else ""
 			print(
 				f"{book:10} {m['span']:>9} {m['chars']:>7} {m['ratio']:>6.2f}x "
 				f"{str(m['rank']) + '/' + str(m['of']):>10} "
 				f"{str(m['bulk_rank']) + '/' + str(m['of']):>10} "
-				f"{str(m['grouped']) + '/' + str(m['entries']):>9}"
+				f"{str(m['grouped']) + '/' + str(m['entries']):>9}{note}"
 			)
 		print("  ratio/rank: does this verse ask.  bulk: does this subject weigh.")
 		return

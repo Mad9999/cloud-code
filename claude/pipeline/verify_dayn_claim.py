@@ -26,6 +26,8 @@ import re
 import sys
 from pathlib import Path
 
+from measure_attention import measure
+
 BASE = Path(__file__).resolve().parent.parent
 DIACRITICS = re.compile(r"[ً-ْٰـۖ-ۭٓ-ٟ]")
 
@@ -56,19 +58,12 @@ def tafsir(book, surah=2):
 	return {k: re.sub(r"\[\[.*?\]\]", " ", v, flags=re.S) for k, v in payload.items()}
 
 
-def blocks(entries):
-	grouped = {}
-	for ayah, text in entries.items():
-		grouped.setdefault(text, []).append(int(ayah))
-	return [(sorted(a), len(t)) for t, a in grouped.items()]
-
-
-def rank_of(book, ayah):
-	bl = blocks(tafsir(book))
-	shares = sorted(((size / len(a), min(a)) for a, size in bl), reverse=True)
-	average = sum(s for s, _ in shares) / len(shares)
-	span, size = next((a, s) for a, s in bl if ayah in a)
-	return (size / len(span)) / average, [s for _, s in shares].index(min(span)) + 1, len(shares)
+# The rank comes from measure_attention, not from a second copy of its logic
+# living here. We wrote that second copy, and within the hour the two had
+# drifted: the tool learned to drop empty entries from the denominator and this
+# file did not, so one said 271 blocks and the other 272 for the same question.
+# A claim checked by a private reimplementation of the thing it claims about is
+# not checked.
 
 
 # Saadi's own words, which are the stop's spine.
@@ -102,10 +97,16 @@ def main():
 
 	# 2) both imams peak here, which is the unusual part
 	for book in ("saadi", "qurtubi"):
-		ratio, rank, of = rank_of(book, 282)
-		if rank != 1:
-			failures.append(f"{book} does not peak at 282: rank {rank}/{of} at {ratio:.2f}x")
-		print(f"  OK: {book} peaks at 282, {ratio:.2f}x, {rank} of {of} blocks")
+		m = measure(book, 2, 282)
+		if m["rank"] != 1 or m["bulk_rank"] != 1:
+			failures.append(
+				f"{book} does not peak at 282: {m['rank']}/{m['of']} by share, "
+				f"{m['bulk_rank']}/{m['of']} by bulk, at {m['ratio']:.2f}x"
+			)
+		print(
+			f"  OK: {book} peaks at 282 by both readings, {m['ratio']:.2f}x, "
+			f"1 of {m['of']} blocks"
+		)
 
 	# 3) the count, either way of counting
 	saadi = tafsir("saadi")
