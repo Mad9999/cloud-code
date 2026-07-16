@@ -72,6 +72,13 @@ MALIK = [
 	),
 ]
 
+# The three days are the point of the stop and were the one thing this file did
+# not check, while printing that it had. Qurtubi never writes «ثلاثة أيام»: the
+# count is read off «فأتاه من الغد» twice, so that is what gets counted here,
+# and the phrase stays out of the stop because it is not his.
+DELAY = "فأتاه من الغد"
+DELAY_TIMES = 2
+
 QURTUBI_ELSE = [
 	"هذا وعيد إن لم يذروا الربا، والحرب داعية القتل",
 	"دلت هذه الآية على أن أكل الربا والعمل به من الكبائر، ولا خلاف في ذلك",
@@ -113,7 +120,24 @@ def main():
 	for label, phrase in MALIK:
 		if normalize(phrase) not in qurtubi:
 			failures.append(f"Malik's case not found ({label}): {phrase}")
-	print("  OK: Malik's three days, his ruling, and his reason are in Qurtubi verbatim")
+
+	# This line used to read "Malik's three days, his ruling, and his reason are
+	# in Qurtubi verbatim" while checking no such thing: MALIK holds five
+	# phrases and the days are not among them. A print that promises more than
+	# its check performs is worse than no check, because it buys silence. So
+	# count the delay, and say only what was counted.
+	delays = qurtubi.count(normalize(DELAY))
+	if delays != DELAY_TIMES:
+		failures.append(
+			f"Malik sent the man away {delays} times, not {DELAY_TIMES}: the stop's three days"
+			" are read off this repetition and must be re-read"
+		)
+	if normalize("ثلاثة أيام") in qurtubi:
+		failures.append("Qurtubi now says «ثلاثة أيام» outright: the stop may quote him for it")
+	print(
+		f"  OK: Malik's case, his ruling and his reason are in Qurtubi verbatim, and he sent"
+		f" the man away {delays} times, which is where the three days are counted from"
+	)
 
 	for phrase in QURTUBI_ELSE:
 		if normalize(phrase) not in qurtubi:
