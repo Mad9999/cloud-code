@@ -559,12 +559,12 @@ function buildStatsTable() {
    ============================================================ */
 function buildAcoustic() {
 	$("#acoustic-src").textContent =
-		`التلاوة: ${D.acoustics.reciter} — المصدر: ${D.acoustics.source}. ` +
+		`التلاوة: ${D.acoustics.reciter}، المصدر: ${D.acoustics.source}. ` +
 		"الطيف محسوب بتحويل فورييه (نافذة ٢٠٤٨ عينة): الأفقي زمن، والعمودي تردد حتى ٥ كيلوهرتز، والإضاءة شدة الطاقة."
 	$("#acoustic-cards").innerHTML = D.acoustics.verses.map((v) => {
 		if (v.missing) {
 			return `<div class="acoustic-card"><div class="vtitle">آية ${arNum(v.n)}</div>
-				<div class="hint">الملف الصوتي غير متوفر — ضع ${"00100" + v.n}.mp3 في مجلد audio ثم أعد تشغيل build.py</div></div>`
+				<div class="hint">الملف الصوتي غير متوفر، ضع ${"00100" + v.n}.mp3 في مجلد audio ثم أعد تشغيل build.py</div></div>`
 		}
 		const verse = D.surah.verses[v.n - 1]
 		const bands = Object.entries(v.band_energy_pct)
@@ -678,7 +678,7 @@ function buildFramework() {
 }
 
 /* ============================================================
-   Layer: خريطة السور (surah connection map) — 114 surahs linked by
+   Layer: خريطة السور (surah connection map)، 114 surahs linked by
    their shared distinctive roots. Force-directed. Computed facts.
    ============================================================ */
 const SM = window.SURAH_MAP
@@ -883,8 +883,8 @@ function showSmPanel(nd) {
 		`<div class="rx-head"><b>${smName(nd.n)}</b> — ${nd.type} · ${arNum(nd.ayahs)} آية · ${arNum(nd.size)} كلمة</div>` +
 		(topR ? `<div class="sm-sec"><span class="sm-lbl">أبرز جذورها:</span> ${topR}</div>` : "") +
 		(uniq ? `<div class="sm-sec sm-uniq">✦ <span class="sm-lbl">كلماتٌ تفرّدت بها في القرآن كلّه:</span> ${uniq}</div>` : "") +
-		`<div class="ec-control">⚖ <b>صمّام الأمانة:</b> قِسنا تشابُهَ السور على نموذجٍ عشوائيّ (خلطُ الجذور مع حفظ التكرارات). النتيجة الصادقة: <b>جِوارُ أكثر السور قريبٌ من الصدفة</b> (وسيطُ التشابه الحقيقيّ ${arNum(c.real_median_top_sim)} مقابل ${arNum(c.null_median_top_sim)} في العشوائيّ) — فطولُ السورة وكثرةُ ألفاظها الشائعة يكفيان لتشابهٍ ظاهر. لا يتجاوز الصدفةَ بوضوحٍ إلا القِلّةُ الأقوى. الوسمُ بجانب كلٍّ يبيّن ذلك؛ والجذورُ المشتركةُ حقٌّ في كلّ حال، والمعنى تتدبّره أنت.</div>` +
-		`<div class="rx-stat" style="margin-top:6px">أقرب السور إليها لغويًّا — اضغط سورةً لتنتقل إليها في الشبكة:</div>` +
+		`<div class="ec-control">⚖ <b>صمّام الأمانة:</b> قِسنا تشابُهَ السور على نموذجٍ عشوائيّ (خلطُ الجذور مع حفظ التكرارات). النتيجة الصادقة: <b>جِوارُ أكثر السور قريبٌ من الصدفة</b> (وسيطُ التشابه الحقيقيّ ${arNum(c.real_median_top_sim)} مقابل ${arNum(c.null_median_top_sim)} في العشوائيّ)، فطولُ السورة وكثرةُ ألفاظها الشائعة يكفيان لتشابهٍ ظاهر. لا يتجاوز الصدفةَ بوضوحٍ إلا القِلّةُ الأقوى. الوسمُ بجانب كلٍّ يبيّن ذلك؛ والجذورُ المشتركةُ حقٌّ في كلّ حال، والمعنى تتدبّره أنت.</div>` +
+		`<div class="rx-stat" style="margin-top:6px">أقرب السور إليها لغويًّا، اضغط سورةً لتنتقل إليها في الشبكة:</div>` +
 		`<div class="rx-list">${rows}</div>` +
 		`<div class="sm-ctx">هذه أرقامٌ محسوبة تصف البنية، لا تفسّر المعنى. للقصّة وسببِ النزول والتفسير المُسنَد، ارجع إلى <button class="sm-ctx-link" data-go="sources">المصادر المُسنَدة</button>.</div>`
 	$("#suramap-info").querySelectorAll(".sm-nb").forEach((el) =>
@@ -894,7 +894,7 @@ function showSmPanel(nd) {
 }
 
 /* ============================================================
-   Layer: مستكشف الجذر (root explorer) — every word is a gate to
+   Layer: مستكشف الجذر (root explorer)، every word is a gate to
    everywhere its root appears across the whole Qur'an. Computed facts.
    ============================================================ */
 const EX = window.EXPLORER_DATA
@@ -913,7 +913,7 @@ function echoLift(score) {
 	if (x >= 8) { return { label: `أقوى من الصدفة بنحو ${arNum(Math.round(x))}×`, cls: "ec-strong" } }
 	if (x >= 3) { return { label: `أعلى من الصدفة بنحو ${arNum(Math.round(x))}×`, cls: "ec-above" } }
 	if (x >= 1.5) { return { label: `أعلى من الصدفة قليلًا (${arNum(x)}×)`, cls: "ec-weak" } }
-	return { label: "قد يكون توارُدَ لفظٍ عاديّ — قريبٌ من الصدفة", cls: "ec-chance" }
+	return { label: "قد يكون توارُدَ لفظٍ عاديّ، قريبٌ من الصدفة", cls: "ec-chance" }
 }
 
 function sname(s) {
@@ -949,7 +949,7 @@ function renderExplorerSurah(n) {
 	const uniqNote = (disc && disc.unique.length)
 		? `<div class="ex-disc">✦ <b>ما قد لا تلاحظه:</b> ` +
 			disc.unique.slice(0, 4).map((u) => `«${u[1]}»`).join("، ") +
-			` — كلماتٌ لا يردُ جذرها في القرآن كلّه إلا في هذه السورة. <span class="mut">(كشفٌ محسوب)</span></div>`
+			`، كلماتٌ لا يردُ جذرها في القرآن كلّه إلا في هذه السورة. <span class="mut">(كشفٌ محسوب)</span></div>`
 		: ""
 	$("#explorer-header").innerHTML =
 		`<b>${sname(n)}</b> — ${EX.surah_type[n]} · ${arNum(cnt)} آية` +
@@ -969,7 +969,7 @@ function renderExplorerSurah(n) {
 		html += `<div class="rx-verse"><span class="rx-num">${arNum(a)}</span> ${words}${echo}</div>`
 	}
 	$("#explorer-verses").innerHTML = html
-	$("#explorer-detail").innerHTML = "اضغط أيّ كلمة مُبرَزة لترى جذرها وأين ينتشر في القرآن كلّه — أو «⇄ صداها» لترى مواضعَ تُشبهها لغةً."
+	$("#explorer-detail").innerHTML = "اضغط أيّ كلمة مُبرَزة لترى جذرها وأين ينتشر في القرآن كلّه، أو «⇄ صداها» لترى مواضعَ تُشبهها لغةً."
 }
 
 // The echo of a verse (السؤال السادس): where else across the whole Qur'an its
@@ -990,7 +990,7 @@ function showEchoes(ref, btn) {
 	}).join("")
 	const c = AL.control
 	$("#explorer-detail").innerHTML =
-		`<div class="rx-head"><b>صدى الآية</b> — ${sname(s)} ${arNum(a)}</div>` +
+		`<div class="rx-head"><b>صدى الآية</b>، ${sname(s)} ${arNum(a)}</div>` +
 		`<div class="rx-stat" style="font-family:var(--arabic);font-size:16px;color:var(--ink)">${ayahText(s, a)}</div>` +
 		`<div class="ec-control">⚖ <b>صمّام الأمانة:</b> قِسنا هذه الروابط على نموذجٍ عشوائيّ (خلطنا جذور القرآن مع حفظ تكراراتها). النتيجة الصادقة: <b>أكثرُ الأصداء توارُدُ ألفاظٍ قريبٌ من الصدفة</b> (الوسيط الحقيقي ${arNum(c.real_median_top_echo)} مقابل ${arNum(c.null_median_top_echo)} في العشوائيّ)، ولا يتجاوز الصدفةَ بوضوحٍ إلا <b>الأقوى</b> منها. فلا تُقرأ ضعيفةُ الاشتراك «تجاوبًا»؛ الوسمُ بجانب كلٍّ يبيّن قوّته مقابل الصدفة. المعنى تتدبّره أنت.</div>` +
 		`<div class="rx-list">${rows}</div>`
@@ -1011,14 +1011,14 @@ function showRootExplorer(root, wtext, el) {
 	const more = r.ayahs.length > cap
 		? `<div class="rx-more">و ${arNum(r.ayahs.length - cap)} موضعًا آخر في المصحف…</div>` : ""
 	$("#explorer-detail").innerHTML =
-		`<div class="rx-head"><b>${wtext}</b> — الجذر <b class="root">${root}</b></div>` +
+		`<div class="rx-head"><b>${wtext}</b>، الجذر <b class="root">${root}</b></div>` +
 		`<div class="rx-stat">ظهر هذا الجذر في القرآن كلّه: <b>${arNum(r.count)}</b> مرة · في <b>${arNum(r.ayah_count)}</b> آية · عبر <b>${arNum(r.surah_count)}</b> سورة</div>` +
 		`<div class="rx-surahs">أكثر السور حضورًا: ${topS}</div>` +
 		`<h3>حيث يظهر عبر المصحف (عيّنة):</h3><div class="rx-list">${rows}${more}</div>`
 }
 
 /* ============================================================
-   Layer: كشوف محسوبة (computed discoveries) — what the AI surfaces
+   Layer: كشوف محسوبة (computed discoveries)، what the AI surfaces
    that a reader passes over. Pure counting facts, each with its proof.
    ============================================================ */
 const DISC = window.DISCOVERIES
@@ -1035,12 +1035,12 @@ function buildDiscoveries() {
 		`<span class="disc-stat"><b>${arNum(Object.keys(DISC.surahs).length)}</b> سورةً لها كلماتٌ تفرّدت بها</span>`
 	const c = DISC.control
 	$("#disc-feed").innerHTML =
-		`<div class="ec-control">⚖ <b>صمّام الأمانة:</b> الكلمةُ التي ترد <b>مرّةً واحدة</b> تنحصرُ في سورةٍ بالبداهة (وفي القرآن ${arNum(c.hapax)} منها) — <b>لا لطيفةَ إحصائية في ذلك</b>، فأيُّ نصٍّ فيه مفرداتٌ نادرة. اللافتُ حقًّا: جذرٌ <b>يتكرّر</b> (مرّتين فأكثر) ومع ذلك لا يغادرُ سورةً واحدة — وهذا في القرآن <b>${arNum(c.real_confined_recurring)}</b> جذرًا مقابل <b>${arNum(c.null_confined_recurring)}</b> فقط في نموذجٍ عشوائيّ، أي <b>أعلى من الصدفة بنحو ${arNum(Math.round(c.lift))}×</b>. وهذه التغذيةُ تعرضُ هذه المتكرّرةَ المنحصرة وحدها:</div>` +
+		`<div class="ec-control">⚖ <b>صمّام الأمانة:</b> الكلمةُ التي ترد <b>مرّةً واحدة</b> تنحصرُ في سورةٍ بالبداهة (وفي القرآن ${arNum(c.hapax)} منها)، <b>لا لطيفةَ إحصائية في ذلك</b>، فأيُّ نصٍّ فيه مفرداتٌ نادرة. اللافتُ حقًّا: جذرٌ <b>يتكرّر</b> (مرّتين فأكثر) ومع ذلك لا يغادرُ سورةً واحدة، وهذا في القرآن <b>${arNum(c.real_confined_recurring)}</b> جذرًا مقابل <b>${arNum(c.null_confined_recurring)}</b> فقط في نموذجٍ عشوائيّ، أي <b>أعلى من الصدفة بنحو ${arNum(Math.round(c.lift))}×</b>. وهذه التغذيةُ تعرضُ هذه المتكرّرةَ المنحصرة وحدها:</div>` +
 		g.feed.map((f, i) =>
 		`<div class="disc-item" data-s="${f.surah}" data-a="${f.ayah}">` +
 		`<div class="disc-line"><span class="disc-word">${f.form}</span>` +
 		`<span class="disc-say">لا يردُ جذرُها <b class="root">${f.root}</b> في القرآن كلّه إلا في ` +
-		`<b>${stripSurah(f.name)}</b> — ${arNum(f.count)} مرّات.</span></div>` +
+		`<b>${stripSurah(f.name)}</b>، ${arNum(f.count)} مرّات.</span></div>` +
 		`<div class="disc-proof" id="disc-proof-${i}"><span class="disc-open">تحقّق: أظهِر الموضع الأول ↓</span></div></div>`).join("")
 	$("#disc-feed").querySelectorAll(".disc-item").forEach((el, i) => {
 		el.addEventListener("click", () => {
@@ -1175,7 +1175,7 @@ function tsEchoHtml(ref) {
 		return `<div class="ts-echo-row"><span class="rx-ref">${sname(os)} ${arNum(oa)}</span> ${chips}` +
 			`<span class="ec-band ${lf.cls}">${lf.label}</span><div class="ec-txt">${ayahText(os, oa)}</div></div>`
 	}).join("")
-	return `<div class="ts-echo-note">مواضعُ تشترك معها في لفظٍ مميّز — موزونةٌ على الصدفة، للتدبّر لا للاستدلال:</div>${rows}`
+	return `<div class="ts-echo-note">مواضعُ تشترك معها في لفظٍ مميّز، موزونةٌ على الصدفة، للتدبّر لا للاستدلال:</div>${rows}`
 }
 
 // one verse card, shared by short surahs and al-Baqara passages
@@ -1233,8 +1233,8 @@ function renderTadabburShort(i) {
 	if (long) {
 		const done = e.coverage.covered >= e.coverage.total
 		html += done
-			? `<div class="ts-coverage ts-done">اكتملت بحمد الله — <b>${arNum(e.coverage.total)}</b> آية كاملةً، كلُّها مُسنَدةٌ وموسومة (ابن كثير/السعدي). <span class="mut">(الصوتُ بصوت الحصري للمقاطع الكبرى؛ والتدبّرُ لكلّ آية.)</span></div>`
-			: `<div class="ts-coverage">تُبنى هذه السورة تدرّجًا بإذن الله — <b>${arNum(e.coverage.covered)}</b> من <b>${arNum(e.coverage.total)}</b> آية، بادئين بأعظم مقاطعها وأكثرها تلاوةً. كلُّ ما هنا مُسنَدٌ وموسوم؛ ولا نُوهم أنّ التغطية كاملة. <span class="mut">(الصوتُ بصوت الحصري للمقاطع الكبرى؛ والتدبّرُ لكلِّ ما نُغطّيه.)</span></div>`
+			? `<div class="ts-coverage ts-done">اكتملت بحمد الله، <b>${arNum(e.coverage.total)}</b> آية كاملةً، كلُّها مُسنَدةٌ وموسومة (ابن كثير/السعدي). <span class="mut">(الصوتُ بصوت الحصري للمقاطع الكبرى؛ والتدبّرُ لكلّ آية.)</span></div>`
+			: `<div class="ts-coverage">تُبنى هذه السورة تدرّجًا بإذن الله، <b>${arNum(e.coverage.covered)}</b> من <b>${arNum(e.coverage.total)}</b> آية، بادئين بأعظم مقاطعها وأكثرها تلاوةً. كلُّ ما هنا مُسنَدٌ وموسوم؛ ولا نُوهم أنّ التغطية كاملة. <span class="mut">(الصوتُ بصوت الحصري للمقاطع الكبرى؛ والتدبّرُ لكلِّ ما نُغطّيه.)</span></div>`
 		html += e.passages.map((p) => {
 			let ph = `<div class="ts-passage"><div class="ts-passage-head">${p.title} <span class="mut">(${arNum(p.range[0])}${p.range[1] !== p.range[0] ? "–" + arNum(p.range[1]) : ""})</span></div>`
 			if (p.fadl) { ph += `<div class="ts-note ts-fadl">✦ <b>فضلها:</b> ${p.fadl.text} <span class="src">${p.fadl.source} ${gradeBadge(p.fadl.grade)}</span></div>` }
@@ -1252,7 +1252,7 @@ function renderTadabburShort(i) {
 	const hasSabab = long ? e.passages.some((p) => p.sabab) : !!e.sabab
 	const cats = ["tafsir_mathur"].concat(hasSabab ? ["asbab"] : [])
 	const chips = cats.map((k) => `<span class="ts-src-chip">${catLabel(k)}</span>`).join(" ")
-	html += `<div class="ts-srclink">للاستزادة المُسنَدة في ${e.name} — ارجع إلى ${chips} ` +
+	html += `<div class="ts-srclink">للاستزادة المُسنَدة في ${e.name}، ارجع إلى ${chips} ` +
 		`في <button class="ts-src-btn" type="button">المصادر المُسنَدة</button>. (نَدُلّ ولا نُلخّص؛ المعنى الكامل عند أهله.)</div>`
 
 	$("#ts-body").innerHTML = html
@@ -1310,7 +1310,7 @@ function buildSources() {
 }
 
 /* ============================================================
-   Layer: الآية تُضيء (verse scenes) — bespoke design that lights up
+   Layer: الآية تُضيء (verse scenes)، bespoke design that lights up
    each verse's meaning. The verse text stays fixed & respected;
    the canvas behind it is the aid.
    ============================================================ */
@@ -1560,7 +1560,7 @@ const SCENE_DRAW = {
 			const permit = (sceneSel === 23 ? 0.6 : 0.22) - dist * (sceneSel === 23 ? 0.45 : 0.18)
 			glow(ctx, x, y, 8, "#e0a02a", Math.max(0, permit))
 		})
-		const alive = sceneSel === 7 ? 1 : 0.82 + 0.05 * Math.sin(sceneT * 0.8)  // الحيّ القيّوم — never off
+		const alive = sceneSel === 7 ? 1 : 0.82 + 0.05 * Math.sin(sceneT * 0.8)  // الحيّ القيّوم، never off
 		glow(ctx, cx, cy, 74, "#f0c85a", 0.5 * alive)
 		glow(ctx, cx, cy, 30, "#fff2cc", 0.6 * alive)
 	},
@@ -1570,11 +1570,11 @@ const SCENE_DRAW = {
 	shahida(ctx, w, h) {
 		const cx = w / 2, cy = h / 2, m = Math.min(w, h)
 		const p = 0.5 + 0.5 * Math.sin(sceneT * 0.6)
-		// the witnessed truth: a still central light — "لا إله إلا هو"
+		// the witnessed truth: a still central light، "لا إله إلا هو"
 		glow(ctx, cx, cy, m * 0.30, "#e0a02a", 0.16 + 0.05 * p)
 		// three witnesses, each a beam converging on the centre
 		const wit = [
-			{ a: -Math.PI / 2, sel: 1, c: "#e0a02a" },   // شهد الله — from above (highest)
+			{ a: -Math.PI / 2, sel: 1, c: "#e0a02a" },   // شهد الله، from above (highest)
 			{ a: Math.PI * 0.75, sel: 8, c: COLORS.aqua }, // الملائكة
 			{ a: Math.PI * 0.25, sel: 10, c: COLORS.blue }, // أولو العلم
 		]
@@ -1603,16 +1603,16 @@ const SCENE_DRAW = {
 	// abasement alternate; a warm glow never leaves — all good is in His hand.
 	malik_mulk(ctx, w, h) {
 		const cx = w / 2, cy = h / 2, m = Math.min(w, h)
-		// the still owner at the centre — "مالك الملك"
+		// the still owner at the centre، "مالك الملك"
 		glow(ctx, cx, cy, m * 0.16, "#e0a02a", 0.22)
 		const R = m * 0.34
 		const give = sceneSel === 5, take = sceneSel === 9
-		// bestowing arc — sweeps inward (تؤتي الملك)
+		// bestowing arc، sweeps inward (تؤتي الملك)
 		const ga = sceneT * 0.5
 		ctx.strokeStyle = hexA(COLORS.aqua, give ? 0.6 : 0.3)
 		ctx.lineWidth = give ? 3 : 1.8
 		ctx.beginPath(); ctx.arc(cx, cy, R, ga, ga + Math.PI * 0.7); ctx.stroke()
-		// stripping arc — sweeps the other way (تنزع الملك)
+		// stripping arc، sweeps the other way (تنزع الملك)
 		const ta = -sceneT * 0.5 + Math.PI
 		ctx.strokeStyle = hexA(COLORS.muted, take ? 0.55 : 0.28)
 		ctx.lineWidth = take ? 3 : 1.8
@@ -1716,7 +1716,7 @@ function sceneLabel(ctx, text, x, y, color) {
 }
 
 /* ============================================================
-   Layer: الميزان (the scale) — the prophetic division made visible
+   Layer: الميزان (the scale)، the prophetic division made visible
    ============================================================ */
 let scaleSel = null
 const SC_PRAISE = [1, 2, 3, 4], SC_PIVOT = 5, SC_PETITION = [6, 7]
@@ -1815,7 +1815,7 @@ function showScaleInfo(n) {
 	const verse = D.surah.verses[n - 1]
 	const td = D.tadabbur.verses[n - 1]
 	const side = scaleSide(n)
-	const sideLabel = { praise: "كفّة الثناء لله", pivot: "نقطة الارتكاز — بين الله وعبده", petition: "كفّة العطاء للعبد" }[side]
+	const sideLabel = { praise: "كفّة الثناء لله", pivot: "نقطة الارتكاز، بين الله وعبده", petition: "كفّة العطاء للعبد" }[side]
 	let html = `<b>﴿${verse.uthmani}﴾</b> <span style="color:${SC_COL[side]}">— ${sideLabel}</span>`
 	if (td.divine_response) {
 		html += `<div style="margin-top:8px;color:${COLORS.aqua}">قال الله: «${td.divine_response}» <span class="src">${td.divine_response_source}</span></div>`
@@ -1829,7 +1829,7 @@ function showScaleInfo(n) {
 }
 
 /* ============================================================
-   Layer: المحاورة (dialogue) — worshipper wing
+   Layer: المحاورة (dialogue)، worshipper wing
    ============================================================ */
 let dlgIndex = 0
 let dlgAudio = null
@@ -1931,11 +1931,11 @@ function dialogueEchoHtml(n) {
 			`<div class="dlg-echo-txt">${ayahText(os, oa)}</div></div>`
 	}).join("")
 	// honest framing: for al-Fatiha these shared-word links are near chance, so
-	// we invite reading, not inference — and say so plainly (رقم القاعدة ٥).
+	// we invite reading, not inference، and say so plainly (رقم القاعدة ٥).
 	return `<div class="dlg-echo">` +
-		`<span class="lbl">مواضعُ تشترك مع هذه الآية في لفظٍ مميّز — قد تعينك على تدبّرها. وأمانةً: هذا الاشتراك في الفاتحة <b>قريبٌ من الصدفة</b> غالبًا (قِسناه على نموذجٍ عشوائيّ)، فهو دعوةٌ للقراءة والتأمّل، لا دليلَ بناءٍ خفيّ:</span>` +
+		`<span class="lbl">مواضعُ تشترك مع هذه الآية في لفظٍ مميّز، قد تعينك على تدبّرها. وأمانةً: هذا الاشتراك في الفاتحة <b>قريبٌ من الصدفة</b> غالبًا (قِسناه على نموذجٍ عشوائيّ)، فهو دعوةٌ للقراءة والتأمّل، لا دليلَ بناءٍ خفيّ:</span>` +
 		`<div class="dlg-echo-list">${rows}</div>` +
-		`<span class="src">اشتراكُ جذرٍ لفظيّ محسوب، موزونٌ على الصدفة — للتأمّل لا للاستدلال ${gradeBadge("ijtihadi")}</span>` +
+		`<span class="src">اشتراكُ جذرٍ لفظيّ محسوب، موزونٌ على الصدفة، للتأمّل لا للاستدلال ${gradeBadge("ijtihadi")}</span>` +
 		`</div>`
 }
 
@@ -2035,7 +2035,7 @@ function revealDialogue() {
 window.__revealDialogue = revealDialogue
 
 /* ============================================================
-   Layer: مرصد الفواصل (observatory) — researcher wing
+   Layer: مرصد الفواصل (observatory)، researcher wing
    ============================================================ */
 const F = window.FAWASIL_DATA
 let obsFilter = "all"
@@ -2044,7 +2044,7 @@ function buildObservatory() {
 	$("#obs-intro").innerHTML =
 		`تجربة حيّة من <b style="font-family:inherit;color:${COLORS.ink}">دفتر الأسئلة المفتوحة</b> (السؤال ٢: هندسة الفواصل). ` +
 		`حلّلنا حرف الفاصلة الأخير لكل آيات القرآن (${arNum(F.total_ayahs)} آية في ${arNum(F.surah_count)} سورة). ` +
-		`أبرز نتيجة: حرف <b style="font-family:var(--arabic);color:${COLORS.ink}">النون</b> يهيمن على فواصل القرآن (${arNum(F.global_top_fasila[0][1])} آية، قرابة النصف) — الغنّة الأنفية الرخيّة — تليه ألف المد. ` +
+		`أبرز نتيجة: حرف <b style="font-family:var(--arabic);color:${COLORS.ink}">النون</b> يهيمن على فواصل القرآن (${arNum(F.global_top_fasila[0][1])} آية، قرابة النصف)، الغنّة الأنفية الرخيّة، تليه ألف المد. ` +
 		`${F.scope_note}`
 
 	$("#obs-legend").innerHTML =
@@ -2071,7 +2071,7 @@ const C = window.CONTROL_DATA
 function buildControl() {
 	const b = C.quran_baseline
 	$("#control-intro").innerHTML =
-		`قبل أن نَنسب أي نمطٍ للقرآن، نمرّره على نصوصٍ عربيةٍ ضابطة (شعر جاهلي وعباسي، سجع كهّان، خطب، نثر مرسل) — فما ظهر فيها بالقوة نفسها <b style="font-family:inherit;color:${COLORS.ink}">نشطبه بأمانة</b>. ` +
+		`قبل أن نَنسب أي نمطٍ للقرآن، نمرّره على نصوصٍ عربيةٍ ضابطة (شعر جاهلي وعباسي، سجع كهّان، خطب، نثر مرسل)، فما ظهر فيها بالقوة نفسها <b style="font-family:inherit;color:${COLORS.ink}">نشطبه بأمانة</b>. ` +
 		`الوكلاء كُلّفوا بمحاولة <b style="font-family:inherit;color:${COLORS.ink}">إسقاط</b> التميّز لا إثباته، والطرف القرآني محسوبٌ حسابياً من ${arNum(b.total_ayahs)} آية. النتيجة: ` +
 		`${arNum(C.synthesis.survived.length)} صمدت، و${arNum(C.synthesis.killed.length)} سقطت.`
 
@@ -2101,7 +2101,7 @@ function buildControl() {
 	$("#control-summary").innerHTML =
 		`<div class="control-cols">
 			<div><h4 class="survived-h">صمد بعد الغربلة</h4><ul>${s.survived.map((x) => `<li>${x}</li>`).join("")}</ul></div>
-			<div><h4 class="killed-h">سقط — لا يُنسب للقرآن</h4><ul>${s.killed.map((x) => `<li class="killed-item">${x}</li>`).join("")}</ul></div>
+			<div><h4 class="killed-h">سقط، لا يُنسب للقرآن</h4><ul>${s.killed.map((x) => `<li class="killed-item">${x}</li>`).join("")}</ul></div>
 		</div>` +
 		`<div style="margin-top:12px">${s.summary_ar}</div>` +
 		`<div class="src">حدود المنهج: ${s.method_limits.join(" · ")}</div>` +
@@ -2265,7 +2265,7 @@ function invRender() {
 	if (invStep === 0) {
 		stage.innerHTML =
 			`<div class="inv-hook-title">أنت تقرأ الفاتحة في صلاتك<br>سبع عشرة مرّة كل يوم</div>` +
-			`<div class="inv-hook-sub">وأنت — غالبًا — غافلٌ عنها، تمرّ عليها مرور العادة.<br>لكنّك لستَ في مناجاةٍ من طرفٍ واحد.<br><b>أنت في حوار… والله يُجيبك بعد كل آية.</b></div>`
+			`<div class="inv-hook-sub">وأنت، غالبًا، غافلٌ عنها، تمرّ عليها مرور العادة.<br>لكنّك لستَ في مناجاةٍ من طرفٍ واحد.<br><b>أنت في حوار… والله يُجيبك بعد كل آية.</b></div>`
 		ctrl.innerHTML = `<button class="primary" id="inv-start">ابدأ الرحلة</button><button class="ghost" id="inv-skip">تخطَّ إلى العمق</button>`
 		$("#inv-start").onclick = () => { invStep = 1; invRender() }
 		$("#inv-skip").onclick = () => { invStep = INV_VERSES.length + 2; invRender() }
@@ -2291,7 +2291,7 @@ function invRender() {
 	if (invStep === INV_VERSES.length + 1) {
 		stage.innerHTML =
 			`<div class="inv-closing">رأيتَ بعينك: ما إن تُثني حتى تُجاب، وما إن تسأل حتى يُقال «ولعبدي ما سأل».<br>` +
-			`فإذا قمتَ الليلة تصلّي، تذكّر أنك <b>تُخاطَب وتُجاب</b> — لا تناجي جدارًا.<br>` +
+			`فإذا قمتَ الليلة تصلّي، تذكّر أنك <b>تُخاطَب وتُجاب</b>، لا تناجي جدارًا.<br>` +
 			`اقرأها متمهّلًا، وأنصت لجواب ربّك في قلبك.` +
 			`<span class="action">↦ الليلة: صلِّ ركعتين، وقف عند كل آيةٍ لحظةً تستشعر جوابها.</span></div>`
 		ctrl.innerHTML = `<button class="primary" id="inv-next2">تابع</button>`
@@ -2301,13 +2301,13 @@ function invRender() {
 
 	// disclaimer gate (mandatory — reachable from skip too)
 	stage.innerHTML =
-		`<div class="inv-disclaimer"><h3>تنبيهٌ وأمانة — قبل أن تدخل</h3>` +
+		`<div class="inv-disclaimer"><h3>تنبيهٌ وأمانة، قبل أن تدخل</h3>` +
 		`الأدوات التي ستراها (أرقام، أنماط، خرائط) هي <b>عينُ ما يقع كثيرٌ من الناس في فخّه</b>: ` +
 		`فيرفعون النمط الإحصائي إلى «إعجازٍ مثبت»، أو يُنزِّلون استنتاجاتِهم البشرية على كلام الله <b>فيفسّرون كلامه بكلامنا وأهوائنا</b>. ` +
 		`ونحن نتبرأ إلى الله من ذلك: ما هنا كلُّه وصفٌ بشريٌّ اجتهاديٌّ قابل للخطأ، موسومٌ بدرجته، لا إثباتَ إعجازٍ ولا تفسيرَ قرآنٍ على كلامنا. ` +
 		`القرآنُ غنيٌّ عن أرقامنا، وإنما النورُ في التدبّر والعمل. ` +
 		`فما وافق الحقَّ فمن الله وحده، وما خالفه فمن أنفسنا، ونستغفر الله.</div>`
-	ctrl.innerHTML = `<button class="primary" id="inv-enter">فهمتُ وقرأت — ادخل</button>`
+	ctrl.innerHTML = `<button class="primary" id="inv-enter">فهمتُ وقرأت، ادخل</button>`
 	$("#inv-enter").onclick = () => closeInvitation()
 }
 
@@ -2361,7 +2361,7 @@ function invDrawBreath(arcv, progress) {
 
 /* ---------- boot ---------- */
 /* ============================================================
-   Layer — التفاسير المعتمدة: verbatim tafsir browser.
+   Layer، التفاسير المعتمدة: verbatim tafsir browser.
    Text is loaded on demand per (tafsir, surah) via injected <script>
    tags (keeps file:// working, avoids a huge bundle). Rendered with
    textContent so the copied wording is shown verbatim and safe.
@@ -2413,11 +2413,11 @@ function tfRender() {
 		if (txt) {
 			tfFillText(b, txt)
 		} else if (!g) {
-			b.textContent = "— جارٍ التحميل… —"
+			b.textContent = "، جارٍ التحميل…، "
 		} else {
 			// surah loaded but this ayah has no separate entry (e.g. as-Saadi
 			// comments on a passage, so the ayah's tafsir sits under a neighbour)
-			b.textContent = "— لم يُفرِد هذا المفسّرُ هذه الآيةَ بتفسيرٍ مستقلّ؛ يُنظَر تفسيرُها ضمن الآيات المجاورة —"
+			b.textContent = "، لم يُفرِد هذا المفسّرُ هذه الآيةَ بتفسيرٍ مستقلّ؛ يُنظَر تفسيرُها ضمن الآيات المجاورة، "
 		}
 		card.appendChild(h); card.appendChild(b); body.appendChild(card)
 	})

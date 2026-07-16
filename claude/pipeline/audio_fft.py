@@ -141,7 +141,7 @@ def build():
 		verses.append(analyze_verse(n, path))
 	return {
 		"reciter": "الشيخ محمود خليل الحصري (مرتل)",
-		"source": "everyayah.com — Husary_128kbps",
+		"source": "everyayah.com، Husary_128kbps",
 		"verses": verses,
 	}
 

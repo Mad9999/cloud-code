@@ -127,7 +127,7 @@
 			],
 			"result": {
 				"status": "cite_only",
-				"note": "محميّ — يُذكر للاستشهاد ولا يُحمَّل",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
 				"where": "https://shamela.ws/book/9776"
 			}
 		},
@@ -322,7 +322,7 @@
 			],
 			"result": {
 				"status": "cite_only",
-				"note": "محميّ — يُذكر للاستشهاد ولا يُحمَّل",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
 				"where": "https://books.google.com/books/about/Structure_and_Qur_anic_Interpretation.html?id=io03ngEACAAJ"
 			}
 		},
@@ -532,7 +532,7 @@
 			],
 			"result": {
 				"status": "cite_only",
-				"note": "محميّ — يُذكر للاستشهاد ولا يُحمَّل",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
 				"where": "https://archive.org/details/lmsatbyaniah"
 			}
 		},
@@ -543,7 +543,7 @@
 			"tier": "copyrighted",
 			"sources": [
 				{
-					"provider": "دار ابن كثير (الناشر الرسمي) — ibn-katheer.com",
+					"provider": "دار ابن كثير (الناشر الرسمي)، وibn-katheer.com",
 					"ref": "https://ibn-katheer.com/Book/detBooks/13/595/%D8%A7%D9%84%D8%AA%D8%B9%D8%A8%D9%8A%D8%B1-%D8%A7%D9%84%D9%82%D8%B1%D8%A2%D9%86%D9%8A",
 					"kind": "purchase"
 				},
@@ -555,7 +555,7 @@
 			],
 			"result": {
 				"status": "cite_only",
-				"note": "محميّ — يُذكر للاستشهاد ولا يُحمَّل",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
 				"where": "https://ibn-katheer.com/Book/detBooks/13/595/%D8%A7%D9%84%D8%AA%D8%B9%D8%A8%D9%8A%D8%B1-%D8%A7%D9%84%D9%82%D8%B1%D8%A2%D9%86%D9%8A"
 			}
 		},
@@ -676,7 +676,7 @@
 			],
 			"result": {
 				"status": "cite_only",
-				"note": "محميّ — يُذكر للاستشهاد ولا يُحمَّل",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
 				"where": "https://www.mheducation.com/highered/product/discrete-mathematics-and-its-applications-rosen.html"
 			}
 		},
@@ -697,12 +697,12 @@
 					"kind": "full_text"
 				},
 				{
-					"provider": "University of Hamburg (author official page — free preview Ch1, full chapter PDF)",
+					"provider": "University of Hamburg (author official page، free preview Ch1, full chapter PDF)",
 					"ref": "https://www.math.uni-hamburg.de/home/diestel/books/graph.theory/preview/Ch1.pdf",
 					"kind": "full_text"
 				},
 				{
-					"provider": "Springer (official publisher — purchase / institutional access)",
+					"provider": "Springer (official publisher، purchase / institutional access)",
 					"ref": "https://link.springer.com/book/10.1007/978-3-662-53622-3",
 					"kind": "purchase"
 				}
@@ -736,7 +736,7 @@
 			"tier": "free_official",
 			"sources": [
 				{
-					"provider": "cs.cornell.edu (official author page — Jon Kleinberg / Cornell)",
+					"provider": "cs.cornell.edu (official author page، Jon Kleinberg / Cornell)",
 					"ref": "https://www.cs.cornell.edu/home/kleinber/networks-book/",
 					"kind": "full_text"
 				},
@@ -746,7 +746,7 @@
 					"kind": "pdf"
 				},
 				{
-					"provider": "Cambridge University Press (published edition — for purchase)",
+					"provider": "Cambridge University Press (published edition، for purchase)",
 					"ref": "https://www.cambridge.org/core/books/networks-crowds-and-markets/A70C7855A3003FE1079C25F8397AF641",
 					"kind": "purchase"
 				},
@@ -780,7 +780,7 @@
 			],
 			"result": {
 				"status": "cite_only",
-				"note": "محميّ — يُذكر للاستشهاد ولا يُحمَّل",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
 				"where": "https://archive.org/details/topology0002edmunk"
 			}
 		},
@@ -830,7 +830,7 @@
 			],
 			"result": {
 				"status": "cite_only",
-				"note": "محميّ — يُذكر للاستشهاد ولا يُحمَّل",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
 				"where": "https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/"
 			}
 		},
@@ -841,17 +841,17 @@
 			"tier": "free_official",
 			"sources": [
 				{
-					"provider": "hastie.su.domains — Trevor Hastie official Stanford page (official free download page, states Springer's written permission to keep book on the web)",
+					"provider": "hastie.su.domains، Trevor Hastie official Stanford page (official free download page, states Springer's written permission to keep book on the web)",
 					"ref": "https://hastie.su.domains/ElemStatLearn/download.html",
 					"kind": "metadata"
 				},
 				{
-					"provider": "hastie.su.domains — direct PDF (12th printing w/ corrections & TOC, Jan 2017) via author's Google Drive, linked from the official download page",
+					"provider": "hastie.su.domains، direct PDF (12th printing w/ corrections & TOC, Jan 2017) via author's Google Drive, linked from the official download page",
 					"ref": "https://drive.google.com/uc?export=download&id=1--Wo5Hcl2y_v3DL-tGgcJHRPdtjiVYjS",
 					"kind": "pdf"
 				},
 				{
-					"provider": "Springer (publisher — official paid acquisition, DOI 10.1007/978-0-387-84858-7, ISBN 978-0-387-84857-0)",
+					"provider": "Springer (publisher، official paid acquisition, DOI 10.1007/978-0-387-84858-7, ISBN 978-0-387-84857-0)",
 					"ref": "https://link.springer.com/book/10.1007/978-0-387-84858-7",
 					"kind": "purchase"
 				}
@@ -1021,7 +1021,7 @@
 			],
 			"result": {
 				"status": "cite_only",
-				"note": "محميّ — يُذكر للاستشهاد ولا يُحمَّل",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
 				"where": "https://archive.org/details/fundamentalsofac0000kins"
 			}
 		},
@@ -1049,7 +1049,7 @@
 			],
 			"result": {
 				"status": "cite_only",
-				"note": "محميّ — يُذكر للاستشهاد ولا يُحمَّل",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
 				"where": "https://mitpress.mit.edu/9780262692502/acoustic-phonetics/"
 			}
 		},
@@ -1082,7 +1082,7 @@
 			],
 			"result": {
 				"status": "cite_only",
-				"note": "محميّ — يُذكر للاستشهاد ولا يُحمَّل",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
 				"where": "https://archive.org/details/physicsofsound00berg"
 			}
 		},
@@ -1093,19 +1093,19 @@
 			"tier": "copyrighted",
 			"sources": [
 				{
-					"provider": "archive.org (Internet Archive — controlled digital lending)",
+					"provider": "archive.org (Internet Archive، controlled digital lending)",
 					"ref": "https://archive.org/details/digitalsignalpro0000proa_r8t4",
 					"kind": "reader"
 				},
 				{
-					"provider": "Pearson (official publisher — purchase)",
+					"provider": "Pearson (official publisher، purchase)",
 					"ref": "https://www.pearson.com/en-us/subject-catalog/p/digital-signal-processing-principles-algorithms-and-applications/P200000003415/9780137348657",
 					"kind": "purchase"
 				}
 			],
 			"result": {
 				"status": "cite_only",
-				"note": "محميّ — يُذكر للاستشهاد ولا يُحمَّل",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
 				"where": "https://archive.org/details/digitalsignalpro0000proa_r8t4"
 			}
 		},
@@ -1121,14 +1121,14 @@
 					"kind": "purchase"
 				},
 				{
-					"provider": "archive.org (رفع مستخدم فردي غير مأذون — لا يُعتمد كنسخة رسمية)",
+					"provider": "archive.org (رفع مستخدم فردي غير مأذون، لا يُعتمد كنسخة رسمية)",
 					"ref": "https://archive.org/details/20220717_20220717_2012",
 					"kind": "full_text_unauthorized"
 				}
 			],
 			"result": {
 				"status": "cite_only",
-				"note": "محميّ — يُذكر للاستشهاد ولا يُحمَّل",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
 				"where": "https://www.neelwafurat.com/itempage.aspx?id=lbb7847-7705&search=books"
 			}
 		},
@@ -1225,7 +1225,7 @@
 			"tier": "copyrighted",
 			"sources": [
 				{
-					"provider": "us.macmillan.com (الناشر الرسمي — Farrar, Straus and Giroux / Macmillan)",
+					"provider": "us.macmillan.com (الناشر الرسمي، Farrar, Straus and Giroux / Macmillan)",
 					"ref": "https://us.macmillan.com/books/9780374533557/thinkingfastandslow/",
 					"kind": "purchase"
 				},
@@ -1247,7 +1247,7 @@
 			],
 			"result": {
 				"status": "cite_only",
-				"note": "محميّ — يُذكر للاستشهاد ولا يُحمَّل",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
 				"where": "https://us.macmillan.com/books/9780374533557/thinkingfastandslow/"
 			}
 		},
@@ -1270,14 +1270,14 @@
 			],
 			"result": {
 				"status": "cite_only",
-				"note": "محميّ — يُذكر للاستشهاد ولا يُحمَّل",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
 				"where": "https://archive.org/details/psychologyoflang0000harl_c9f1"
 			}
 		},
 		{
 			"i": 47,
 			"title": "مراجع المدرسة السلوكية في التدرج وتغيير العادات",
-			"attribution": "«مراجع المدرسة السلوكية في التدرج وتغيير العادات» لـلا مؤلف واحد — مدخل موضوعي جماعي يشير إلى مراجع المدرسة السلوكية (بافلوف، واطسون، ثورندايك، سكنر، وولبي…)",
+			"attribution": "«مراجع المدرسة السلوكية في التدرج وتغيير العادات» لـلا مؤلف واحد، مدخل موضوعي جماعي يشير إلى مراجع المدرسة السلوكية (بافلوف، واطسون، ثورندايك، سكنر، وولبي…)",
 			"tier": "uncertain",
 			"sources": [
 				{
@@ -1310,7 +1310,7 @@
 			],
 			"result": {
 				"status": "cite_only",
-				"note": "محميّ — يُذكر للاستشهاد ولا يُحمَّل",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
 				"where": "https://archive.org/details/20220929_20220929_1154"
 			}
 		},
@@ -1360,7 +1360,7 @@
 			],
 			"result": {
 				"status": "cite_only",
-				"note": "محميّ — يُذكر للاستشهاد ولا يُحمَّل",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
 				"where": "https://www.shoroukbookstores.com/books/view.aspx?id=52f43edb-2b40-444f-a89c-c8206ae771a3"
 			}
 		}
