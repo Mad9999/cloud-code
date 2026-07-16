@@ -40,7 +40,7 @@ FETCHABLE_TIERS = {"public_domain", "free_official"}
 TIER_LABEL = {
 	"public_domain": "تراث (ملكية عامة)",
 	"free_official": "نسخة مجانية رسمية",
-	"copyrighted": "محميّ (لا يُحمَّل — إسناد فقط)",
+	"copyrighted": "محميّ (لا يُحمَّل، إسناد فقط)",
 	"uncertain": "غير مؤكّد",
 }
 
@@ -165,8 +165,8 @@ def source_link(entry):
 
 VERIF_LABEL = {
 	"verified": "✅ مؤكَّد (طُوبق العنوان داخل الملف)",
-	"unreadable_text": "⚠️ نصّ معطوب — تحقّق بشريّ",
-	"scanned_no_text": "⚠️ مسح ضوئي — تحقّق بشريّ",
+	"unreadable_text": "⚠️ نصّ معطوب، تحقّق بشريّ",
+	"scanned_no_text": "⚠️ مسح ضوئي، تحقّق بشريّ",
 	"link_ok": "🔗 رابط حيّ (غير مفحوص المحتوى)",
 	"needs_review": "❗ يُراجَع (قد يكون كتابًا آخر)",
 }
@@ -180,11 +180,11 @@ def write_doc(catalog, records):
 	rec_by_i = {r["i"]: r for r in records}
 
 	lines = [
-		"# مكتبة المصادر — الإسناد والتحقّق",
+		"# مكتبة المصادر: الإسناد والتحقّق",
 		"",
 		"> تُولَّد آليًّا من `pipeline/extract_sources.py` + `pipeline/verify_sources.py` فوق `data/sources_catalog.json`.",
 		"> **أمانة الحقوق**: يُجلب التراث العام والنسخ المجانية الرسمية فقط؛ والمحميّ يُذكر للاستشهاد ولا يُحمَّل (مواقع القرصنة مرفوضة).",
-		"> **أمانة الدقّة**: عمود «التحقّق» آليّ حتميّ — «مؤكَّد» يعني أن عنوان الكتاب طُوبق داخل نصّه المستخرَج. ما وُسم بتحقّقٍ بشريّ **لا يُعتمد دون فحص**. والميتاداتا (المؤلف/سنة الوفاة) **مصرَّح بها من مصدر آليّ، غير متحقَّقة مستقلًّا** بعد.",
+		"> **أمانة الدقّة**: عمود «التحقّق» آليّ حتميّ؛ «مؤكَّد» يعني أن عنوان الكتاب طُوبق داخل نصّه المستخرَج. ما وُسم بتحقّقٍ بشريّ **لا يُعتمد دون فحص**. والميتاداتا (المؤلف/سنة الوفاة) **مصرَّح بها من مصدر آليّ، غير متحقَّقة مستقلًّا** بعد.",
 		"",
 	]
 	for cat, items in by_cat.items():
@@ -208,7 +208,7 @@ def write_doc(catalog, records):
 	if review:
 		lines.append("## بحاجة إلى فحص بشريّ (لم يتأكّد آليًّا)")
 		lines.append("")
-		lines.append("> هذه ملفات نُزّلت لكن تعذّر تأكيد محتواها آليًّا (مسح ضوئي أو ترميز نصّ معطوب). **ليست خاطئة بالضرورة** — لكن لا تُعتمد حتى تُفتَح وتُراجَع.")
+		lines.append("> هذه ملفات نُزّلت لكن تعذّر تأكيد محتواها آليًّا (مسح ضوئي أو ترميز نصّ معطوب). **ليست خاطئة بالضرورة**، لكن لا تُعتمد حتى تُفتَح وتُراجَع.")
 		lines.append("")
 		for e in sorted(review, key=lambda x: x["i"]):
 			lines.append(f"- **#{e['i']}** {attribution(e)} — {VERIF_LABEL.get(e.get('verification'))}")
@@ -235,7 +235,7 @@ def main():
 		rec = {"i": e["i"], "title": e["title"], "attribution": attribution(e),
 			"tier": e.get("tier"), "sources": e.get("digital_sources", [])}
 		if e.get("tier") == "copyrighted":
-			rec["result"] = {"status": "cite_only", "note": "محميّ — يُذكر للاستشهاد ولا يُحمَّل",
+			rec["result"] = {"status": "cite_only", "note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
 				"where": source_link(e) or e.get("notes", "")}
 			bump("cite_only")
 		elif not is_fetchable(e):

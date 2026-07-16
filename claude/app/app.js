@@ -424,7 +424,7 @@ function buildPhonetic() {
 		const flags = p.flags.filter((f) => ["lin", "madd_lazim", "waqf"].includes(f))
 			.map((f) => ({ lin: "حرف لين", madd_lazim: "مد لازم (٦ حركات)", waqf: "سكون الوقف" })[f]).join("، ")
 		showTip(
-			`<b>${a.name}</b> — ${STATE_AR[p.state]}` +
+			`<b>${a.name}</b> · ${STATE_AR[p.state]}` +
 			`<div>${AR[a.voicing]} · ${AR[a.strength]} · ${AR[a.elevation]}${a.itbaq ? " · مطبق" : ""}${extras ? " · " + extras : ""}</div>` +
 			`<div class="mut">المخرج: ${AR[a.makhraj]} · درجة الحدة: ${p.intensity}${flags ? " · " + flags : ""}</div>`,
 			e.clientX, e.clientY,
@@ -880,7 +880,7 @@ function showSmPanel(nd) {
 	}).join("")
 	const c = SM.control
 	$("#suramap-info").innerHTML =
-		`<div class="rx-head"><b>${smName(nd.n)}</b> — ${nd.type} · ${arNum(nd.ayahs)} آية · ${arNum(nd.size)} كلمة</div>` +
+		`<div class="rx-head"><b>${smName(nd.n)}</b> · ${nd.type} · ${arNum(nd.ayahs)} آية · ${arNum(nd.size)} كلمة</div>` +
 		(topR ? `<div class="sm-sec"><span class="sm-lbl">أبرز جذورها:</span> ${topR}</div>` : "") +
 		(uniq ? `<div class="sm-sec sm-uniq">✦ <span class="sm-lbl">كلماتٌ تفرّدت بها في القرآن كلّه:</span> ${uniq}</div>` : "") +
 		`<div class="ec-control">⚖ <b>صمّام الأمانة:</b> قِسنا تشابُهَ السور على نموذجٍ عشوائيّ (خلطُ الجذور مع حفظ التكرارات). النتيجة الصادقة: <b>جِوارُ أكثر السور قريبٌ من الصدفة</b> (وسيطُ التشابه الحقيقيّ ${arNum(c.real_median_top_sim)} مقابل ${arNum(c.null_median_top_sim)} في العشوائيّ)، فطولُ السورة وكثرةُ ألفاظها الشائعة يكفيان لتشابهٍ ظاهر. لا يتجاوز الصدفةَ بوضوحٍ إلا القِلّةُ الأقوى. الوسمُ بجانب كلٍّ يبيّن ذلك؛ والجذورُ المشتركةُ حقٌّ في كلّ حال، والمعنى تتدبّره أنت.</div>` +
@@ -952,7 +952,7 @@ function renderExplorerSurah(n) {
 			`، كلماتٌ لا يردُ جذرها في القرآن كلّه إلا في هذه السورة. <span class="mut">(كشفٌ محسوب)</span></div>`
 		: ""
 	$("#explorer-header").innerHTML =
-		`<b>${sname(n)}</b> — ${EX.surah_type[n]} · ${arNum(cnt)} آية` +
+		`<b>${sname(n)}</b> · ${EX.surah_type[n]} · ${arNum(cnt)} آية` +
 		`${topR ? ` · أبرز جذورها: ${topR}` : ""}` +
 		`${prof.unique_roots ? ` · جذورٌ تفرّدت بها: ${arNum(prof.unique_roots)}` : ""}` +
 		uniqNote
@@ -1399,7 +1399,7 @@ function selectSceneWord(s, wi, el) {
 	const h = s.hotspots.find((x) => x.word === wi)
 	const w = sceneWords(s.n).find((x) => x.i === wi)
 	$("#scene-hotnote").innerHTML =
-		`<b>${h.label}</b>${w && w.root ? ` <span class="r">جذر: ${w.root}</span>` : ""} — ${h.note}`
+		`<b>${h.label}</b>${w && w.root ? ` <span class="r">جذر: ${w.root}</span>` : ""}: ${h.note}`
 }
 
 function sizeSceneCanvas() {
@@ -1816,7 +1816,7 @@ function showScaleInfo(n) {
 	const td = D.tadabbur.verses[n - 1]
 	const side = scaleSide(n)
 	const sideLabel = { praise: "كفّة الثناء لله", pivot: "نقطة الارتكاز، بين الله وعبده", petition: "كفّة العطاء للعبد" }[side]
-	let html = `<b>﴿${verse.uthmani}﴾</b> <span style="color:${SC_COL[side]}">— ${sideLabel}</span>`
+	let html = `<b>﴿${verse.uthmani}﴾</b> <span style="color:${SC_COL[side]}">${sideLabel}</span>`
 	if (td.divine_response) {
 		html += `<div style="margin-top:8px;color:${COLORS.aqua}">قال الله: «${td.divine_response}» <span class="src">${td.divine_response_source}</span></div>`
 	} else {
@@ -2179,7 +2179,7 @@ function showObsSurah(n) {
 		</div>`).join("")
 	const top = s.top_letters.map(([l, c]) => `${l} (${arNum(c)})`).join("، ")
 	$("#obs-note").innerHTML =
-		`<b>${s.name} — ${s.revelation}، ${arNum(s.ayah_count)} آية</b>` +
+		`<b>${s.name}، ${s.revelation}، ${arNum(s.ayah_count)} آية</b>` +
 		`<div style="margin-top:4px;color:${COLORS.ink2}">الفاصلة الغالبة: <b style="font-family:var(--arabic)">${s.dominant_fasila}</b> بنسبة ${s.dominant_pct}٪ · أكثر حروف الفواصل: ${top}</div>` +
 		`<div style="margin-top:10px">بصمة صفات الفواصل:</div>${bars}` +
 		`<div class="src">${F.source}</div>`

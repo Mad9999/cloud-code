@@ -144,21 +144,81 @@ def closest_ayah(norm, surahs, own):
 	return None
 
 
+ARABIC = re.compile(r"[ء-ي]")
+LINE_COMMENT = re.compile(r"^\s*(//|#)")
+
+
+def code_lines(text):
+	"""Yield (number, line) for lines that are not English prose about code.
+
+	Docstrings and block comments are where we explain ourselves, in English,
+	and English takes the em-dash. Skipping them is not a loophole: nothing in
+	a comment reaches a reader of the app. The first cut of this guard skipped
+	only `//` and `#` lines and so flagged its own docstring, which quotes the
+	very dash it forbids.
+	"""
+	in_block = False
+	for i, line in enumerate(text.split("\n"), 1):
+		fences = line.count('"""') + line.count("'''")
+		opens_block = "/*" in line and "*/" not in line
+		if in_block:
+			if "*/" in line or fences:
+				in_block = False
+			continue
+		if fences == 1 or opens_block:
+			in_block = True
+			continue
+		if LINE_COMMENT.match(line):
+			continue
+		yield i, line
+
+
+def arabic_prose(line):
+	"""Does an em-dash on this line sit in Arabic the reader will see?
+
+	Counting letters to decide gets it backwards inside a template literal:
+	`<b>${s.name} - ${s.revelation}</b>` is mostly Latin, and renders to the
+	reader as pure Arabic. So the code around each dash is cleared away first
+	and we judge what is actually left beside it.
+	"""
+	stripped = re.sub(r"\$\{[^{}]*\}", "ـ", line)  # a rendered value
+	stripped = re.sub(r"<[^>]+>", " ", stripped)  # markup, not prose
+	for m in re.finditer("—", stripped):
+		window = stripped[max(0, m.start() - 30) : m.start() + 30]
+		if ARABIC.search(window) or "ـ" in window:
+			return True
+	return False
+
+
 def check_no_em_dash():
 	"""The em-dash is not Arabic punctuation: it appears zero times across
 	all six tafsirs (11.4M characters). It kept creeping back into our own
-	Arabic by habit, so the valve guards the rule rather than the memory."""
+	Arabic by habit, so the valve guards the rule rather than the memory.
+
+	The guard first watched data/ only, while the rule was about every Arabic
+	text we write. It was the narrower thing that got obeyed: the app was
+	rendering «البقرة — مدنية» to the reader's eye the whole time, and the
+	scripts printed Arabic with dashes in it. A guard narrower than its rule
+	teaches the rule's narrowness, so this one now walks everything we author.
+	The imams' own books are not ours to police, and hold none anyway.
+	"""
 	offenders = []
-	for f in sorted(DATA.glob("*.json")):
-		text = f.read_text(encoding="utf-8")
-		if "—" in text:
-			offenders.append((f.name, text.count("—")))
+	for pattern in ("data/*.json", "app/*.js", "app/*.html", "pipeline/*.py"):
+		for f in sorted(BASE.glob(pattern)):
+			bad = [
+				(i, line.strip())
+				for i, line in code_lines(f.read_text(encoding="utf-8"))
+				if "—" in line and arabic_prose(line)
+			]
+			if bad:
+				offenders.append((f.relative_to(BASE).as_posix(), bad))
 	if offenders:
-		print("EM-DASH FOUND in Arabic text (rule 34):", file=sys.stderr)
-		for name, n in offenders:
-			print(f"  {name}: {n}", file=sys.stderr)
+		print("EM-DASH FOUND in Arabic prose (rule 34):", file=sys.stderr)
+		for name, bad in offenders:
+			for i, line in bad:
+				print(f"  {name}:{i}  {line[:90]}", file=sys.stderr)
 		sys.exit(1)
-	print("  OK: no em-dash in data/ (rule 34)")
+	print("  OK: no em-dash in any Arabic prose we author (rule 34)")
 
 
 def main():

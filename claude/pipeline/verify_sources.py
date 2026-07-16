@@ -93,11 +93,11 @@ def verify_pdf(entry, path):
 	fwd, rev = haystacks(raw)
 	if len(fwd) < 40:
 		return {"level": "scanned_no_text",
-			"caveat": "ملفٌ ممسوح ضوئيًّا بلا طبقة نصّ — لا يمكن مطابقة العنوان آليًّا (تحقّق بشريّ)"}
+			"caveat": "ملفٌ ممسوح ضوئيًّا بلا طبقة نصّ، فلا يمكن مطابقة العنوان آليًّا (تحقّق بشريّ)"}
 	arabic = sum(1 for c in fwd if "ء" <= c <= "ي")
 	if arabic / len(fwd) < 0.15:
 		return {"level": "unreadable_text",
-			"caveat": "طبقة النصّ في الـPDF معطوبة الترميز (تُقرأ كرموز لاتينية) — لا يمكن التحقّق آليًّا، لا يعني أنه كتابٌ خاطئ (تحقّق بشريّ)"}
+			"caveat": "طبقة النصّ في الـPDF معطوبة الترميز (تُقرأ كرموز لاتينية)، فلا يمكن التحقّق آليًّا، لا يعني أنه كتابٌ خاطئ (تحقّق بشريّ)"}
 	inhay = lambda k: k in fwd or k in rev  # noqa: E731
 	kws = keywords(entry["title"])
 	hits = [k for k in kws if inhay(k)]
@@ -108,7 +108,7 @@ def verify_pdf(entry, path):
 		return {"level": "verified", "title_hits": hits, "author_in_text": author_hit,
 			"caveat": "طُوبق عنوان الكتاب داخل نصّه المستخرَج"}
 	return {"level": "needs_review", "title_hits": hits, "author_in_text": author_hit,
-		"caveat": "نصّ الملف لا يطابق كلمات العنوان — قد يكون كتابًا آخر أو مسحًا رديئًا (تحقّق بشريّ)"}
+		"caveat": "نصّ الملف لا يطابق كلمات العنوان، فقد يكون كتابًا آخر أو مسحًا رديئًا (تحقّق بشريّ)"}
 
 
 def http_check(url, want_title=None):
@@ -156,12 +156,12 @@ def main():
 						"caveat": "رابط حيّ؛ المحتوى غير مُنزَّل فلا فحص نصّي (خاصةً المحميّ)"}
 				else:
 					rec["verification"] = {"level": "needs_review", "link": link, "http": chk,
-						"caveat": "الرابط لم يستجب — تأكّد يدويًّا"}
+						"caveat": "الرابط لم يستجب، تأكّد يدويًّا"}
 			else:
 				rec["verification"] = {"level": "link_ok" if link else "needs_review",
 					"link": link,
 					"caveat": ("رابط مصدر مذكور، غير مفحوص (شغّل --links للفحص)" if link
-						else "لا ملف ولا رابط مؤكَّد — تحقّق بشريّ")}
+						else "لا ملف ولا رابط مؤكَّد، تحقّق بشريّ")}
 		lvl = rec["verification"]["level"]
 		counts[lvl] = counts.get(lvl, 0) + 1
 		if lvl == "needs_review":
