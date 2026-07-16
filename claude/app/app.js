@@ -1179,6 +1179,52 @@ function tsEchoHtml(ref) {
 }
 
 // one verse card, shared by short surahs and al-Baqara passages
+// The qadiyya is the long-form treatment a few verses ask for: the matter
+// stated from nothing, what people say, what the text says, what the imams
+// said, and what it leaves the reader holding. Twenty of them sat in the data
+// for weeks while this file did not know the field existed, so the writing was
+// real and the light stopped at the file. It is folded shut by default: most
+// verses have none, and a reader who wants the verse should not have to wade.
+const QADIYYA_PARTS = [
+	["question", "ما القضيّة؟"],
+	["background", "من الصفر"],
+	["what_happened", "ما جرى، وما قاله أهل العلم"],
+	["the_verdict", "الخلاصةُ المحرَّرة"],
+	["for_you", "وماذا يعني هذا لك؟"],
+]
+
+// Our Arabic carries **emphasis** and line breaks, and nothing here rendered
+// either. Escape first: the tafsir corpus is other people's text and a stray
+// angle bracket in it must reach the reader as an angle bracket, not as markup.
+function richText(s) {
+	const escaped = String(s)
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+	return escaped
+		.replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+		.split("\n")
+		.filter((line) => line.trim())
+		.map((line) => `<p>${line}</p>`)
+		.join("")
+}
+
+function qadiyyaPanel(v) {
+	const q = v.qadiyya
+	if (!q) return ""
+	const parts = QADIYYA_PARTS.filter(([key]) => q[key])
+		.map(([key, heading]) => `<h4>${heading}</h4>${richText(q[key])}`)
+		.join("")
+	const honesty = q.honesty
+		? `<div class="qd-honesty"><h4>أمانةٌ تُقال</h4>${richText(q.honesty)}</div>` : ""
+	const source = q.source
+		? `<div class="src">${q.source} ${gradeBadge(q.grade || "ijtihadi")}</div>` : ""
+	return `<div class="qd-wrap">` +
+		`<button class="qd-btn" data-a="${v.n}">◆ قضيّةُ هذه الآية: ${q.title}</button>` +
+		`<div class="qd-body" hidden>${parts}${honesty}${source}</div>` +
+		`</div>`
+}
+
 function tsVerseCard(s, v, showPlay) {
 	const names = (v.names && v.names.length) ? `<span class="ts-names">الأسماء الفاعلة: ${v.names.join(" · ")}</span>` : ""
 	const playBtn = showPlay ? `<button class="ts-play" data-a="${v.n}" title="استمع لهذه الآية">▶</button> ` : ""
@@ -1195,6 +1241,7 @@ function tsVerseCard(s, v, showPlay) {
 		`<div class="ts-meta">${names}` +
 		`<span class="ts-heart">القلب: ${v.heart_state.text} ${gradeBadge("ijtihadi")}</span></div>` +
 		`<div class="ts-action">↦ ${v.action.text} ${gradeBadge("ijtihadi")}</div>` +
+		qadiyyaPanel(v) +
 		(echoBtn ? `<div class="ts-echo-wrap">${echoBtn}<div class="ts-echo-body" hidden></div></div>` : "") +
 		`</div>`
 }
@@ -1267,6 +1314,12 @@ function renderTadabburShort(i) {
 				if (!body.dataset.filled) { body.innerHTML = tsEchoHtml(b.dataset.ref); body.dataset.filled = "1" }
 				body.hidden = false; b.classList.add("open")
 			} else { body.hidden = true; b.classList.remove("open") }
+		}))
+	$("#ts-body").querySelectorAll(".qd-btn").forEach((b) =>
+		b.addEventListener("click", () => {
+			const body = b.nextElementSibling
+			body.hidden = !body.hidden
+			b.classList.toggle("open", !body.hidden)
 		}))
 	$("#ts-body").querySelectorAll(".ts-play").forEach((b) =>
 		b.addEventListener("click", () => {
