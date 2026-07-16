@@ -36,6 +36,17 @@ APP = BASE / "app" / "app.js"
 # the moment the question 'does it reach anyone' is easiest to forget.
 READER_FIELDS = ["qadiyya", "reflection", "sabab", "heart_state", "action", "names"]
 
+# Rule 28: the scholar's register, not the engineer's. Seven of these were in the
+# honesty fields, written the same day the rule was quoted approvingly: «مثبتٌ في
+# verify_dayn_claim.py», «أُثبت الخطأ في الصمّام». The intent was right, since the
+# honesty field exists so a reader can check us. The register was not: an imam
+# writing his book does not hand you a filename. He says «ومن شاء فليعُدّ».
+#
+# The invitation stays and the machinery's vocabulary goes. The reader is told the
+# claim is testable and that the tool ships with the project; he is not asked to
+# learn our directory layout to trust our count.
+WORKSHOP_WORDS = ["الصمّام", "الصمام", "verify_", ".py", "pipeline/", "البناء يفشل", "الوكيل", "الوكلاء"]
+
 
 def load_js(path):
 	raw = path.read_text(encoding="utf-8")
@@ -80,6 +91,26 @@ def main():
 				)
 
 	print(f"  checked {checked} field/file pairs across data -> generated -> app")
+
+	# and the register of what does reach him
+	for src in sorted(DATA.glob("tadabbur_*.json")):
+		text = src.read_text(encoding="utf-8")
+		for word in WORKSHOP_WORDS:
+			if word in text:
+				# «الوكيل» is also God's name in the Qur'an, and «وكيل» is a word of
+				# the Book; only flag it where it is ours, not where it is quoted
+				hits = [
+					line.strip()[:100]
+					for line in text.split("\n")
+					if word in line and "reflection" not in line[: line.find(word)]
+				]
+				if word in ("الوكيل", "الوكلاء") and not any("honesty" in h for h in hits):
+					continue
+				failures.append(
+					f"{src.stem}: «{word}» reaches the reader (rule 28: the scholar's register,"
+					f" not the workshop's). Say the claim is testable without naming the tool."
+				)
+	print("  OK: the reader is not handed our filenames or our machinery's vocabulary")
 
 	if failures:
 		print("\nWRITING THAT DOES NOT REACH THE READER:", file=sys.stderr)
