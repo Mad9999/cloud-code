@@ -144,7 +144,25 @@ def closest_ayah(norm, surahs, own):
 	return None
 
 
+def check_no_em_dash():
+	"""The em-dash is not Arabic punctuation: it appears zero times across
+	all six tafsirs (11.4M characters). It kept creeping back into our own
+	Arabic by habit, so the valve guards the rule rather than the memory."""
+	offenders = []
+	for f in sorted(DATA.glob("*.json")):
+		text = f.read_text(encoding="utf-8")
+		if "—" in text:
+			offenders.append((f.name, text.count("—")))
+	if offenders:
+		print("EM-DASH FOUND in Arabic text (rule 34):", file=sys.stderr)
+		for name, n in offenders:
+			print(f"  {name}: {n}", file=sys.stderr)
+		sys.exit(1)
+	print("  OK: no em-dash in data/ (rule 34)")
+
+
 def main():
+	check_no_em_dash()
 	surahs = load_quran()
 	if not surahs:
 		print("could not parse quran_text.js", file=sys.stderr)
