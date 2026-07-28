@@ -1235,6 +1235,34 @@ function qadiyyaPanel(v) {
 		`</div>`
 }
 
+// The four note kinds rule 33 allows short of a full qadiyya. They sat in the
+// data for weeks, twenty-one of them, rendering nowhere, because the guard that
+// was built to catch exactly this watched a hand-written list of field names and
+// nobody added these. Same shape as the qadiyya panel: a heading that says which
+// kind of note it is, so the reader knows what he is being handed.
+const NOTE_KINDS = [
+	["textual_note", "ملاحظةٌ في النصّ"],
+	["textual_note_2", "وملاحظةٌ ثانية"],
+	["ikhtilaf_note", "خلافٌ بين أهل العلم"],
+	["israiliyyat_note", "تنبيهٌ على الإسرائيليّات"],
+]
+
+function notePanels(v) {
+	return NOTE_KINDS.filter(([key]) => v[key]).map(([key, heading]) => {
+		const n = v[key]
+		const body = typeof n === "string" ? n : n.text
+		if (!body) return ""
+		const honesty = (n && n.honesty)
+			? `<div class="qd-honesty"><h4>أمانةٌ تُقال</h4>${richText(n.honesty)}</div>` : ""
+		const source = (n && n.source)
+			? `<div class="src">${n.source} ${gradeBadge(n.grade || "ijtihadi")}</div>` : ""
+		return `<div class="qd-wrap note-wrap">` +
+			`<button class="qd-btn" data-a="${v.n}-${key}">◇ ${heading}</button>` +
+			`<div class="qd-body" hidden>${richText(body)}${honesty}${source}</div>` +
+			`</div>`
+	}).join("")
+}
+
 function tsVerseCard(s, v, showPlay) {
 	const names = (v.names && v.names.length) ? `<span class="ts-names">الأسماء الفاعلة: ${v.names.join(" · ")}</span>` : ""
 	const playBtn = showPlay ? `<button class="ts-play" data-a="${v.n}" title="استمع لهذه الآية">▶</button> ` : ""
@@ -1252,6 +1280,7 @@ function tsVerseCard(s, v, showPlay) {
 		`<span class="ts-heart">القلب: ${v.heart_state.text} ${gradeBadge("ijtihadi")}</span></div>` +
 		`<div class="ts-action">↦ ${v.action.text} ${gradeBadge("ijtihadi")}</div>` +
 		qadiyyaPanel(v) +
+		notePanels(v) +
 		(echoBtn ? `<div class="ts-echo-wrap">${echoBtn}<div class="ts-echo-body" hidden></div></div>` : "") +
 		`</div>`
 }

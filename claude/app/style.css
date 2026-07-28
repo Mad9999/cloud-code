@@ -217,6 +217,8 @@ section.layer.visible { display: block; }
 .badge.qawl-alim { border-color: var(--violet); color: var(--violet); }
 .badge.ijtihadi { border-color: var(--yellow); color: var(--yellow); }
 
+.qd-wrap.note-wrap .qd-btn { border-color: var(--violet); color: var(--violet); }
+
 .grade-key { font-size: 12px; color: var(--muted); margin-top: 8px; }
 
 svg text { font-family: var(--arabic); }

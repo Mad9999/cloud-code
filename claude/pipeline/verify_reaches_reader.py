@@ -34,7 +34,32 @@ APP = BASE / "app" / "app.js"
 # Fields that carry writing meant for a reader. A field here must survive all
 # three hops. Add to this list when a new kind of writing is invented, which is
 # the moment the question 'does it reach anyone' is easiest to forget.
-READER_FIELDS = ["qadiyya", "reflection", "sabab", "heart_state", "action", "names"]
+# A hand-written list of fields to check was the whole bug. This guard was built
+# after twenty qadiyyas turned out never to render, and then it sat green while
+# twenty-one textual_note / ikhtilaf_note / israiliyyat_note entries did exactly
+# the same thing, because nobody had added those three words to the list. A guard
+# that watches a list we maintain will always be one invention behind us.
+#
+# So the fields are read out of the data itself. Anything a verse carries beyond
+# its own identity is something a reader is meant to see, and has to be proven to
+# reach him. Inventing a new field now trips the guard by default instead of
+# slipping past it in silence.
+SKIP_KEYS = {"n", "uthmani", "simple", "theme", "speech_mode", "range", "title", "verses"}
+
+
+def reader_fields(node, found=None):
+	"""Every field the data carries on a verse, discovered rather than listed."""
+	if found is None:
+		found = set()
+	if isinstance(node, dict):
+		if "n" in node and isinstance(node.get("n"), int):
+			found |= {k for k in node if k not in SKIP_KEYS}
+		for v in node.values():
+			reader_fields(v, found)
+	elif isinstance(node, list):
+		for v in node:
+			reader_fields(v, found)
+	return found
 
 # Rule 28: the scholar's register, not the engineer's. Seven of these were in the
 # honesty fields, written the same day the rule was quoted approvingly: «مثبتٌ في
@@ -73,7 +98,7 @@ def main():
 			continue
 		data = json.loads(src.read_text(encoding="utf-8"))
 		shipped = load_js(built)
-		for field in READER_FIELDS:
+		for field in sorted(reader_fields(data)):
 			in_data = count_field(data, field)
 			if not in_data:
 				continue
