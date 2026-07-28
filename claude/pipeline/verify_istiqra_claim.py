@@ -38,6 +38,26 @@ HIS_CLAIM = (
 	"ولهذا كل سورة افتتحت بالحروف فلا بد أن يذكر فيها الانتصار للقرآن وبيان إعجازه وعظمته"
 )
 
+# He counts al-Baqara itself at the head of his commentary, and attributes the
+# count rather than floating it: «في عدد الكوفي وعدد علي بن أبي طالب». So it is
+# checkable, and it is checked here, with the margins stated rather than hidden.
+HIS_TALLY = (
+	"خمسة وعشرون ألفا وخمسمائة حرف، وستة آلاف ومائة وعشرون كلمة، ومائتان وستة "
+	"وثمانون آية في عدد الكوفي وعدد علي بن أبي طالب رضي الله عنه"
+)
+HIS_NUMBERS = {"ayat": 286, "words": 6120, "letters": 25500}
+# Word and letter tallies depend on rasm conventions that vary between counting
+# schools, so an exact match would be the surprising result, not a near one.
+TOLERANCE = {"ayat": 0.0, "words": 0.01, "letters": 0.05}
+
+# The entry keyed to 2:1 in our corpus opens with the tail of al-Fatiha's
+# commentary and only reaches al-Baqara a third of the way in. It is the only
+# such leak we found in ten surah-openings, and it inflates Ibn Kathir's block
+# for 2:1 into the largest in the surah. Pinned so nobody reads that rank as a
+# fact about his attention.
+FATIHA_LEAK_MARKER = "غير صراط المغضوب عليهم"
+BAQARA_STARTS_AT = "تفسير سورة البقرة"
+
 
 def strip_marks(s):
 	return DIACRITICS.sub("", s)
@@ -110,6 +130,43 @@ def main():
 		if normalize(phrase) not in text:
 			failures.append(f"Ibn Kathir's words are not where we cite them: {phrase}")
 	print("  OK: he states the claim and grounds it in istiqra' with the count, verbatim")
+
+	# his tally of al-Baqara, against ours
+	if normalize(HIS_TALLY) not in text:
+		failures.append("his tally of al-Baqara, with its attribution, is not where we cite it")
+	verses = [strip_marks(q[f"2:{n}"]) for n in range(1, 287)]
+	joined = " ".join(verses)
+	ours = {
+		"ayat": len(verses),
+		"words": len(joined.split()),
+		"letters": len(re.sub(r"[^ء-ي]", "", joined)),
+	}
+	for key, his in HIS_NUMBERS.items():
+		gap = abs(ours[key] - his) / his
+		if gap > TOLERANCE[key]:
+			failures.append(
+				f"his {key} count {his} vs ours {ours[key]}, off by {gap:.1%}, past the "
+				f"{TOLERANCE[key]:.0%} the stop tells the reader to expect"
+			)
+	print(
+		f"  OK: his tally holds: {ours['ayat']} ayat exactly, {ours['words']} words to his "
+		f"{HIS_NUMBERS['words']}, {ours['letters']} letters to his {HIS_NUMBERS['letters']}"
+	)
+
+	# and the corpus defect that inflates his 2:1 block
+	entry = re.sub(r"\[\[.*?\]\]", " ", payload["1"], flags=re.S)
+	flat = DIACRITICS.sub("", entry)
+	head = flat.find(BAQARA_STARTS_AT)
+	if FATIHA_LEAK_MARKER not in flat[:5000] or head <= 0:
+		failures.append(
+			"the al-Fatiha tail no longer opens our 2:1 entry. If the corpus was fixed, "
+			"good, and the stop's caveat about the inflated block must be rewritten."
+		)
+	else:
+		print(
+			f"  OK: our 2:1 entry still opens with al-Fatiha's tail, {head / len(flat):.0%} of "
+			f"it, so his rank there is a corpus artifact and the stop says so"
+		)
 
 	if failures:
 		print("\nCLAIM FAILED:", file=sys.stderr)
