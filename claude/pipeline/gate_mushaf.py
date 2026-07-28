@@ -36,6 +36,29 @@ DIACRITICS = re.compile(r"[ً-ْٰـۖ-ۭٓ-ٟ]")
 FASL = re.compile(r"فصل\s*(في|فيما)")
 FAIDA = re.compile(r"ومنها:")
 
+# Twice in the mushaf Saadi appends a long passage from someone else's book and
+# the extraction counts it as his. At 48:29 he says «ولنسق قصة الحديبية بطولها،
+# كما ساقها الإمام شمس الدين بن القيم» and then runs eleven thousand characters
+# of Ibn al-Qayyim's sira: 87% of the entry. His own commentary there is 1,668
+# characters, below his average for the surah, and the gate was calling it the
+# loudest verse in al-Fath at 13.28x. The other is 4:12 at 61%.
+#
+# So the ratio is computed on his own words, and the borrowed length is reported
+# rather than silently dropped, because a reader of this list should know that
+# the verse has a long sira attached to it even though it is not Saadi's.
+BORROWED = re.compile(r"(ولنسق|كما ساقها|قال ابن القيم)")
+
+
+def own_share(text):
+	"""Fraction of an entry that is the imam's own, not a long borrowed passage."""
+	flat = strip_marks(text)
+	if len(flat) < 4000:
+		return 1.0
+	m = BORROWED.search(flat)
+	if not m or m.start() / len(flat) > 0.6:
+		return 1.0
+	return m.start() / len(flat)
+
 
 def strip_marks(s):
 	return DIACRITICS.sub("", s)
@@ -91,6 +114,10 @@ def open_verses(surah, counts):
 			s = measure("saadi", surah, ayah)
 		except (KeyError, StopIteration):
 			continue
+		body_raw = entries.get(ayah, "") or entries.get(s.get("covered_by") or ayah, "")
+		share = own_share(body_raw)
+		if share < 1.0:
+			s = dict(s, ratio=s["ratio"] * share, borrowed=round(1 - share, 2))
 		if s["ratio"] < RATIO_CUT or s["rank"] > RANK_CUT:
 			continue
 		try:
@@ -105,7 +132,7 @@ def open_verses(surah, counts):
 		# «ومنها». Reading those as a heavy verse is the wrong reading; they are
 		# a heavy passage, and this is where the imam says what it came for. The
 		# Khidr story ends in thirty-seven of them, more than the debt verse.
-		body = strip_marks(entries.get(ayah, "") or entries.get(s.get("covered_by") or ayah, ""))
+		body = strip_marks(body_raw)
 		if FASL.search(body) or len(FAIDA.findall(body)) >= 6:
 			shape = "خلاصةُ الإمام للمقطع"
 		elif s["ratio"] >= 2.0 and q["ratio"] < 1.5 and k["ratio"] < 1.5:
