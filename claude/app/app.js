@@ -234,7 +234,7 @@ function graphInit() {
 			const n = G.hover
 			let html = `<b>${n.label}</b> <span class="mut">(${KIND_STYLE[n.kind].label})</span>`
 			if (n.kind === "word") {
-				html += `<div class="mut">آية ${arNum(n.verse)} · ${n.pos}${n.root ? " · جذر: " + n.root : ""}</div><div>${n.gloss}</div>`
+				html += `<div class="mut">آية ${arNum(n.verse)} · ${n.pos}${n.root ? " · جذر: " + n.root : ""}</div><div>${richText(n.gloss)}</div>${n.source ? `<div class="mut">المصدر: ${n.source}</div>` : ""}`
 			}
 			if (n.kind === "verse") { html += `<div>${n.theme}</div>` }
 			if (n.kind === "root") { html += `<div class="mut">ورد ${arNum(n.count)} مرات في السورة</div>` }
@@ -2044,7 +2044,8 @@ function showWordTadabbur(verse, wi, el) {
 	el.classList.add("sel")
 	const box = $("#dlg-word-info")
 	let html = `<div class="wt-head"><b>${w.text}</b>${w.root ? ` <span class="wt-root">الجذر: ${w.root}</span>` : ""} <span class="wt-pos">${w.pos}</span></div>`
-	html += `<div class="wt-gloss">${w.gloss}</div>`
+	html += `<div class="wt-gloss">${richText(w.gloss)}</div>`
+	if (w.source) { html += `<div class="wt-source">المصدر: ${w.source}</div>` }
 	const insights = WORD_INSIGHTS.get(wi) || []
 	for (const ins of insights) {
 		const t = (LINK_TYPE[ins.type] || {}).label || ins.type
