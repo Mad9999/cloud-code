@@ -63,8 +63,14 @@ def iter_strings(node):
 
 def fragments(text):
 	for m in re.finditer(r"«([^»]+)»", text):
-		# elisions inside a quote are checked piecewise
-		for part in re.split(r"\.\.\.|…|\*", m.group(1)):
+		# An elision is a real break in the quotation and is checked piecewise.
+		# Emphasis is not. This used to split on `*` as well, so every `**` we
+		# put inside a quotation cut it in two and each half was matched alone,
+		# with anything under MIN_LEN dropped unchecked. That let a quotation
+		# pass while a word near a bold boundary was wrong, and it hid two real
+		# defects for months. Strip the marks, then check the quotation whole.
+		body = m.group(1).replace("**", "")
+		for part in re.split(r"\.\.\.|…", body):
 			part = part.strip()
 			if len(normalize(part)) >= MIN_LEN:
 				yield part
