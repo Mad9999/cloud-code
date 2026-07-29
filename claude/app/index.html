@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>الهندسة القرآنية: سورة الفاتحة</title>
+	<link rel="stylesheet" href="fonts/fonts.css" />
+	<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+	<div id="invitation" class="invitation">
+		<div class="inv-inner">
+			<div class="inv-basmala">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>
+			<div id="inv-stage"></div>
+			<div id="inv-controls" class="inv-controls"></div>
+			<div class="inv-progress" id="inv-progress"></div>
+		</div>
+	</div>
+
+	<header class="site">
+		<div class="basmala">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>
+		<h1>مشروع الهندسة القرآنية</h1>
+		<div class="sub">النموذج الأول: سورة الفاتحة في سبع آيات تحت مجهر التحليل الهيكلي والدلالي والصوتي والفيزيائي</div>
+		<div class="disclaimer">
+			إن أصبتُ فمن الله وحده والحمد لله، وإن أخطأتُ فمن نفسي وأعوذ بالله.
+			كل ما في هذه الواجهة موسوم بدرجته: <span class="badge qati">قطعي</span> نصٌّ وقواعد تجويد متفق عليها،
+			<span class="badge mathur">مأثور</span> منقول عن مصدر معتمد مذكور،
+			<span class="badge ijtihadi">اجتهادي</span> استنباط من المشروع قابل للخطأ والمراجعة.
+		</div>
+	</header>
+
+	<nav class="tabs" id="tabs">
+		<span class="tab-group-label">للعابد · النور</span>
+		<button data-layer="dialogue" class="active">★ المحاورة</button>
+		<button data-layer="tadabbur-short">التدبّر (كل السور)</button>
+		<button data-layer="tafsir">📖 التفاسير (نصًّا)</button>
+		<button data-layer="scenes">الآية تُضيء</button>
+		<button data-layer="scale">الميزان</button>
+		<button data-layer="ring">الهيكل الدائري</button>
+		<button data-layer="framework">النموذج العملي</button>
+		<button data-layer="sources">المصادر المُسنَدة</button>
+		<span class="tab-sep"></span>
+		<span class="tab-group-label research">مختبر الباحث · تحرّي الحق</span>
+		<button data-layer="discover">✦ كشوف محسوبة</button>
+		<button data-layer="graph">الشبكة الدلالية</button>
+		<button data-layer="phonetic">البصمة الصوتية</button>
+		<button data-layer="acoustic">التردد الفيزيائي</button>
+		<button data-layer="observatory">مرصد الفواصل</button>
+		<button data-layer="explorer">مستكشف الجذر</button>
+		<button data-layer="suramap">خريطة السور</button>
+		<span class="tab-sep"></span>
+		<button id="reopen-invitation" class="tab-ghost">↻ الافتتاحية</button>
+	</nav>
+
+	<main>
+		<div id="research-disclaimer" class="research-disclaimer">
+			<b>تنبيهٌ وإخلاءُ مسؤولية أمام الله:</b> الأرقامُ والأنماطُ التي تراها هنا هي عينُ ما يقع كثيرٌ من الناس في فخّه، فيرفعونها إلى «إعجازٍ مثبت»، أو يُنزِّلون استنتاجاتهم على كلام الله فيفسّرونه بأقوالهم. ما هنا كلُّه وصفٌ بشريٌّ اجتهاديٌّ قابل للخطأ، لا إثباتَ إعجازٍ ولا تفسيرَ قرآنٍ على كلامنا. <b>وليس العدُّ نفسُه هو المذموم</b>، فقد استقرأ ابنُ كثيرٍ المصحفَ وعدَّ وبنى على عدّه، قال في «الم»: «ولهذا كل سورة افتتحت بالحروف فلا بد أن يذكر فيها الانتصار للقرآن وبيان إعجازه وعظمته، <b>وهذا معلوم بالاستقراء، وهو الواقع في تسع وعشرين سورة</b>»؛ وعددناها بالآلة فكانت تسعًا وعشرين كما قال. <b>وإنّما المذمومُ أن يُحمَّل العددُ ما لا يحتمل</b>: فالعدُّ يُثبت ما عُدَّ ولا يُثبت إعجازًا، واستقراءُ الإمام كان على <b>معنًى</b> يتكرّر لا على حسابِ حروف. <b>والنورُ في التدبّر والعمل، والعدُّ خادمٌ يدلّك على الموضع ثمّ يسكت.</b>
+		</div>
+		<section class="layer visible" id="layer-dialogue">
+			<div class="panel dialogue-panel">
+				<h2>المحاورة: الفاتحة كما تُصلَّى <span class="badge mathur">مأثور</span></h2>
+				<div class="hint">الفاتحة ليست مناجاةً في اتجاهٍ واحد؛ هي محاورةٌ حيّة: لكل آيةٍ تقولها جوابٌ من الله، كما في حديث «قسمتُ الصلاة بيني وبين عبدي نصفين» (صحيح مسلم ٣٩٥). استمع للآية بصوت الشيخ الحصري، وتأمّل جواب ربك بعدها. واضغط أيّ كلمة لتتدبّر معناها وسرّها.</div>
+				<div id="dialogue-stage"></div>
+				<div class="controls" id="dialogue-controls"></div>
+			</div>
+			<div class="panel benefit-panel">
+				<h3>كيف تنتفع بهذا؟</h3>
+				<p>النورُ ليس في الأرقام ولا في التحليل، بل في ثلاثة: <b>أن تتدبّر</b> معنى ما تقول، و<b>أن تستحضر</b> أنك في صلاتك تُخاطَب وتُجاب، و<b>أن تخرج بعملٍ واحد</b> تعيشه في يومك. أدواتُ التحليل هنا خادمةٌ لهذا، لا غاية. فإذا قمتَ الليلة تصلّي، اقرأ الفاتحة متمهّلًا، وأنصت لجواب ربّك في قلبك.</p>
+			</div>
+		</section>
+
+		<section class="layer" id="layer-scenes">
+			<div class="panel">
+				<h2>الآية تُضيء: التصميم يشرح المعنى <span class="badge ijtihadi">وسيلة إيضاح</span></h2>
+				<div class="hint">لكل آية مشهدٌ فريد يجعل سرّها يلمع للغافل الذي يمرّ عليها. النص القرآني ثابتٌ محترمٌ في المركز، والتصميم حوله خادمٌ للمعنى. اضغط الكلمات المُبرَزة لتتدبّرها. (الاستعارة البصرية اجتهاد منّا، والمعنى مُسند.)</div>
+				<div class="scene-set" id="scene-set"></div>
+				<div class="scene-nav" id="scene-nav"></div>
+				<div id="scene-stage" class="scene-stage"></div>
+				<div class="info-card" id="scene-rationale"></div>
+			</div>
+		</section>
+
+		<section class="layer" id="layer-scale">
+			<div class="panel">
+				<h2>الميزان: قسمة الصلاة بين الله وعبده <span class="badge mathur">مأثور</span></h2>
+				<div class="hint">في الحديث القدسي: «قسمتُ الصلاة بيني وبين عبدي نصفين». الفاتحة ميزان: كفّةُ ثناءٍ لله (٢–٤)، وكفّةُ عطاءٍ للعبد (٦–٧)، ونقطةُ الارتكاز بينهما «إياك نعبد وإياك نستعين» (٥). <b>والبسملةُ (١) خارج هذه القسمة</b>، فالحديثُ يبدأ بها من «فإذا قال العبد: الحمد لله رب العالمين، قال الله: حمدني عبدي»، ولم يذكرها في كفّة. اضغط أيّ آية لترى موضعها في الميزان وجوابها.</div>
+				<canvas id="scale-canvas" height="420"></canvas>
+				<div class="controls" id="scale-chips"></div>
+				<div class="info-card" id="scale-info"></div>
+			</div>
+		</section>
+
+		<section class="layer" id="layer-ring">
+			<div class="panel">
+				<h2>البنية الدائرية للسورة <span class="badge ijtihadi">اجتهادي</span></h2>
+				<div class="hint">اضغط على أي آية لترى نظيرتها في التناظر المرآتي ووجه المناسبة بينهما. المحور العددي: الآية الرابعة، والمحور التعبدي: الآية الخامسة (وفق الحديث القدسي في صحيح مسلم <span class="badge mathur">مأثور</span>).</div>
+				<div id="ring-svg-holder"></div>
+				<div class="info-card" id="ring-info"></div>
+			</div>
+		</section>
+
+		<section class="layer" id="layer-graph">
+			<div class="panel">
+				<h2>الشبكة الدلالية <span class="badge ijtihadi">اجتهادي</span></h2>
+				<div class="hint">كل نقطة مضيئة: كلمة أو جذر أو محور أو آية. مرّر الفأرة فوق أي عقدة لبيانها، واسحبها لإعادة تشكيل الشبكة. الروابط المُسندة معروضة كبطاقات أسفل الخريطة، مرّر فوق البطاقة لإبراز كلماتها في الشبكة.</div>
+				<div class="legend" id="graph-legend"></div>
+				<canvas id="graph-canvas" height="560"></canvas>
+				<h3>الروابط المُسندة</h3>
+				<div class="links-list" id="links-list"></div>
+			</div>
+		</section>
+
+		<section class="layer" id="layer-phonetic">
+			<div class="panel">
+				<h2>البصمة الصوتية النصية <span class="badge qati">قطعي الصفات</span><span class="badge ijtihadi">اجتهادي المقياس</span></h2>
+				<div class="hint">كل حرف ملوَّن بموقعه على مقياس اللين ↔ الشدة، المحسوب من صفاته التجويدية الثابتة (الجهر، الشدة، الاستعلاء، الإطباق، القلقلة). الصفات نفسها قطعية من كتب التجويد؛ تجميعها في مقياس واحد اجتهادٌ حسابي موثق. مرّر فوق أي حرف لترى صفاته.</div>
+				<div class="legend" id="phonetic-legend"></div>
+				<div id="phonetic-verses"></div>
+			</div>
+			<div class="panel">
+				<h2>مقارنة البصمات بين الآيات</h2>
+				<div class="hint">اختر آيتين للمقارنة على المخطط الراداري (٦ أبعاد صوتية). القيم نِسَبٌ مئوية موزونة بأزمنة النطق.</div>
+				<div class="controls" id="radar-controls"></div>
+				<div class="legend" id="radar-legend"></div>
+				<canvas id="radar-canvas" height="420"></canvas>
+				<h3>الجدول الكامل</h3>
+				<table class="stats" id="stats-table"></table>
+			</div>
+		</section>
+
+		<section class="layer" id="layer-acoustic">
+			<div class="panel">
+				<h2>التردد الفيزيائي: تلاوة حقيقية <span class="badge qati">قياس فيزيائي</span></h2>
+				<div class="hint" id="acoustic-src"></div>
+				<div id="acoustic-cards"></div>
+			</div>
+			<div class="panel">
+				<h2>الجسر: التوقع النصي مقابل القياس الفيزيائي <span class="badge ijtihadi">اجتهادي</span></h2>
+				<div class="hint">مقارنة استكشافية بين «مقياس الحدة» المحسوب من صفات الحروف نصياً، و«مركز الثقل الطيفي» المقاس فيزيائياً من التلاوة. تنبيه منهجي: الطيف الفيزيائي يتأثر بصوت القارئ وطريقة التسجيل، فهذه المقارنة باب بحثٍ لا نتيجة نهائية.</div>
+				<div class="legend" id="bridge-legend"></div>
+				<canvas id="bridge-canvas" height="340"></canvas>
+			</div>
+		</section>
+
+		<section class="layer" id="layer-framework">
+			<div class="panel">
+				<h2 id="framework-title"></h2>
+				<div class="hint" id="framework-note"></div>
+				<div class="flow" id="framework-steps"></div>
+			</div>
+			<div class="panel">
+				<h2>التقسيم النبوي للسورة <span class="badge mathur">مأثور</span></h2>
+				<div class="hint" id="prophetic-note"></div>
+			</div>
+		</section>
+
+		<section class="layer" id="layer-tadabbur-short">
+			<div class="panel">
+				<h2>التدبّر: كل سور المصحف <span class="badge mathur">تدبّرٌ على منهج المفسّرين</span></h2>
+				<div class="hint"><b>أمانةٌ صريحة:</b> هذه الوقفاتُ <b>تدبّرٌ مُصاغٌ على منهج ابن كثير والسعدي</b> واستنباطٌ من معانيهما، <b>وليست نقلًا حرفيًّا</b> من كتبهما. للنصِّ الحرفيِّ المنقولِ نسخًا (ابن كثير، السعدي، القرطبي، الطبري، البغوي، الميسّر) افتح تبويب <b>«📖 التفاسير (نصًّا)»</b> وقارِن بنفسك. وحالُ القلب والعملُ اجتهادٌ موسوم. و«جوابُ الله بعد كل آية» خاصٌّ بالفاتحة لحديث «قسمتُ الصلاة» (مسلم ٣٩٥) فلا نصنعُه لغيرها.</div>
+				<div class="ts-picker" id="ts-picker"></div>
+				<div class="ts-reciter" id="ts-reciter"></div>
+				<div class="ts-body" id="ts-body"></div>
+			</div>
+		</section>
+
+		<section class="layer" id="layer-tafsir">
+			<div class="panel">
+				<h2>📖 التفاسير المعتمدة: النصُّ الحرفيُّ لكل آية <span class="badge mathur">منقولٌ نصًّا</span></h2>
+				<div class="hint">هنا <b>النصُّ الحرفيُّ</b> لكتب التفسير المعتمدة، منقولٌ نسخًا (لا تلخيصَ ولا تصرّف) عبر واجهة <b>quran.com</b>: <b>الميسّر</b> (مجمع الملك فهد)، <b>ابن كثير</b>، <b>البغوي</b>، <b>السعدي</b>، <b>القرطبي</b>، <b>الطبري</b>. اختر السورة والآية لتقرأ ما قاله المفسّرون فيها بألفاظهم، فتتحقّق بنفسك. (كتبُ التراث في الملك العام؛ والسعدي والميسّر متاحان مجانًا للنشر.)</div>
+				<div class="tf-picker" id="tf-picker"></div>
+				<div class="tf-ayah" id="tf-ayah"></div>
+				<div class="tf-body" id="tf-body"></div>
+			</div>
+		</section>
+
+		<section class="layer" id="layer-sources">
+			<div class="panel">
+				<h2>المصادر المُسنَدة: إلى أين تعود لتفهم القصّة والسبب <span class="badge mathur">مأثور موثّق</span></h2>
+				<div class="hint">لا نُلخّص هذه الكتب هنا لئلّا نتقوّل على معناها؛ بل <b>نُسندُ ونَدُلّ</b>. هذه أوثقُ ما يُرجَع إليه لفهم قصص القرآن وأسباب نزوله وتاريخه وتفسيره بالمأثور، كلُّها تراثٌ في الملك العام متاحٌ مجانًا. سِنو الوفاة وفق المصادر المشهورة، وما فيه خلافٌ أُشير إليه، والروابط المباشرة لا تُثبَت إلا بعد التحقّق من مطابقة العنوان.</div>
+				<div class="src-lib" id="sources-lib"></div>
+			</div>
+		</section>
+
+		<section class="layer" id="layer-discover">
+			<div class="panel">
+				<h2>كشوف محسوبة: ما قد تمرّ عليه دون أن تدري <span class="badge qati">حقائق محسوبة</span></h2>
+				<div class="hint">هذه ليست تفسيرًا ولا ادّعاءَ إعجاز، بل <b>حقائقُ عدٍّ صِرفة</b> استخرجها الحاسوب من مورفولوجيا المصحف كاملًا (٦٢٣٦ آية في عدِّ مصحفنا): كلماتٌ لا يردُ جذرها في المصحف كلّه إلا في موضعٍ واحد. كلُّ كشفٍ يحمل دليله، الجذر، والموضع، والعدد، فتتحقّق منه بنفسك. المعنى لك أنت تتدبّره؛ نحن نَعُدّ فقط.</div>
+				<div class="disc-stats" id="disc-stats"></div>
+				<div class="disc-feed" id="disc-feed"></div>
+			</div>
+		</section>
+
+		<section class="layer" id="layer-suramap">
+			<div class="panel">
+				<h2>خريطة ترابط السور <span class="badge qati">حقائق محسوبة</span></h2>
+				<div class="hint">الـ١١٤ سورة كشبكة: تُوصَل كل سورة بأقرب السور إليها «لغةً»: أي أكثرها مشاركةً لها في الجذور النادرة (لا الشائعة كـأله/قول). فترى أي السور «تتكلم بنفس اللغة». مرّر فوق سورة أو اضغطها. حقائق محسوبة، لا تزيد على القرآن شيئًا.</div>
+				<div class="legend" id="suramap-legend"></div>
+				<canvas id="suramap-canvas" height="560"></canvas>
+				<div class="info-card" id="suramap-info"></div>
+			</div>
+		</section>
+
+		<section class="layer" id="layer-explorer">
+			<div class="panel">
+				<h2>مستكشف الجذر: كل كلمة بوّابة <span class="badge qati">حقائق محسوبة</span></h2>
+				<div class="hint">المصحف كلُّه مبنيٌّ من ١٦٥١ جذرًا فقط عبر ٦٢٣٦ آية (في عدِّ مصحفنا). اختر أيّ سورة، واضغط أيّ كلمة، لترى جذرها وأين ينتشر في القرآن كلّه، فتشعر كيف يتشابك المصحف بجذوره. حقائق يكشفها الحاسوب، لا تزيد على القرآن شيئًا.</div>
+				<div class="controls" id="explorer-controls"></div>
+				<div class="info-card" id="explorer-header"></div>
+				<div id="explorer-verses" class="rx-verses"></div>
+				<div class="info-card" id="explorer-detail"></div>
+			</div>
+		</section>
+
+		<section class="layer" id="layer-observatory">
+			<div class="panel">
+				<h2>مرصد الفواصل: تجربة حيّة على القرآن كاملاً <span class="badge qati">قياس</span></h2>
+				<div class="hint" id="obs-intro"></div>
+				<div class="legend" id="obs-legend"></div>
+				<canvas id="obs-canvas" height="360"></canvas>
+				<h3>خريطة السور الـ١١٤ (الفاصلة الغالبة في كل سورة)</h3>
+				<div class="controls" id="obs-controls"></div>
+				<div id="obs-grid" class="obs-grid"></div>
+				<div class="info-card" id="obs-note"></div>
+			</div>
+			<div class="panel" id="control-panel">
+				<h2>الغربلة: هل هذا تميّزٌ قرآني أم طبعٌ في العربية؟ <span class="badge ijtihadi">اجتهادي</span></h2>
+				<div class="hint" id="control-intro"></div>
+				<div class="legend" id="control-legend"></div>
+				<canvas id="control-canvas" height="240"></canvas>
+				<div id="control-verdicts"></div>
+				<div class="info-card" id="control-summary"></div>
+			</div>
+		</section>
+	</main>
+
+	<footer class="site">
+		<div class="dua">وما توفيقي إلا بالله، عليه توكلت وإليه أنيب</div>
+		<div>النص القرآني: قاعدة Tanzil (رواية حفص)، وعددُ الآي عدُّ هذا المصحف؛ وعدُّ الآي علمٌ يختلف فيه أهلُه، قال ابن كثير في رأس البقرة: «ومائتان وستة وثمانون آية في عدد الكوفي وعدد علي بن أبي طالب رضي الله عنه» · التلاوة: الشيخ محمود خليل الحصري عبر everyayah.com · صفات الحروف: المقدمة الجزرية · الروابط الدلالية مسندة في كل بطاقة إلى مصدرها</div>
+		<div style="margin-top:6px">للتبليغ عن خطأ: رقم المطوّر <span dir="ltr">+966 50 766 4944</span></div>
+	</footer>
+
+	<div class="tooltip" id="tooltip"></div>
+	<script src="generated/scenes_baqara.js"></script>
+	<script src="generated/scenes_alimran.js"></script>
+	<script src="generated/scenes_nisa.js"></script>
+	<script src="generated/data.js"></script>
+	<script src="generated/tafsir_manifest.js"></script>
+	<script src="generated/quran_text.js"></script>
+	<script src="generated/fawasil.js"></script>
+	<script src="generated/control.js"></script>
+	<script src="generated/explorer.js"></script>
+	<script src="generated/surah_map.js"></script>
+	<script src="generated/discoveries.js"></script>
+	<script src="generated/quran_context.js"></script>
+	<script src="generated/ayah_links.js"></script>
+	<script src="generated/tadabbur_short.js"></script>
+	<script src="generated/tadabbur_baqara.js"></script>
+	<script src="generated/tadabbur_alimran.js"></script>
+	<script src="generated/tadabbur_nisa.js"></script>
+	<script src="generated/tadabbur_maida.js"></script>
+	<script src="generated/tadabbur_anam.js"></script>
+	<script src="generated/tadabbur_araf.js"></script>
+	<script src="generated/tadabbur_anfal.js"></script>
+	<script src="generated/tadabbur_tawba.js"></script>
+	<script src="generated/tadabbur_yunus.js"></script>
+	<script src="generated/tadabbur_hud.js"></script>
+	<script src="generated/tadabbur_yusuf.js"></script>
+	<script src="generated/tadabbur_rad.js"></script>
+	<script src="generated/tadabbur_ibrahim.js"></script>
+	<script src="generated/tadabbur_hijr.js"></script>
+	<script src="generated/tadabbur_nahl.js"></script>
+	<script src="generated/tadabbur_isra.js"></script>
+	<script src="generated/tadabbur_kahf.js"></script>
+	<script src="generated/tadabbur_maryam.js"></script>
+	<script src="generated/tadabbur_taha.js"></script>
+	<script src="generated/tadabbur_anbiya.js"></script>
+	<script src="generated/tadabbur_hajj.js"></script>
+	<script src="generated/tadabbur_muminun.js"></script>
+	<script src="generated/tadabbur_nur.js"></script>
+	<script src="generated/tadabbur_furqan.js"></script>
+	<script src="generated/tadabbur_shuara.js"></script>
+	<script src="generated/tadabbur_naml.js"></script>
+	<script src="generated/tadabbur_qasas.js"></script>
+	<script src="generated/tadabbur_ankabut.js"></script>
+	<script src="generated/tadabbur_rum.js"></script>
+	<script src="generated/tadabbur_luqman.js"></script>
+	<script src="generated/tadabbur_sajda.js"></script>
+	<script src="generated/tadabbur_ahzab.js"></script>
+	<script src="generated/tadabbur_saba.js"></script>
+	<script src="generated/tadabbur_fatir.js"></script>
+	<script src="generated/tadabbur_yasin.js"></script>
+	<script src="generated/tadabbur_saffat.js"></script>
+	<script src="generated/tadabbur_sad.js"></script>
+	<script src="generated/tadabbur_zumar.js"></script>
+	<script src="generated/tadabbur_ghafir.js"></script>
+	<script src="generated/tadabbur_fussilat.js"></script>
+	<script src="generated/tadabbur_shura.js"></script>
+	<script src="generated/tadabbur_zukhruf.js"></script>
+	<script src="generated/tadabbur_dukhan.js"></script>
+	<script src="generated/tadabbur_jathiya.js"></script>
+	<script src="generated/tadabbur_ahqaf.js"></script>
+	<script src="generated/tadabbur_muhammad.js"></script>
+	<script src="generated/tadabbur_fath.js"></script>
+	<script src="generated/tadabbur_hujurat.js"></script>
+	<script src="generated/tadabbur_qaf.js"></script>
+	<script src="generated/tadabbur_dhariyat.js"></script>
+	<script src="generated/tadabbur_tur.js"></script>
+	<script src="generated/tadabbur_najm.js"></script>
+	<script src="generated/tadabbur_qamar.js"></script>
+	<script src="generated/tadabbur_rahman.js"></script>
+	<script src="generated/tadabbur_waqia.js"></script>
+    <script src="generated/tadabbur_hadid.js"></script>
+    <script src="generated/tadabbur_mujadila.js"></script>
+    <script src="generated/tadabbur_hashr.js"></script>
+    <script src="generated/tadabbur_mumtahina.js"></script>
+    <script src="generated/tadabbur_saff.js"></script>
+    <script src="generated/tadabbur_jumua.js"></script>
+    <script src="generated/tadabbur_munafiqun.js"></script>
+    <script src="generated/tadabbur_taghabun.js"></script>
+    <script src="generated/tadabbur_talaq.js"></script>
+    <script src="generated/tadabbur_tahrim.js"></script>
+    <script src="generated/tadabbur_mulk.js"></script>
+    <script src="generated/tadabbur_qalam.js"></script>
+    <script src="generated/tadabbur_haqqa.js"></script>
+    <script src="generated/tadabbur_maarij.js"></script>
+    <script src="generated/tadabbur_nuh.js"></script>
+    <script src="generated/tadabbur_jinn.js"></script>
+    <script src="generated/tadabbur_muzzammil.js"></script>
+    <script src="generated/tadabbur_muddaththir.js"></script>
+    <script src="generated/tadabbur_qiyama.js"></script>
+    <script src="generated/tadabbur_insan.js"></script>
+    <script src="generated/tadabbur_mursalat.js"></script>
+    <script src="generated/tadabbur_naba.js"></script>
+    <script src="generated/tadabbur_naziat.js"></script>
+    <script src="generated/tadabbur_abasa.js"></script>
+    <script src="generated/tadabbur_takwir.js"></script>
+    <script src="generated/tadabbur_infitar.js"></script>
+    <script src="generated/tadabbur_mutaffifin.js"></script>
+    <script src="generated/tadabbur_inshiqaq.js"></script>
+    <script src="generated/tadabbur_buruj.js"></script>
+    <script src="generated/tadabbur_tariq.js"></script>
+    <script src="generated/tadabbur_ala.js"></script>
+    <script src="generated/tadabbur_ghashiya.js"></script>
+  <script src="generated/tadabbur_fajr.js"></script>
+  <script src="generated/tadabbur_balad.js"></script>
+  <script src="generated/tadabbur_shams.js"></script>
+  <script src="generated/tadabbur_layl.js"></script>
+  <script src="generated/tadabbur_duha.js"></script>
+  <script src="generated/tadabbur_sharh.js"></script>
+  <script src="generated/tadabbur_tin.js"></script>
+  <script src="generated/tadabbur_alaq.js"></script>
+  <script src="generated/tadabbur_qadr.js"></script>
+  <script src="generated/tadabbur_bayyinah.js"></script>
+  <script src="generated/tadabbur_zalzalah.js"></script>
+  <script src="generated/tadabbur_adiyat.js"></script>
+  <script src="generated/tadabbur_qariah.js"></script>
+  <script src="generated/tadabbur_takathur.js"></script>
+  <script src="generated/tadabbur_asr.js"></script>
+  <script src="generated/tadabbur_humazah.js"></script>
+  <script src="generated/tadabbur_fil.js"></script>
+  <script src="generated/tadabbur_quraysh.js"></script>
+  <script src="generated/tadabbur_maun.js"></script>
+  <script src="generated/tadabbur_kawthar.js"></script>
+  <script src="generated/tadabbur_kafirun.js"></script>
+  <script src="generated/tadabbur_nasr.js"></script>
+  <script src="generated/tadabbur_masad.js"></script>
+  <script src="generated/tadabbur_ikhlas.js"></script>
+  <script src="generated/tadabbur_falaq.js"></script>
+  <script src="generated/tadabbur_nas.js"></script>
+	<script src="app.js"></script>
+</body>
+</html>

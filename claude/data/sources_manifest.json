@@ -1,0 +1,1368 @@
+{
+	"total": 50,
+	"counts": {
+		"already_present": 31,
+		"cite_only": 16,
+		"failed": 1,
+		"no_source": 2
+	},
+	"records": [
+		{
+			"i": 1,
+			"title": "نظم الدرر في تناسب الآيات والسور",
+			"attribution": "«نظم الدرر في تناسب الآيات والسور» لـبرهان الدين أبو الحسن إبراهيم بن عمر بن حسن الرِّباط البقاعي (ت 885هـ)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "archive.org (الأرشيف)",
+					"ref": "https://archive.org/details/NathmDurarBaghae",
+					"kind": "full_text"
+				},
+				{
+					"provider": "shamela.ws (المكتبة الشاملة)",
+					"ref": "https://shamela.ws/book/9098",
+					"kind": "full_text"
+				},
+				{
+					"provider": "islamweb.net (مكتبة إسلام ويب)",
+					"ref": "https://www.islamweb.net/ar/library/content/214/1/%D9%85%D9%82%D8%AF%D9%85%D8%A9",
+					"kind": "reader"
+				},
+				{
+					"provider": "ketabonline.com (جامع الكتب الإسلامية)",
+					"ref": "https://ketabonline.com/ar/books/19061",
+					"kind": "reader"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/01-نظم_الدرر_في_تناسب_الآيات_والسور.pdf"
+			}
+		},
+		{
+			"i": 2,
+			"title": "البرهان في علوم القرآن",
+			"attribution": "«البرهان في علوم القرآن» لـبدر الدين أبو عبد الله محمد بن عبد الله بن بهادر الزركشي المصري الشافعي (ت 794)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "shamela.ws",
+					"ref": "https://shamela.ws/book/11436",
+					"kind": "full_text"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/BurhanQuran",
+					"kind": "pdf"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/mohamed199230_gmail_4",
+					"kind": "pdf"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/20200118_20200118_1147",
+					"kind": "pdf"
+				},
+				{
+					"provider": "quranpedia.net",
+					"ref": "https://quranpedia.net/book/240",
+					"kind": "reader"
+				},
+				{
+					"provider": "ketabonline.com",
+					"ref": "https://ketabonline.com/ar/books/916",
+					"kind": "reader"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/02-البرهان_في_علوم_القرآن.pdf"
+			}
+		},
+		{
+			"i": 3,
+			"title": "الإتقان في علوم القرآن",
+			"attribution": "«الإتقان في علوم القرآن» لـجلال الدين عبد الرحمن بن أبي بكر السيوطي (ت 911)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "ketabonline.com",
+					"ref": "https://ketabonline.com/ar/books/1008",
+					"kind": "reader"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/20200128_20200128_0504",
+					"kind": "full_text"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/20200128_20200128_0504",
+					"kind": "pdf"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/03-الإتقان_في_علوم_القرآن.pdf"
+			}
+		},
+		{
+			"i": 4,
+			"title": "التحرير والتنوير (تحرير المعنى السديد وتنوير العقل الجديد من تفسير الكتاب المجيد)",
+			"attribution": "«التحرير والتنوير (تحرير المعنى السديد وتنوير العقل الجديد من تفسير الكتاب المجيد)» لـمحمد الطاهر بن عاشور (ت 1393)",
+			"tier": "copyrighted",
+			"sources": [
+				{
+					"provider": "shamela.ws",
+					"ref": "https://shamela.ws/book/9776",
+					"kind": "full_text"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/tahrer_tanwer",
+					"kind": "pdf"
+				}
+			],
+			"result": {
+				"status": "cite_only",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
+				"where": "https://shamela.ws/book/9776"
+			}
+		},
+		{
+			"i": 5,
+			"title": "مفاتيح الغيب = التفسير الكبير (تفسير الرازي)",
+			"attribution": "«مفاتيح الغيب = التفسير الكبير (تفسير الرازي)» لـفخر الدين الرازي (أبو عبد الله محمد بن عمر بن الحسن بن الحسين التيمي الرازي، الملقب بفخر الدين الرازي خطيب الرَّي) (ت 606هـ)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "shamela.ws",
+					"ref": "https://shamela.ws/book/23635",
+					"kind": "full_text"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/mghtrazi",
+					"kind": "pdf"
+				},
+				{
+					"provider": "ketabonline.com",
+					"ref": "https://ketabonline.com/ar/books/3068",
+					"kind": "full_text"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/05-مفاتيح_الغيب_=_التفسير_الكبير_(تفسير_الرازي).pdf"
+			}
+		},
+		{
+			"i": 6,
+			"title": "الكشاف عن حقائق غوامض التنزيل وعيون الأقاويل في وجوه التأويل",
+			"attribution": "«الكشاف عن حقائق غوامض التنزيل وعيون الأقاويل في وجوه التأويل» لـأبو القاسم محمود بن عمر بن أحمد الزمخشري جار الله (ت 538)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/20200115_20200115_1525",
+					"kind": "full_text"
+				},
+				{
+					"provider": "ketabonline.com",
+					"ref": "https://ketabonline.com/ar/books/3061",
+					"kind": "full_text"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/06-الكشاف_عن_حقائق_غوامض_التنزيل_وعيون_الأقاويل_في_وجوه_التأويل.pdf"
+			}
+		},
+		{
+			"i": 7,
+			"title": "تناسق الدرر في تناسب السور (ويُطبع أيضًا باسم: أسرار ترتيب القرآن)",
+			"attribution": "«تناسق الدرر في تناسب السور (ويُطبع أيضًا باسم: أسرار ترتيب القرآن)» لـجلال الدين عبد الرحمن بن أبي بكر السيوطي (ت 911 هـ)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "archive.org (Internet Archive)",
+					"ref": "https://archive.org/details/Tanasuq_Durar",
+					"kind": "full_text"
+				},
+				{
+					"provider": "shamela.ws (المكتبة الشاملة)",
+					"ref": "https://shamela.ws/book/9992",
+					"kind": "full_text"
+				},
+				{
+					"provider": "ketabonline.com (جامع الكتب الإسلامية)",
+					"ref": "https://ketabonline.com/ar/books/92937",
+					"kind": "reader"
+				},
+				{
+					"provider": "quranpedia.net",
+					"ref": "https://quranpedia.net/book/25213",
+					"kind": "metadata"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/07-تناسق_الدرر_في_تناسب_السور_(ويُطبع_أيضًا_باسم:_أسرار_ترتيب_ا.pdf"
+			}
+		},
+		{
+			"i": 8,
+			"title": "الموافقات في أصول الشريعة",
+			"attribution": "«الموافقات في أصول الشريعة» لـأبو إسحاق إبراهيم بن موسى بن محمد اللخمي الغرناطي الشهير بالشاطبي (ت 790هـ)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "shamela.ws (المكتبة الشاملة)",
+					"ref": "https://shamela.ws/book/11435",
+					"kind": "full_text"
+				},
+				{
+					"provider": "archive.org (Internet Archive)",
+					"ref": "https://archive.org/details/20200129_20200129_0618",
+					"kind": "pdf"
+				},
+				{
+					"provider": "ketabonline.com (جامع الكتب الإسلامية)",
+					"ref": "https://ketabonline.com/ar/books/915",
+					"kind": "full_text"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/08-الموافقات_في_أصول_الشريعة.pdf"
+			}
+		},
+		{
+			"i": 9,
+			"title": "أسباب النزول (أسباب نزول القرآن)",
+			"attribution": "«أسباب النزول (أسباب نزول القرآن)» لـأبو الحسن علي بن أحمد بن محمد بن علي الواحدي النيسابوري الشافعي (ت 468هـ)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/20200224_20200224_1203",
+					"kind": "pdf"
+				},
+				{
+					"provider": "ketabonline.com",
+					"ref": "https://ketabonline.com/ar/books/102657",
+					"kind": "reader"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/09-أسباب_النزول_(أسباب_نزول_القرآن).pdf"
+			}
+		},
+		{
+			"i": 10,
+			"title": "بصائر ذوي التمييز في لطائف الكتاب العزيز",
+			"attribution": "«بصائر ذوي التمييز في لطائف الكتاب العزيز» لـمجد الدين أبو طاهر محمد بن يعقوب الفيروزآبادي (ت 817)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/003989",
+					"kind": "pdf"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/sa71mir_gmail_1_201606",
+					"kind": "pdf"
+				},
+				{
+					"provider": "shamela.ws",
+					"ref": "https://shamela.ws/book/9856",
+					"kind": "full_text"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/10-بصائر_ذوي_التمييز_في_لطائف_الكتاب_العزيز.pdf"
+			}
+		},
+		{
+			"i": 11,
+			"title": "Structure and Qur'anic Interpretation: A Study of Symmetry and Coherence in Islam's Holy Text",
+			"attribution": "«Structure and Qur'anic Interpretation: A Study of Symmetry and Coherence in Islam's Holy Text» لـRaymond Farrin (Raymond K. Farrin)",
+			"tier": "copyrighted",
+			"sources": [
+				{
+					"provider": "Google Books",
+					"ref": "https://books.google.com/books/about/Structure_and_Qur_anic_Interpretation.html?id=io03ngEACAAJ",
+					"kind": "metadata"
+				},
+				{
+					"provider": "American University of Kuwait (mypure.auk.edu.kw)",
+					"ref": "https://mypure.auk.edu.kw/en/publications/structure-and-quranic-interpretation-a-study-of-symmetry-and-cohe",
+					"kind": "metadata"
+				},
+				{
+					"provider": "amazon.com",
+					"ref": "https://www.amazon.com/Structure-Quranic-Interpretation-Coherence-Encounter/dp/1935952986",
+					"kind": "purchase"
+				},
+				{
+					"provider": "ebooks.com",
+					"ref": "https://www.ebooks.com/en-us/book/96489355/structure-and-qur-anic-interpretation/raymond-farrin/",
+					"kind": "purchase"
+				},
+				{
+					"provider": "OverDrive (library ebook)",
+					"ref": "https://www.overdrive.com/media/1955207/structure-and-quranic-interpretation",
+					"kind": "reader"
+				}
+			],
+			"result": {
+				"status": "cite_only",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
+				"where": "https://books.google.com/books/about/Structure_and_Qur_anic_Interpretation.html?id=io03ngEACAAJ"
+			}
+		},
+		{
+			"i": 12,
+			"title": "دلائل الإعجاز في علم المعاني",
+			"attribution": "«دلائل الإعجاز في علم المعاني» لـأبو بكر عبد القاهر بن عبد الرحمن بن محمد الجرجاني (الفارسي الأصل، الجرجاني الدار) (ت 471 هـ)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/Dalail_I3jaz",
+					"kind": "pdf_fulltext"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/20210220_20210220_0727",
+					"kind": "pdf_fulltext"
+				},
+				{
+					"provider": "shamela.ws",
+					"ref": "https://shamela.ws/book/12055",
+					"kind": "full_text"
+				},
+				{
+					"provider": "shamela.ws",
+					"ref": "https://shamela.ws/book/37697",
+					"kind": "full_text"
+				},
+				{
+					"provider": "shamela.ws",
+					"ref": "https://shamela.ws/book/22664",
+					"kind": "full_text"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/12-دلائل_الإعجاز_في_علم_المعاني.pdf"
+			}
+		},
+		{
+			"i": 13,
+			"title": "أسرار البلاغة في علم البيان",
+			"attribution": "«أسرار البلاغة في علم البيان» لـأبو بكر عبد القاهر بن عبد الرحمن بن محمد الفارسي الأصل الجرجاني الدار (ت 471)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/Asrar_Albalagha",
+					"kind": "full_text"
+				},
+				{
+					"provider": "shamela.ws",
+					"ref": "https://shamela.ws/book/8187",
+					"kind": "reader"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/13-أسرار_البلاغة_في_علم_البيان.pdf"
+			}
+		},
+		{
+			"i": 14,
+			"title": "الخصائص",
+			"attribution": "«الخصائص» لـأبو الفتح عثمان بن جِنّي الموصلي (ابن جني) (ت 392هـ)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "shamela.ws",
+					"ref": "https://shamela.ws/book/9986",
+					"kind": "full_text"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/khsesjny1",
+					"kind": "pdf"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/khsesjny2",
+					"kind": "pdf"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/khsesjny3",
+					"kind": "pdf"
+				},
+				{
+					"provider": "ketabonline.com",
+					"ref": "https://ketabonline.com/ar/books/54583",
+					"kind": "reader"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/14-الخصائص.pdf"
+			}
+		},
+		{
+			"i": 15,
+			"title": "مغني اللبيب عن كتب الأعاريب",
+			"attribution": "«مغني اللبيب عن كتب الأعاريب» لـعبد الله بن يوسف بن أحمد، جمال الدين أبو محمد، ابن هشام الأنصاري (ت 761هـ)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/moharram1965_gmail_20180428",
+					"kind": "pdf"
+				},
+				{
+					"provider": "ketabonline.com (جامع الكتب الإسلامية)",
+					"ref": "https://ketabonline.com/ar/books/57084",
+					"kind": "full_text"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/15-مغني_اللبيب_عن_كتب_الأعاريب.pdf"
+			}
+		},
+		{
+			"i": 16,
+			"title": "لسان العرب",
+			"attribution": "«لسان العرب» لـمحمد بن مكرم بن علي، أبو الفضل، جمال الدين ابن منظور الأنصاري (ابن منظور) (ت 711)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "shamela.ws",
+					"ref": "https://shamela.ws/book/1687",
+					"kind": "reader"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/LissanaAlArab",
+					"kind": "pdf"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/Lesanol3arab",
+					"kind": "pdf"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/MNZOR1994AR",
+					"kind": "pdf"
+				},
+				{
+					"provider": "old.shamela.ws",
+					"ref": "https://old.shamela.ws/index.php/book/1687",
+					"kind": "reader"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/16-لسان_العرب.pdf"
+			}
+		},
+		{
+			"i": 17,
+			"title": "معجم مقاييس اللغة",
+			"attribution": "«معجم مقاييس اللغة» لـأحمد بن فارس بن زكرياء القزويني الرازي، أبو الحسين (ابن فارس) (ت 395هـ)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/Maqayees",
+					"kind": "pdf"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/20220809_Makaislugha",
+					"kind": "pdf"
+				},
+				{
+					"provider": "waqfeya.net",
+					"ref": "https://waqfeya.net/book.php?bid=3144",
+					"kind": "pdf"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/17-معجم_مقاييس_اللغة.pdf"
+			}
+		},
+		{
+			"i": 18,
+			"title": "لمسات بيانية في نصوص من التنزيل",
+			"attribution": "«لمسات بيانية في نصوص من التنزيل» لـفاضل صالح السامرائي",
+			"tier": "copyrighted",
+			"sources": [
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/lmsatbyaniah",
+					"kind": "attribution_only"
+				},
+				{
+					"provider": "دار ابن كثير (الموقع الرسمي للناشر)",
+					"ref": "https://www.ibn-katheer.com/Book/detBooks/13/592/",
+					"kind": "purchase"
+				},
+				{
+					"provider": "Jarir (جرير)",
+					"ref": "https://www.jarir.com/arabic-books-454005.html",
+					"kind": "purchase"
+				}
+			],
+			"result": {
+				"status": "cite_only",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
+				"where": "https://archive.org/details/lmsatbyaniah"
+			}
+		},
+		{
+			"i": 19,
+			"title": "التعبير القرآني",
+			"attribution": "«التعبير القرآني» لـفاضل صالح السامرائي (Fadel Saleh al-Samarrai)",
+			"tier": "copyrighted",
+			"sources": [
+				{
+					"provider": "دار ابن كثير (الناشر الرسمي)، وibn-katheer.com",
+					"ref": "https://ibn-katheer.com/Book/detBooks/13/595/%D8%A7%D9%84%D8%AA%D8%B9%D8%A8%D9%8A%D8%B1-%D8%A7%D9%84%D9%82%D8%B1%D8%A2%D9%86%D9%8A",
+					"kind": "purchase"
+				},
+				{
+					"provider": "Goodreads (بيانات ببليوغرافية)",
+					"ref": "https://www.goodreads.com/en/book/show/4009525",
+					"kind": "metadata"
+				}
+			],
+			"result": {
+				"status": "cite_only",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
+				"where": "https://ibn-katheer.com/Book/detBooks/13/595/%D8%A7%D9%84%D8%AA%D8%B9%D8%A8%D9%8A%D8%B1-%D8%A7%D9%84%D9%82%D8%B1%D8%A2%D9%86%D9%8A"
+			}
+		},
+		{
+			"i": 20,
+			"title": "كتاب الصناعتين: الكتابة والشعر",
+			"attribution": "«كتاب الصناعتين: الكتابة والشعر» لـأبو هلال الحسن بن عبد الله بن سهل العسكري (ت نحو 395هـ)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "shamela.ws",
+					"ref": "https://shamela.ws/book/23787",
+					"kind": "full_text"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/Senaatayn",
+					"kind": "pdf"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/20-كتاب_الصناعتين:_الكتابة_والشعر.pdf"
+			}
+		},
+		{
+			"i": 21,
+			"title": "سر الفصاحة",
+			"attribution": "«سر الفصاحة» لـأبو محمد عبد الله بن محمد بن سعيد بن سنان الخفاجي الحلبي (ابن سنان الخفاجي) (ت 466)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/20210630_20210630_1658",
+					"kind": "full_text_pdf"
+				},
+				{
+					"provider": "shamela.ws",
+					"ref": "https://shamela.ws/book/11239",
+					"kind": "full_text"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/21-سر_الفصاحة.pdf"
+			}
+		},
+		{
+			"i": 22,
+			"title": "المفصل في صنعة الإعراب",
+			"attribution": "«المفصل في صنعة الإعراب» لـأبو القاسم محمود بن عمر بن أحمد، جار الله الزمخشري الخوارزمي (ت 538)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "shamela.ws",
+					"ref": "https://shamela.ws/book/759",
+					"kind": "full_text"
+				},
+				{
+					"provider": "ketabonline.com",
+					"ref": "https://ketabonline.com/ar/books/189",
+					"kind": "full_text"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/20200227_20200227_0704",
+					"kind": "pdf"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/22-المفصل_في_صنعة_الإعراب.pdf"
+			}
+		},
+		{
+			"i": 23,
+			"title": "الطراز المتضمِّن لأسرار البلاغة وعلوم حقائق الإعجاز",
+			"attribution": "«الطراز المتضمِّن لأسرار البلاغة وعلوم حقائق الإعجاز» لـيحيى بن حمزة بن علي بن إبراهيم الحسيني العلوي الطالبي، المؤيَّد بالله (اليمني الصنعاني) (ت 749)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/altrazlasraralblagah",
+					"kind": "pdf"
+				},
+				{
+					"provider": "shamela.ws",
+					"ref": "https://shamela.ws/book/23788",
+					"kind": "full_text"
+				},
+				{
+					"provider": "ketabonline.com",
+					"ref": "https://ketabonline.com/ar/books/3124",
+					"kind": "reader"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/23-الطراز_المتضمِّن_لأسرار_البلاغة_وعلوم_حقائق_الإعجاز.pdf"
+			}
+		},
+		{
+			"i": 24,
+			"title": "Discrete Mathematics and Its Applications",
+			"attribution": "«Discrete Mathematics and Its Applications» لـKenneth H. Rosen",
+			"tier": "copyrighted",
+			"sources": [
+				{
+					"provider": "mheducation.com",
+					"ref": "https://www.mheducation.com/highered/product/discrete-mathematics-and-its-applications-rosen.html",
+					"kind": "purchase"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/discretemathemat00kenn",
+					"kind": "reader"
+				}
+			],
+			"result": {
+				"status": "cite_only",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
+				"where": "https://www.mheducation.com/highered/product/discrete-mathematics-and-its-applications-rosen.html"
+			}
+		},
+		{
+			"i": 25,
+			"title": "Graph Theory (Graduate Texts in Mathematics 173)",
+			"attribution": "«Graph Theory (Graduate Texts in Mathematics 173)» لـReinhard Diestel",
+			"tier": "free_official",
+			"sources": [
+				{
+					"provider": "diestel-graph-theory.com (official author/publisher site)",
+					"ref": "https://diestel-graph-theory.com/",
+					"kind": "reader"
+				},
+				{
+					"provider": "diestel-graph-theory.com (free preview chapters listing, full main text, 6th ed. 2025)",
+					"ref": "https://diestel-graph-theory.com/basic.html",
+					"kind": "full_text"
+				},
+				{
+					"provider": "University of Hamburg (author official page، free preview Ch1, full chapter PDF)",
+					"ref": "https://www.math.uni-hamburg.de/home/diestel/books/graph.theory/preview/Ch1.pdf",
+					"kind": "full_text"
+				},
+				{
+					"provider": "Springer (official publisher، purchase / institutional access)",
+					"ref": "https://link.springer.com/book/10.1007/978-3-662-53622-3",
+					"kind": "purchase"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/25-Graph_Theory_(Graduate_Texts_in_Mathematics_173).pdf"
+			}
+		},
+		{
+			"i": 26,
+			"title": "Speech and Language Processing: An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition",
+			"attribution": "«Speech and Language Processing: An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition» لـDaniel Jurafsky and James H. Martin",
+			"tier": "free_official",
+			"sources": [
+				{
+					"provider": "web.stanford.edu (official author page of Daniel Jurafsky at Stanford University)",
+					"ref": "https://web.stanford.edu/~jurafsky/slp3/",
+					"kind": "full_text"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/26-Speech_and_Language_Processing:_An_Introduction_to_Natural_L.pdf"
+			}
+		},
+		{
+			"i": 27,
+			"title": "Networks, Crowds, and Markets: Reasoning about a Highly Connected World",
+			"attribution": "«Networks, Crowds, and Markets: Reasoning about a Highly Connected World» لـDavid Easley; Jon Kleinberg",
+			"tier": "free_official",
+			"sources": [
+				{
+					"provider": "cs.cornell.edu (official author page، Jon Kleinberg / Cornell)",
+					"ref": "https://www.cs.cornell.edu/home/kleinber/networks-book/",
+					"kind": "full_text"
+				},
+				{
+					"provider": "cs.cornell.edu (complete pre-publication draft PDF, author-provided)",
+					"ref": "https://www.cs.cornell.edu/home/kleinber/networks-book/networks-book.pdf",
+					"kind": "pdf"
+				},
+				{
+					"provider": "Cambridge University Press (published edition، for purchase)",
+					"ref": "https://www.cambridge.org/core/books/networks-crowds-and-markets/A70C7855A3003FE1079C25F8397AF641",
+					"kind": "purchase"
+				},
+				{
+					"provider": "Google Books (metadata)",
+					"ref": "https://books.google.com/books/about/Networks_Crowds_and_Markets.html?id=atfCl2agdi8C",
+					"kind": "metadata"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/27-Networks,_Crowds,_and_Markets:_Reasoning_about_a_Highly_Conn.pdf"
+			}
+		},
+		{
+			"i": 28,
+			"title": "Topology",
+			"attribution": "«Topology» لـJames R. Munkres",
+			"tier": "copyrighted",
+			"sources": [
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/topology0002edmunk",
+					"kind": "reader-borrow-only"
+				},
+				{
+					"provider": "amazon.com (Pearson/Prentice Hall)",
+					"ref": "https://www.amazon.com/Topology-2nd-Economy-James-Munkres/dp/8120320468",
+					"kind": "purchase"
+				}
+			],
+			"result": {
+				"status": "cite_only",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
+				"where": "https://archive.org/details/topology0002edmunk"
+			}
+		},
+		{
+			"i": 29,
+			"title": "Pattern Recognition and Machine Learning",
+			"attribution": "«Pattern Recognition and Machine Learning» لـChristopher M. Bishop",
+			"tier": "free_official",
+			"sources": [
+				{
+					"provider": "Microsoft Research (microsoft.com) - publication page",
+					"ref": "https://www.microsoft.com/en-us/research/publication/pattern-recognition-machine-learning/",
+					"kind": "full_text"
+				},
+				{
+					"provider": "Microsoft Research (microsoft.com) - direct authorized PDF",
+					"ref": "https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf",
+					"kind": "pdf"
+				},
+				{
+					"provider": "Christopher Bishop's official page at Microsoft Research (PRML book: figures, slides, sample chapter, solutions)",
+					"ref": "https://www.microsoft.com/en-us/research/people/cmbishop/prml-book/",
+					"kind": "metadata"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/29-Pattern_Recognition_and_Machine_Learning.pdf"
+			}
+		},
+		{
+			"i": 30,
+			"title": "Introduction to Algorithms",
+			"attribution": "«Introduction to Algorithms» لـThomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, Clifford Stein",
+			"tier": "copyrighted",
+			"sources": [
+				{
+					"provider": "mitpress.mit.edu (official publisher)",
+					"ref": "https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/",
+					"kind": "purchase"
+				},
+				{
+					"provider": "cs.dartmouth.edu/~thc (author's official homepage)",
+					"ref": "https://www.cs.dartmouth.edu/~thc/",
+					"kind": "metadata"
+				}
+			],
+			"result": {
+				"status": "cite_only",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
+				"where": "https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/"
+			}
+		},
+		{
+			"i": 31,
+			"title": "The Elements of Statistical Learning: Data Mining, Inference, and Prediction (2nd Edition)",
+			"attribution": "«The Elements of Statistical Learning: Data Mining, Inference, and Prediction (2nd Edition)» لـTrevor Hastie, Robert Tibshirani, Jerome Friedman",
+			"tier": "free_official",
+			"sources": [
+				{
+					"provider": "hastie.su.domains، Trevor Hastie official Stanford page (official free download page, states Springer's written permission to keep book on the web)",
+					"ref": "https://hastie.su.domains/ElemStatLearn/download.html",
+					"kind": "metadata"
+				},
+				{
+					"provider": "hastie.su.domains، direct PDF (12th printing w/ corrections & TOC, Jan 2017) via author's Google Drive, linked from the official download page",
+					"ref": "https://drive.google.com/uc?export=download&id=1--Wo5Hcl2y_v3DL-tGgcJHRPdtjiVYjS",
+					"kind": "pdf"
+				},
+				{
+					"provider": "Springer (publisher، official paid acquisition, DOI 10.1007/978-0-387-84858-7, ISBN 978-0-387-84857-0)",
+					"ref": "https://link.springer.com/book/10.1007/978-0-387-84858-7",
+					"kind": "purchase"
+				}
+			],
+			"result": {
+				"status": "failed",
+				"reason": "not a PDF (landing/error page)",
+				"url": "https://hastie.su.domains/ElemStatLearn/"
+			}
+		},
+		{
+			"i": 32,
+			"title": "Information Theory, Inference, and Learning Algorithms",
+			"attribution": "«Information Theory, Inference, and Learning Algorithms» لـDavid J. C. MacKay (ت 2016)",
+			"tier": "free_official",
+			"sources": [
+				{
+					"provider": "inference.org.uk (author's official site, David MacKay)",
+					"ref": "https://www.inference.org.uk/mackay/itila/book.html",
+					"kind": "reader"
+				},
+				{
+					"provider": "inference.org.uk (author's official site, David MacKay)",
+					"ref": "https://www.inference.org.uk/itprnn/book.pdf",
+					"kind": "pdf"
+				},
+				{
+					"provider": "Cambridge University Press (official publisher / purchase)",
+					"ref": "https://www.inference.org.uk/mackay/itila/",
+					"kind": "purchase"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/32-Information_Theory,_Inference,_and_Learning_Algorithms.pdf"
+			}
+		},
+		{
+			"i": 33,
+			"title": "أساسيات المنطق الرياضي ونظرية المجموعات",
+			"attribution": "«أساسيات المنطق الرياضي ونظرية المجموعات» لـمرجع أكاديمي (غير محدَّد المؤلف في قيد المشروع)",
+			"tier": "uncertain",
+			"sources": [
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/Abyamr_GMAIL_11",
+					"kind": "full_text"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/azm101010_gmail_20160717_0814",
+					"kind": "full_text"
+				}
+			],
+			"result": {
+				"status": "no_source",
+				"note": "لا رابط مشروع متحقَّق"
+			}
+		},
+		{
+			"i": 34,
+			"title": "الرعاية لتجويد القراءة وتحقيق لفظ التلاوة",
+			"attribution": "«الرعاية لتجويد القراءة وتحقيق لفظ التلاوة» لـأبو محمد مكي بن أبي طالب حَمُّوش بن محمد بن مختار القيسي القيرواني ثم القرطبي (ت 437 هـ)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/atamalt_gmail",
+					"kind": "full_text"
+				},
+				{
+					"provider": "quranpedia.net",
+					"ref": "https://quranpedia.net/book/21401",
+					"kind": "reader"
+				},
+				{
+					"provider": "quranpedia.net (direct PDF via DigitalOcean Spaces)",
+					"ref": "https://wikiquran.nyc3.digitaloceanspaces.com/attachments/documents/BOOK_21401_1.pdf",
+					"kind": "pdf"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/34-الرعاية_لتجويد_القراءة_وتحقيق_لفظ_التلاوة.pdf"
+			}
+		},
+		{
+			"i": 35,
+			"title": "التمهيد في علم التجويد",
+			"attribution": "«التمهيد في علم التجويد» لـشمس الدين أبو الخير محمد بن محمد بن محمد بن علي بن يوسف ابن الجزري (ت 833هـ)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/tajweed_20131226",
+					"kind": "pdf"
+				},
+				{
+					"provider": "ketabonline.com",
+					"ref": "https://ketabonline.com/ar/books/5911",
+					"kind": "reader"
+				},
+				{
+					"provider": "shamela.ws",
+					"ref": "https://shamela.ws/book/8194",
+					"kind": "full_text"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/35-التمهيد_في_علم_التجويد.pdf"
+			}
+		},
+		{
+			"i": 36,
+			"title": "النشر في القراءات العشر",
+			"attribution": "«النشر في القراءات العشر» لـابن الجزري، شمس الدين أبو الخير محمد بن محمد بن محمد بن علي بن يوسف الجزري (تحقيق: علي محمد الضباع) (ت 833)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "shamela.ws",
+					"ref": "https://shamela.ws/book/22642",
+					"kind": "full_text"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/NashrQiraat",
+					"kind": "pdf"
+				},
+				{
+					"provider": "ketabonline.com",
+					"ref": "https://ketabonline.com/ar/books/2878",
+					"kind": "reader"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/nashrqraatashr",
+					"kind": "pdf"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/36-النشر_في_القراءات_العشر.pdf"
+			}
+		},
+		{
+			"i": 37,
+			"title": "Fundamentals of Acoustics",
+			"attribution": "«Fundamentals of Acoustics» لـLawrence E. Kinsler; Austin R. Frey; Alan B. Coppens; James V. Sanders",
+			"tier": "copyrighted",
+			"sources": [
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/fundamentalsofac0000kins",
+					"kind": "reader"
+				},
+				{
+					"provider": "wiley.com (publisher)",
+					"ref": "https://www.wiley.com/en-us/Fundamentals+of+Acoustics,+4th+Edition-p-9780471847892",
+					"kind": "purchase"
+				},
+				{
+					"provider": "amazon.com",
+					"ref": "https://www.amazon.com/Fundamentals-Acoustics-Lawrence-Kinsler/dp/0471847895",
+					"kind": "purchase"
+				}
+			],
+			"result": {
+				"status": "cite_only",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
+				"where": "https://archive.org/details/fundamentalsofac0000kins"
+			}
+		},
+		{
+			"i": 38,
+			"title": "Acoustic Phonetics",
+			"attribution": "«Acoustic Phonetics» لـKenneth N. Stevens (ت 2013)",
+			"tier": "copyrighted",
+			"sources": [
+				{
+					"provider": "mitpress.mit.edu (الناشر الرسمي)",
+					"ref": "https://mitpress.mit.edu/9780262692502/acoustic-phonetics/",
+					"kind": "purchase"
+				},
+				{
+					"provider": "MIT Press Direct (direct.mit.edu)",
+					"ref": "https://direct.mit.edu/books/monograph/4678/Acoustic-Phonetics",
+					"kind": "metadata"
+				},
+				{
+					"provider": "Amazon (شراء)",
+					"ref": "https://www.amazon.com/Acoustic-Phonetics-Current-Studies-Linguistics/dp/0262692503",
+					"kind": "purchase"
+				}
+			],
+			"result": {
+				"status": "cite_only",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
+				"where": "https://mitpress.mit.edu/9780262692502/acoustic-phonetics/"
+			}
+		},
+		{
+			"i": 39,
+			"title": "The Physics of Sound",
+			"attribution": "«The Physics of Sound» لـRichard E. Berg (with co-author David G. Stork)",
+			"tier": "copyrighted",
+			"sources": [
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/physicsofsound00berg",
+					"kind": "reader"
+				},
+				{
+					"provider": "pearson.com",
+					"ref": "https://www.pearson.com/en-us/subject-catalog/p/physics-of-sound-the/P200000006785",
+					"kind": "purchase"
+				},
+				{
+					"provider": "google books",
+					"ref": "https://books.google.com/books/about/The_Physics_of_Sound.html?id=YgRRAAAAMAAJ",
+					"kind": "metadata"
+				},
+				{
+					"provider": "amazon.com",
+					"ref": "https://www.amazon.com/Physics-Sound-3rd-Richard-Berg/dp/0131457896",
+					"kind": "purchase"
+				}
+			],
+			"result": {
+				"status": "cite_only",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
+				"where": "https://archive.org/details/physicsofsound00berg"
+			}
+		},
+		{
+			"i": 40,
+			"title": "Digital Signal Processing: Principles, Algorithms, and Applications",
+			"attribution": "«Digital Signal Processing: Principles, Algorithms, and Applications» لـJohn G. Proakis; Dimitris G. Manolakis",
+			"tier": "copyrighted",
+			"sources": [
+				{
+					"provider": "archive.org (Internet Archive، controlled digital lending)",
+					"ref": "https://archive.org/details/digitalsignalpro0000proa_r8t4",
+					"kind": "reader"
+				},
+				{
+					"provider": "Pearson (official publisher، purchase)",
+					"ref": "https://www.pearson.com/en-us/subject-catalog/p/digital-signal-processing-principles-algorithms-and-applications/P200000003415/9780137348657",
+					"kind": "purchase"
+				}
+			],
+			"result": {
+				"status": "cite_only",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
+				"where": "https://archive.org/details/digitalsignalpro0000proa_r8t4"
+			}
+		},
+		{
+			"i": 41,
+			"title": "علم الأصوات العام: أصوات اللغة العربية",
+			"attribution": "«علم الأصوات العام: أصوات اللغة العربية» لـبسام بركة (بسّام محمود بركة)",
+			"tier": "copyrighted",
+			"sources": [
+				{
+					"provider": "neelwafurat.com (نيل وفرات)",
+					"ref": "https://www.neelwafurat.com/itempage.aspx?id=lbb7847-7705&search=books",
+					"kind": "purchase"
+				},
+				{
+					"provider": "archive.org (رفع مستخدم فردي غير مأذون، لا يُعتمد كنسخة رسمية)",
+					"ref": "https://archive.org/details/20220717_20220717_2012",
+					"kind": "full_text_unauthorized"
+				}
+			],
+			"result": {
+				"status": "cite_only",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
+				"where": "https://www.neelwafurat.com/itempage.aspx?id=lbb7847-7705&search=books"
+			}
+		},
+		{
+			"i": 42,
+			"title": "زاد المعاد في هدي خير العباد",
+			"attribution": "«زاد المعاد في هدي خير العباد» لـابن قيم الجوزية (أبو عبد الله شمس الدين محمد بن أبي بكر بن أيوب الزرعي الدمشقي الحنبلي) (ت 751)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "shamela.ws (المكتبة الشاملة)",
+					"ref": "https://shamela.ws/book/197",
+					"kind": "full_text"
+				},
+				{
+					"provider": "archive.org (أرشيف الإنترنت)",
+					"ref": "https://archive.org/details/zad_elmaad",
+					"kind": "pdf"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/42-زاد_المعاد_في_هدي_خير_العباد.pdf"
+			}
+		},
+		{
+			"i": 43,
+			"title": "الرحيق المختوم",
+			"attribution": "«الرحيق المختوم» لـصفي الرحمن المباركفوري (ت 1427)",
+			"tier": "free_official",
+			"sources": [
+				{
+					"provider": "waqfeya.net (المكتبة الوقفية)",
+					"ref": "https://waqfeya.net/books/الرحيق-المختوم-ط-أوقاف-قطر-d3f363f40b0d4fd7a312ef833ed5f93e",
+					"kind": "pdf"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/20240330_20240330_1352",
+					"kind": "pdf"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/2014-alraheq_almakhtom-almubarakfuri",
+					"kind": "full_text"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/43-الرحيق_المختوم.pdf"
+			}
+		},
+		{
+			"i": 44,
+			"title": "إحياء علوم الدين",
+			"attribution": "«إحياء علوم الدين» لـأبو حامد محمد بن محمد الغزالي الطوسي (ت 505)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "shamela.ws",
+					"ref": "https://shamela.ws/book/9472",
+					"kind": "full_text"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/vols-1-4-bks-1-40",
+					"kind": "full_text"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/ihyaod",
+					"kind": "pdf"
+				},
+				{
+					"provider": "ghazali.org",
+					"ref": "http://www.ghazali.org/ihya-arabic/",
+					"kind": "full_text"
+				},
+				{
+					"provider": "ketabonline.com",
+					"ref": "https://ketabonline.com/ar/books/6449",
+					"kind": "reader"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/44-إحياء_علوم_الدين.pdf"
+			}
+		},
+		{
+			"i": 45,
+			"title": "Thinking, Fast and Slow",
+			"attribution": "«Thinking, Fast and Slow» لـDaniel Kahneman (ت 2024-03-27)",
+			"tier": "copyrighted",
+			"sources": [
+				{
+					"provider": "us.macmillan.com (الناشر الرسمي، Farrar, Straus and Giroux / Macmillan)",
+					"ref": "https://us.macmillan.com/books/9780374533557/thinkingfastandslow/",
+					"kind": "purchase"
+				},
+				{
+					"provider": "amazon.com",
+					"ref": "https://www.amazon.com/Thinking-Fast-Slow-Daniel-Kahneman/dp/0374533555",
+					"kind": "purchase"
+				},
+				{
+					"provider": "en.wikipedia.org",
+					"ref": "https://en.wikipedia.org/wiki/Thinking,_Fast_and_Slow",
+					"kind": "metadata"
+				},
+				{
+					"provider": "kahneman.scholar.princeton.edu (صفحة المؤلف الرسمية)",
+					"ref": "https://kahneman.scholar.princeton.edu/publications",
+					"kind": "metadata"
+				}
+			],
+			"result": {
+				"status": "cite_only",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
+				"where": "https://us.macmillan.com/books/9780374533557/thinkingfastandslow/"
+			}
+		},
+		{
+			"i": 46,
+			"title": "The Psychology of Language: From Data to Theory",
+			"attribution": "«The Psychology of Language: From Data to Theory» لـTrevor A. Harley",
+			"tier": "copyrighted",
+			"sources": [
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/psychologyoflang0000harl_c9f1",
+					"kind": "reader"
+				},
+				{
+					"provider": "routledge.com (Taylor & Francis)",
+					"ref": "https://www.routledge.com/The-Psychology-of-Language-From-Data-to-Theory/Harley/p/book/9781848720893",
+					"kind": "purchase"
+				}
+			],
+			"result": {
+				"status": "cite_only",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
+				"where": "https://archive.org/details/psychologyoflang0000harl_c9f1"
+			}
+		},
+		{
+			"i": 47,
+			"title": "مراجع المدرسة السلوكية في التدرج وتغيير العادات",
+			"attribution": "«مراجع المدرسة السلوكية في التدرج وتغيير العادات» لـلا مؤلف واحد، مدخل موضوعي جماعي يشير إلى مراجع المدرسة السلوكية (بافلوف، واطسون، ثورندايك، سكنر، وولبي…)",
+			"tier": "uncertain",
+			"sources": [
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/conditioned-reflexes-an-investigation-of-the-physiological-activity-of-the-cerebral-cortex",
+					"kind": "full_text_public_domain"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/conditionedrefle00pavl",
+					"kind": "borrow_only"
+				}
+			],
+			"result": {
+				"status": "no_source",
+				"note": "لا رابط مشروع متحقَّق"
+			}
+		},
+		{
+			"i": 48,
+			"title": "أصول الفقه",
+			"attribution": "«أصول الفقه» لـمحمد أبو زهرة (محمد أحمد مصطفى أحمد أبو زهرة) (ت 1394)",
+			"tier": "copyrighted",
+			"sources": [
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/20220929_20220929_1154",
+					"kind": "pdf"
+				}
+			],
+			"result": {
+				"status": "cite_only",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
+				"where": "https://archive.org/details/20220929_20220929_1154"
+			}
+		},
+		{
+			"i": 49,
+			"title": "مقاصد الشريعة الإسلامية",
+			"attribution": "«مقاصد الشريعة الإسلامية» لـمحمد الطاهر بن محمد بن محمد الطاهر بن عاشور التونسي (ت 1393 هـ)",
+			"tier": "public_domain",
+			"sources": [
+				{
+					"provider": "shamela.ws",
+					"ref": "https://shamela.ws/book/17094",
+					"kind": "full_text"
+				},
+				{
+					"provider": "archive.org",
+					"ref": "https://archive.org/details/noor-book.com-2_20240529_1515",
+					"kind": "pdf"
+				}
+			],
+			"result": {
+				"status": "already_present",
+				"path": "sources/pdf/49-مقاصد_الشريعة_الإسلامية.pdf"
+			}
+		},
+		{
+			"i": 50,
+			"title": "فقه السيرة",
+			"attribution": "«فقه السيرة» لـمحمد الغزالي (محمد الغزالي السقا) (ت 1996)",
+			"tier": "copyrighted",
+			"sources": [
+				{
+					"provider": "shoroukbookstores.com (مكتبات الشروق - الناشر الرسمي)",
+					"ref": "https://www.shoroukbookstores.com/books/view.aspx?id=52f43edb-2b40-444f-a89c-c8206ae771a3",
+					"kind": "purchase"
+				},
+				{
+					"provider": "archive.org (رفع مستخدم Malcolm x 25 - غير مأذون، للإسناد فقط لا للتحميل)",
+					"ref": "https://archive.org/details/20200223_20200223_1200",
+					"kind": "pdf_unauthorized"
+				},
+				{
+					"provider": "shamela.ws (المكتبة الشاملة - استضافة طرف ثالث، تعذّر الفتح HTTP 403 لكنها موثّقة في نتائج البحث برقم 23659)",
+					"ref": "https://shamela.ws/book/23659",
+					"kind": "full_text_unauthorized"
+				}
+			],
+			"result": {
+				"status": "cite_only",
+				"note": "محميّ، يُذكر للاستشهاد ولا يُحمَّل",
+				"where": "https://www.shoroukbookstores.com/books/view.aspx?id=52f43edb-2b40-444f-a89c-c8206ae771a3"
+			}
+		}
+	]
+}

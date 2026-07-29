@@ -165,3 +165,13 @@ dist
 .env*
 !.env.example
 .wrangler/
+
+# Python
+__pycache__/
+*.pyc
+
+# Downloaded source PDFs (large; not tracked — see data/sources_manifest.json for provenance)
+claude/sources/pdf/
+
+# Large re-fetchable source corpus (documented in pipeline/corpus.py)
+claude/data/quran-morphology.txt

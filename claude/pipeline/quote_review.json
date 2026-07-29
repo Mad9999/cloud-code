@@ -1,0 +1,30 @@
+[
+ {
+  "file": "tadabbur_hud.json",
+  "surah": 11,
+  "fragment": "رحمةُ الله على لوطٍ، كان يأوي إلى ركنٍ شديد",
+  "closest": null,
+  "allowed": true
+ },
+ {
+  "file": "tadabbur_hud.json",
+  "surah": 11,
+  "fragment": "هي له خاصّةً أم للناس كافّةً؟",
+  "closest": null,
+  "allowed": true
+ },
+ {
+  "file": "tadabbur_maida.json",
+  "surah": 5,
+  "fragment": "لو علينا نزلت لاتخذناه عيدًا",
+  "closest": null,
+  "allowed": true
+ },
+ {
+  "file": "tadabbur_saffat.json",
+  "surah": 37,
+  "fragment": "كما صلّيت على إبراهيم",
+  "closest": null,
+  "allowed": true
+ }
+]
